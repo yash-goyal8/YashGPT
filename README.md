@@ -14,7 +14,7 @@ A professional chatbot for recruiters and hiring managers to learn about your ca
 
 Add these in the Vercel project settings or Vars section:
 
-```bash
+\`\`\`bash
 # Google Gemini API
 GEMINI_API_KEY=your_gemini_api_key_here
 
@@ -27,7 +27,7 @@ KV_URL=automatically_set
 KV_REST_API_TOKEN=automatically_set
 KV_REST_API_URL=automatically_set
 BLOB_READ_WRITE_TOKEN=automatically_set
-```
+\`\`\`
 
 ## How to Get API Keys
 
