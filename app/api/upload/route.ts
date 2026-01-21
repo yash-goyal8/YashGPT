@@ -1,22 +1,30 @@
 import { put } from "@vercel/blob"
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 
-export async function POST(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const filename = searchParams.get("filename")
-
-  if (!filename) {
-    return NextResponse.json({ error: "Filename is required" }, { status: 400 })
-  }
-
+export async function POST(request: NextRequest) {
   try {
-    const blob = await put(filename, request.body as ReadableStream, {
+    const formData = await request.formData()
+    const file = formData.get("file") as File
+
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 })
+    }
+
+    // Upload to Vercel Blob with random suffix to avoid duplicates
+    const blob = await put(file.name, file, {
       access: "public",
+      addRandomSuffix: true,
     })
 
-    return NextResponse.json({ url: blob.url, id: blob.pathname })
+    return NextResponse.json({
+      url: blob.url,
+      id: blob.pathname,
+      filename: file.name,
+      size: file.size,
+      type: file.type,
+    })
   } catch (error) {
     console.error("[v0] Upload error:", error)
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 })
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 })
   }
 }

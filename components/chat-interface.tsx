@@ -1,11 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Send, ArrowLeft, Sparkles } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Send, ArrowLeft, Sparkles, User, Building2 } from "lucide-react"
 import Link from "next/link"
 
 interface Message {
@@ -14,19 +16,80 @@ interface Message {
   timestamp: Date
 }
 
+interface VisitorInfo {
+  name: string
+  company: string
+}
+
+// Generate persistent session ID
+function getSessionId(): string {
+  if (typeof window === "undefined") return ""
+  let sessionId = sessionStorage.getItem("chat_session_id")
+  if (!sessionId) {
+    sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    sessionStorage.setItem("chat_session_id", sessionId)
+  }
+  return sessionId
+}
+
 export function ChatInterface() {
   const searchParams = useSearchParams()
   const initialQuestion = searchParams.get("q")
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [sessionId, setSessionId] = useState("")
+
+  const [visitorInfo, setVisitorInfo] = useState<VisitorInfo | null>(null)
+  const [visitorForm, setVisitorForm] = useState({
+    name: "",
+    company: "",
+  })
+  const [formError, setFormError] = useState("")
 
   useEffect(() => {
-    if (initialQuestion && messages.length === 0) {
+    setSessionId(getSessionId())
+  }, [])
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  const handleVisitorSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setFormError("")
+
+    if (!visitorForm.name.trim()) {
+      setFormError("Please enter your name")
+      return
+    }
+
+    if (!visitorForm.company.trim()) {
+      setFormError("Please enter your company name")
+      return
+    }
+
+    setVisitorInfo({
+      name: visitorForm.name.trim(),
+      company: visitorForm.company.trim(),
+    })
+
+    const welcomeMessage: Message = {
+      role: "assistant",
+      content: `Hi ${visitorForm.name.trim()}! Great to meet you. I'm here to tell you all about Yash's professional journey, skills, and achievements. Feel free to ask me anything about his experience, projects, or career highlights!`,
+      timestamp: new Date(),
+    }
+    setMessages([welcomeMessage])
+  }
+
+  useEffect(() => {
+    if (initialQuestion && visitorInfo && messages.length === 1) {
       handleSendMessage(initialQuestion)
     }
-  }, [initialQuestion])
+  }, [initialQuestion, visitorInfo])
 
   const handleSendMessage = async (question?: string) => {
     const messageText = question || input
@@ -42,23 +105,117 @@ export function ChatInterface() {
     setInput("")
     setIsLoading(true)
 
-    // TODO: Call API endpoint when backend is ready
-    // For now, show a placeholder response
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: messageText,
+          visitorName: visitorInfo?.name,
+          visitorCompany: visitorInfo?.company,
+          sessionId,
+        }),
+      })
+
+      const data = await response.json()
+
       const assistantMessage: Message = {
         role: "assistant",
-        content:
-          "I'm ready to answer your questions about Yash! However, the story bank hasn't been uploaded yet. Please visit the Admin Dashboard to upload Yash's career stories first.",
+        content: data.response || data.error || "I couldn't process that question. Please try again.",
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, assistantMessage])
+    } catch {
+      const errorMessage: Message = {
+        role: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
+  // Visitor info form
+  if (!visitorInfo) {
+    return (
+      <div className="flex flex-col h-full bg-background">
+        <header className="border-b bg-card px-4 py-3">
+          <div className="container mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="icon" asChild>
+                <Link href="/">
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+              </Button>
+              <div>
+                <h1 className="font-semibold flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  Yash's Career Assistant
+                </h1>
+                <p className="text-xs text-muted-foreground">Ask me anything about Yash</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="flex-1 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md p-6">
+            <div className="text-center mb-6">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold">Welcome!</h2>
+              <p className="text-muted-foreground mt-2">Before we start, I'd love to know who I'm speaking with.</p>
+            </div>
+
+            <form onSubmit={handleVisitorSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Your Name <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  placeholder="John Doe"
+                  value={visitorForm.name}
+                  onChange={(e) => setVisitorForm((prev) => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="company" className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Company <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="company"
+                  placeholder="Acme Inc."
+                  value={visitorForm.company}
+                  onChange={(e) => setVisitorForm((prev) => ({ ...prev, company: e.target.value }))}
+                />
+              </div>
+
+              {formError && <p className="text-sm text-destructive text-center">{formError}</p>}
+
+              <Button type="submit" className="w-full" size="lg">
+                Start Conversation
+              </Button>
+
+              <p className="text-xs text-muted-foreground text-center">
+                Your information helps personalize your experience and is kept private.
+              </p>
+            </form>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  // Chat interface
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Header */}
       <header className="border-b bg-card px-4 py-3">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -72,23 +229,17 @@ export function ChatInterface() {
                 <Sparkles className="h-4 w-4 text-primary" />
                 Yash's Career Assistant
               </h1>
-              <p className="text-xs text-muted-foreground">Ask me anything about Yash</p>
+              <p className="text-xs text-muted-foreground">
+                Chatting with {visitorInfo.name}
+                {visitorInfo.company && ` from ${visitorInfo.company}`}
+              </p>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         <div className="container mx-auto max-w-3xl px-4 py-6 space-y-6">
-          {messages.length === 0 && (
-            <Card className="p-8 text-center border-dashed">
-              <Sparkles className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-xl font-semibold mb-2">Start a Conversation</h2>
-              <p className="text-muted-foreground">Ask me anything about Yash's career, skills, and achievements!</p>
-            </Card>
-          )}
-
           {messages.map((message, index) => (
             <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
               <Card
@@ -107,16 +258,22 @@ export function ChatInterface() {
               <Card className="max-w-[80%] p-4 bg-muted">
                 <div className="flex gap-2">
                   <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" />
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-100" />
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-200" />
+                  <div
+                    className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
+                    style={{ animationDelay: "0.1s" }}
+                  />
+                  <div
+                    className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  />
                 </div>
               </Card>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
-      {/* Input */}
       <div className="border-t bg-card">
         <div className="container mx-auto max-w-3xl px-4 py-4">
           <form
@@ -137,9 +294,6 @@ export function ChatInterface() {
               <Send className="h-4 w-4" />
             </Button>
           </form>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            Messages are not stored. Your conversation is private.
-          </p>
         </div>
       </div>
     </div>
