@@ -27,21 +27,41 @@ interface ProcessRequest {
  * Extract text from document URL
  */
 async function extractText(url: string, filename: string): Promise<string> {
-  const response = await fetch(url)
-  const contentType = response.headers.get("content-type") || ""
-
-  if (filename.endsWith(".txt") || contentType.includes("text/plain")) {
-    return await response.text()
+  console.log("[v0] Extracting text from:", url, "filename:", filename)
+  
+  if (!url) {
+    throw new Error("No URL provided for document")
   }
 
-  if (filename.endsWith(".docx") || contentType.includes("wordprocessingml")) {
+  const response = await fetch(url)
+  
+  console.log("[v0] Fetch response status:", response.status)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch document: ${response.status} ${response.statusText}`)
+  }
+  
+  const contentType = response.headers.get("content-type") || ""
+  console.log("[v0] Content-Type:", contentType)
+
+  if (filename.endsWith(".txt") || contentType.includes("text/plain")) {
+    const text = await response.text()
+    console.log("[v0] Extracted text (txt) length:", text.length)
+    return text
+  }
+
+  if (filename.endsWith(".docx") || contentType.includes("wordprocessingml") || contentType.includes("octet-stream")) {
     const arrayBuffer = await response.arrayBuffer()
+    console.log("[v0] ArrayBuffer size:", arrayBuffer.byteLength)
     const result = await mammoth.extractRawText({ arrayBuffer })
+    console.log("[v0] Extracted text (docx) length:", result.value.length)
     return result.value
   }
 
   // Fallback to text
-  return await response.text()
+  const text = await response.text()
+  console.log("[v0] Extracted text (fallback) length:", text.length)
+  return text
 }
 
 /**
@@ -65,6 +85,13 @@ export async function POST(request: Request) {
 
     for (const doc of documents) {
       try {
+        console.log("[v0] Processing document:", JSON.stringify(doc))
+        
+        if (!doc.url) {
+          results.errors.push(`${doc.name}: Could not find file in options`)
+          continue
+        }
+        
         // Extract text
         const text = await extractText(doc.url, doc.name)
 

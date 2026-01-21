@@ -185,8 +185,14 @@ export function AdminDashboard() {
         }
 
         const data = await response.json()
+        
+        console.log("[v0] Upload response:", JSON.stringify(data))
 
         setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }))
+
+        if (!data.url) {
+          throw new Error(`Upload succeeded but no URL returned for "${file.name}"`)
+        }
 
         return {
           id: data.id || Date.now().toString() + Math.random().toString(),
@@ -242,11 +248,14 @@ export function AdminDashboard() {
     setProcessSuccess(null)
 
     try {
+      const documentsPayload = uploadedFiles.map((f) => ({ name: f.name, url: f.url }))
+      console.log("[v0] Processing documents:", JSON.stringify(documentsPayload))
+      
       const response = await fetch("/api/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          documents: uploadedFiles.map((f) => ({ name: f.name, url: f.url })),
+          documents: documentsPayload,
         }),
       })
 
