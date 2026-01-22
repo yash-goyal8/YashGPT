@@ -117,8 +117,10 @@ export async function trackAnalytics(event: {
   responseTime?: number
   chunksUsed?: number
 }): Promise<void> {
-  // Fire and forget - don't await
-  trackAnalyticsAsync(event).catch(() => {})
+  // Fire and forget - don't await but log errors
+  trackAnalyticsAsync(event).catch((err) => {
+    console.error("[v0] Analytics tracking failed:", err)
+  })
 }
 
 async function trackAnalyticsAsync(event: {
@@ -132,7 +134,12 @@ async function trackAnalyticsAsync(event: {
   const redis = getRedis()
   const today = new Date().toISOString().split("T")[0]
   
+  console.log("[v0] Tracking analytics event:", event.type, event.question?.substring(0, 50))
+  
   const pipeline = redis.pipeline()
+  
+  // Increment all-time total counter
+  pipeline.incr("analytics:totalQueries")
   
   // Increment daily counter
   pipeline.hincrby(`analytics:${today}`, "totalQueries", 1)
@@ -152,7 +159,8 @@ async function trackAnalyticsAsync(event: {
   pipeline.lpush("analytics:recentInteractions", JSON.stringify(interaction))
   pipeline.ltrim("analytics:recentInteractions", 0, 499) // Keep last 500
   
-  await pipeline.exec()
+  const results = await pipeline.exec()
+  console.log("[v0] Analytics pipeline executed, results count:", results.length)
 }
 
 /**
@@ -169,15 +177,17 @@ export async function getAnalyticsSummary(): Promise<{
     const today = new Date().toISOString().split("T")[0]
     
     const pipeline = redis.pipeline()
-    pipeline.hget(`analytics:${today}`, "totalQueries")
+    pipeline.get("analytics:totalQueries") // All-time total
+    pipeline.hget(`analytics:${today}`, "totalQueries") // Today's count
     pipeline.zrevrange("analytics:topQuestions", 0, 9, { withScores: true })
     pipeline.lrange("analytics:recentInteractions", 0, 19)
     
     const results = await pipeline.exec()
     
-    const todayQueries = Number(results[0]) || 0
-    const topQuestionsRaw = (results[1] as string[]) || []
-    const recentRaw = (results[2] as string[]) || []
+    const totalQueries = Number(results[0]) || 0
+    const todayQueries = Number(results[1]) || 0
+    const topQuestionsRaw = (results[2] as string[]) || []
+    const recentRaw = (results[3] as string[]) || []
     
     // Parse top questions
     const topQuestions: Array<{ question: string; count: number }> = []
@@ -194,12 +204,13 @@ export async function getAnalyticsSummary(): Promise<{
     }).filter(Boolean)
     
     return {
-      totalQueries: todayQueries,
+      totalQueries,
       todayQueries,
       topQuestions,
       recentInteractions,
     }
-  } catch {
+  } catch (err) {
+    console.error("[v0] Failed to get analytics:", err)
     return {
       totalQueries: 0,
       todayQueries: 0,
