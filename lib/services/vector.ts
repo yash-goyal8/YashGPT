@@ -185,3 +185,16 @@ export async function deleteChunksBySource(sourceFile: string): Promise<number> 
 
   return idsToDelete.length
 }
+
+/**
+ * Delete a single chunk by ID
+ */
+export async function deleteChunkById(id: string): Promise<boolean> {
+  try {
+    const index = getVectorIndex()
+    await index.delete([id])
+    return true
+  } catch {
+    return false
+  }
+}

@@ -294,6 +294,45 @@ export function AdminDashboard() {
     }
   }
 
+  const handleDeleteChunk = async (chunkId: string) => {
+    if (!confirm("Are you sure you want to delete this chunk?")) return
+    
+    try {
+      const response = await fetch(`/api/chunks?id=${encodeURIComponent(chunkId)}`, {
+        method: "DELETE",
+      })
+      const data = await response.json()
+      if (data.success) {
+        setStoredChunks((prev) => prev.filter((c) => c.id !== chunkId))
+        setTotalChunks((prev) => prev - 1)
+      } else {
+        alert("Failed to delete chunk: " + (data.error || "Unknown error"))
+      }
+    } catch {
+      alert("Failed to delete chunk")
+    }
+  }
+
+  const handleDeleteChunksBySource = async (sourceFile: string) => {
+    if (!confirm(`Delete all chunks from "${sourceFile}"?`)) return
+    
+    try {
+      const response = await fetch(`/api/chunks?source=${encodeURIComponent(sourceFile)}`, {
+        method: "DELETE",
+      })
+      const data = await response.json()
+      if (data.success) {
+        setStoredChunks((prev) => prev.filter((c) => c.sourceFile !== sourceFile))
+        setTotalChunks((prev) => prev - data.deleted)
+        alert(`Deleted ${data.deleted} chunks from ${sourceFile}`)
+      } else {
+        alert("Failed to delete chunks: " + (data.error || "Unknown error"))
+      }
+    } catch {
+      alert("Failed to delete chunks")
+    }
+  }
+
   const fetchAnalytics = async () => {
     setIsLoadingAnalytics(true)
     try {
@@ -616,12 +655,28 @@ export function AdminDashboard() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteChunksBySource(chunk.sourceFile)}
+                              className="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors"
+                              title="Click to delete all chunks from this file"
+                            >
                               {chunk.sourceFile}
-                            </span>
+                            </button>
                             <span className="text-xs text-muted-foreground">Chunk #{chunk.chunkIndex + 1}</span>
                           </div>
-                          <span className="text-xs text-muted-foreground">{chunk.tokenCount} tokens</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">{chunk.tokenCount} tokens</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteChunk(chunk.id)}
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-red-500"
+                              title="Delete this chunk"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
                         <p className="text-sm line-clamp-3">{chunk.content}</p>
                       </div>

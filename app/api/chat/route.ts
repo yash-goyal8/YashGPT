@@ -133,6 +133,7 @@ export async function POST(request: Request) {
     await cacheResponse(sanitizedQuestion, response)
 
     // Track analytics (fire and forget)
+    console.log("[v0] About to track analytics for question:", sanitizedQuestion.substring(0, 50))
     trackAnalytics({
       type: "chat",
       question: sanitizedQuestion,
@@ -141,12 +142,14 @@ export async function POST(request: Request) {
       responseTime: Date.now() - startTime,
       chunksUsed: searchResults.length,
     })
+    console.log("[v0] Analytics tracking initiated")
 
     return NextResponse.json({
       response,
       chunksUsed: searchResults.length,
     })
   } catch (error) {
+    console.error("[v0] Chat API error:", error)
     return NextResponse.json(
       { error: "Failed to process your question. Please try again." },
       { status: 500 }
