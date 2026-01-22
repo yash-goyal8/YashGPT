@@ -169,32 +169,47 @@ export async function getAnalyticsSummary(): Promise<{
     const redis = getRedis()
     const today = new Date().toISOString().split("T")[0]
     
-    const pipeline = redis.pipeline()
-    pipeline.get("analytics:totalQueries") // All-time total
-    pipeline.hget(`analytics:${today}`, "totalQueries") // Today's count
-    pipeline.zrevrange("analytics:topQuestions", 0, 9, { withScores: true })
-    pipeline.lrange("analytics:recentInteractions", 0, 19)
+    console.log("[v0] getAnalyticsSummary called, today:", today)
     
-    const results = await pipeline.exec()
+    // Fetch each value separately for better debugging
+    const totalQueries = Number(await redis.get("analytics:totalQueries")) || 0
+    console.log("[v0] totalQueries from Redis:", totalQueries)
     
-    const totalQueries = Number(results[0]) || 0
-    const todayQueries = Number(results[1]) || 0
-    const topQuestionsRaw = (results[2] as string[]) || []
-    const recentRaw = (results[3] as string[]) || []
+    const todayQueries = Number(await redis.hget(`analytics:${today}`, "totalQueries")) || 0
+    console.log("[v0] todayQueries from Redis:", todayQueries)
     
-    // Parse top questions
+    const topQuestionsRaw = await redis.zrange("analytics:topQuestions", 0, 9, { rev: true, withScores: true })
+    console.log("[v0] topQuestionsRaw:", JSON.stringify(topQuestionsRaw))
+    
+    const recentRaw = await redis.lrange("analytics:recentInteractions", 0, 19)
+    console.log("[v0] recentRaw count:", recentRaw.length)
+    
+    // Parse top questions - Upstash returns array of {score, value} objects
     const topQuestions: Array<{ question: string; count: number }> = []
-    for (let i = 0; i < topQuestionsRaw.length; i += 2) {
-      topQuestions.push({
-        question: topQuestionsRaw[i],
-        count: Number(topQuestionsRaw[i + 1]) || 0,
-      })
+    if (Array.isArray(topQuestionsRaw)) {
+      for (const item of topQuestionsRaw) {
+        if (typeof item === "object" && item !== null && "value" in item && "score" in item) {
+          topQuestions.push({
+            question: String(item.value),
+            count: Number(item.score) || 0,
+          })
+        } else if (typeof item === "string") {
+          // Fallback for string format
+          topQuestions.push({ question: item, count: 1 })
+        }
+      }
     }
+    console.log("[v0] Parsed topQuestions:", topQuestions.length)
     
     // Parse recent interactions
     const recentInteractions = recentRaw.map((r) => {
-      try { return JSON.parse(r) } catch { return null }
+      try { 
+        return typeof r === "string" ? JSON.parse(r) : r
+      } catch { 
+        return null 
+      }
     }).filter(Boolean)
+    console.log("[v0] Parsed recentInteractions:", recentInteractions.length)
     
     return {
       totalQueries,
