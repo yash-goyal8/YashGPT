@@ -53,9 +53,19 @@ async function extractText(url: string, filename: string): Promise<string> {
   if (filename.endsWith(".docx") || contentType.includes("wordprocessingml") || contentType.includes("octet-stream")) {
     const arrayBuffer = await response.arrayBuffer()
     console.log("[v0] ArrayBuffer size:", arrayBuffer.byteLength)
-    const result = await mammoth.extractRawText({ arrayBuffer })
-    console.log("[v0] Extracted text (docx) length:", result.value.length)
-    return result.value
+    try {
+      console.log("[v0] Starting mammoth extraction...")
+      const result = await mammoth.extractRawText({ arrayBuffer })
+      console.log("[v0] Mammoth extraction complete")
+      console.log("[v0] Extracted text (docx) length:", result.value.length)
+      if (result.messages && result.messages.length > 0) {
+        console.log("[v0] Mammoth messages:", JSON.stringify(result.messages))
+      }
+      return result.value
+    } catch (mammothError) {
+      console.error("[v0] Mammoth extraction failed:", mammothError)
+      throw new Error(`Failed to extract text from DOCX: ${mammothError instanceof Error ? mammothError.message : "Unknown error"}`)
+    }
   }
 
   // Fallback to text
