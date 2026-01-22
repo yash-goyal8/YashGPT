@@ -71,11 +71,20 @@ export async function POST(request: Request) {
   const startTime = Date.now()
 
   try {
-    const { documents }: ProcessRequest = await request.json()
+    const body = await request.json()
+    console.log("[v0] Raw request body:", JSON.stringify(body))
+    
+    const documents = body.documents as ProcessRequest["documents"]
+    console.log("[v0] Documents array:", JSON.stringify(documents))
 
     if (!documents || documents.length === 0) {
       return NextResponse.json({ error: "No documents provided" }, { status: 400 })
     }
+    
+    // Log each document
+    documents.forEach((doc, i) => {
+      console.log(`[v0] Document ${i}: name="${doc.name}", url="${doc.url}", hasUrl=${!!doc.url}`)
+    })
 
     const results = {
       processed: 0,
