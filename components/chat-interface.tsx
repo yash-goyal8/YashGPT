@@ -21,6 +21,76 @@ interface VisitorInfo {
   company: string
 }
 
+// Question bank organized by category
+const QUESTION_BANK = {
+  initial: [
+    "Tell me about yourself",
+    "What are your key strengths?",
+    "Walk me through your most impactful project",
+    "Why are you looking for new opportunities?",
+  ],
+  technical: [
+    "What technologies do you specialize in?",
+    "Describe a complex technical problem you solved",
+    "How do you approach system design?",
+    "Tell me about your experience with AI/ML",
+  ],
+  leadership: [
+    "Describe your leadership style",
+    "How do you handle conflicts in a team?",
+    "Tell me about a time you mentored someone",
+    "How do you prioritize competing deadlines?",
+  ],
+  behavioral: [
+    "Tell me about a time you failed and what you learned",
+    "How do you handle pressure and tight deadlines?",
+    "Describe a situation where you went above and beyond",
+    "How do you stay updated with industry trends?",
+  ],
+  career: [
+    "What motivates you professionally?",
+    "Where do you see yourself in 5 years?",
+    "Why MBA after your technical background?",
+    "What kind of role are you looking for?",
+  ],
+}
+
+// Get suggested questions based on conversation context
+function getSuggestedQuestions(messages: Message[]): string[] {
+  const messageCount = messages.filter(m => m.role === "user").length
+  const lastUserMessage = [...messages].reverse().find(m => m.role === "user")?.content.toLowerCase() || ""
+  const lastAssistantMessage = [...messages].reverse().find(m => m.role === "assistant")?.content.toLowerCase() || ""
+  
+  // Initial state - show intro questions
+  if (messageCount === 0) {
+    return QUESTION_BANK.initial
+  }
+  
+  // Analyze context and suggest relevant follow-ups
+  const allText = lastUserMessage + " " + lastAssistantMessage
+  
+  if (allText.includes("technical") || allText.includes("code") || allText.includes("project") || allText.includes("technology")) {
+    return QUESTION_BANK.technical
+  }
+  
+  if (allText.includes("team") || allText.includes("lead") || allText.includes("manage") || allText.includes("mentor")) {
+    return QUESTION_BANK.leadership
+  }
+  
+  if (allText.includes("challenge") || allText.includes("difficult") || allText.includes("problem") || allText.includes("conflict")) {
+    return QUESTION_BANK.behavioral
+  }
+  
+  if (allText.includes("career") || allText.includes("goal") || allText.includes("future") || allText.includes("mba")) {
+    return QUESTION_BANK.career
+  }
+  
+  // Rotate through categories based on message count
+  const categories = Object.keys(QUESTION_BANK) as (keyof typeof QUESTION_BANK)[]
+  const categoryIndex = messageCount % categories.length
+  return QUESTION_BANK[categories[categoryIndex]]
+}
+
 // Generate persistent session ID
 function getSessionId(): string {
   if (typeof window === "undefined") return ""
