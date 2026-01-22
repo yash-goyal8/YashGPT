@@ -107,7 +107,7 @@ export async function checkRateLimit(
 }
 
 /**
- * Track analytics event (fire and forget - non-blocking)
+ * Track analytics event - now synchronous for debugging
  */
 export async function trackAnalytics(event: {
   type: string
@@ -117,50 +117,43 @@ export async function trackAnalytics(event: {
   responseTime?: number
   chunksUsed?: number
 }): Promise<void> {
-  // Fire and forget - don't await but log errors
-  trackAnalyticsAsync(event).catch((err) => {
-    console.error("[v0] Analytics tracking failed:", err)
-  })
-}
-
-async function trackAnalyticsAsync(event: {
-  type: string
-  question?: string
-  visitorName?: string
-  visitorCompany?: string
-  responseTime?: number
-  chunksUsed?: number
-}): Promise<void> {
-  const redis = getRedis()
-  const today = new Date().toISOString().split("T")[0]
-  
-  console.log("[v0] Tracking analytics event:", event.type, event.question?.substring(0, 50))
-  
-  const pipeline = redis.pipeline()
-  
-  // Increment all-time total counter
-  pipeline.incr("analytics:totalQueries")
-  
-  // Increment daily counter
-  pipeline.hincrby(`analytics:${today}`, "totalQueries", 1)
-  pipeline.expire(`analytics:${today}`, CACHE_TTL.analytics)
-  
-  // Track query for frequency analysis
-  if (event.question) {
-    const normalizedQ = event.question.toLowerCase().trim().substring(0, 100)
-    pipeline.zincrby("analytics:topQuestions", 1, normalizedQ)
+  try {
+    const redis = getRedis()
+    const today = new Date().toISOString().split("T")[0]
+    
+    console.log("[v0] trackAnalytics called with:", JSON.stringify(event))
+    console.log("[v0] Redis URL exists:", !!process.env.KV_REST_API_URL)
+    console.log("[v0] Redis Token exists:", !!process.env.KV_REST_API_TOKEN)
+    console.log("[v0] Today's date:", today)
+    
+    // Increment all-time total counter
+    const totalResult = await redis.incr("analytics:totalQueries")
+    console.log("[v0] Total queries incremented to:", totalResult)
+    
+    // Increment daily counter
+    const dailyResult = await redis.hincrby(`analytics:${today}`, "totalQueries", 1)
+    console.log("[v0] Daily queries incremented to:", dailyResult)
+    await redis.expire(`analytics:${today}`, CACHE_TTL.analytics)
+    
+    // Track query for frequency analysis
+    if (event.question) {
+      const normalizedQ = event.question.toLowerCase().trim().substring(0, 100)
+      await redis.zincrby("analytics:topQuestions", 1, normalizedQ)
+      console.log("[v0] Question tracked:", normalizedQ)
+    }
+    
+    // Store recent interaction
+    const interaction = {
+      ...event,
+      timestamp: new Date().toISOString(),
+    }
+    await redis.lpush("analytics:recentInteractions", JSON.stringify(interaction))
+    await redis.ltrim("analytics:recentInteractions", 0, 499)
+    console.log("[v0] Interaction stored")
+    
+  } catch (err) {
+    console.error("[v0] Analytics tracking error:", err)
   }
-  
-  // Store recent interaction
-  const interaction = {
-    ...event,
-    timestamp: new Date().toISOString(),
-  }
-  pipeline.lpush("analytics:recentInteractions", JSON.stringify(interaction))
-  pipeline.ltrim("analytics:recentInteractions", 0, 499) // Keep last 500
-  
-  const results = await pipeline.exec()
-  console.log("[v0] Analytics pipeline executed, results count:", results.length)
 }
 
 /**

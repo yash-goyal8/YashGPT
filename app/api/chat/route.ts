@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     // Check cache for repeated questions
     const cached = await getCachedResponse(sanitizedQuestion)
     if (cached) {
-      trackAnalytics({
+      await trackAnalytics({
         type: "chat",
         question: sanitizedQuestion,
         visitorName,
@@ -132,9 +132,9 @@ export async function POST(request: Request) {
     // Cache the response
     await cacheResponse(sanitizedQuestion, response)
 
-    // Track analytics (fire and forget)
+    // Track analytics - await to ensure it completes
     console.log("[v0] About to track analytics for question:", sanitizedQuestion.substring(0, 50))
-    trackAnalytics({
+    await trackAnalytics({
       type: "chat",
       question: sanitizedQuestion,
       visitorName,
@@ -142,7 +142,7 @@ export async function POST(request: Request) {
       responseTime: Date.now() - startTime,
       chunksUsed: searchResults.length,
     })
-    console.log("[v0] Analytics tracking initiated")
+    console.log("[v0] Analytics tracking completed")
 
     return NextResponse.json({
       response,
