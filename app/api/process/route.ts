@@ -55,7 +55,10 @@ async function extractText(url: string, filename: string): Promise<string> {
     console.log("[v0] ArrayBuffer size:", arrayBuffer.byteLength)
     try {
       console.log("[v0] Starting mammoth extraction...")
-      const result = await mammoth.extractRawText({ arrayBuffer })
+      // Convert ArrayBuffer to Buffer for mammoth compatibility in serverless
+      const buffer = Buffer.from(arrayBuffer)
+      console.log("[v0] Buffer created, size:", buffer.length)
+      const result = await mammoth.extractRawText({ buffer })
       console.log("[v0] Mammoth extraction complete")
       console.log("[v0] Extracted text (docx) length:", result.value.length)
       if (result.messages && result.messages.length > 0) {
