@@ -746,7 +746,14 @@ export function AdminDashboard() {
                     {analytics.recentInteractions.slice(0, 10).map((item: any, idx: number) => (
                       <div key={idx} className="p-3 bg-muted/50 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-medium">{item.visitorName || "Anonymous"}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium">{item.visitorName || "Anonymous"}</p>
+                            {item.visitorCompany && (
+                              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                                {item.visitorCompany}
+                              </span>
+                            )}
+                          </div>
                           <span className="text-xs text-muted-foreground">
                             {item.timestamp ? new Date(item.timestamp).toLocaleDateString() : ""}
                           </span>
