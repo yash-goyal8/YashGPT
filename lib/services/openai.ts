@@ -22,11 +22,18 @@ const CONFIG = {
  * Generate embedding for text using OpenAI text-embedding-3-small
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const { embedding } = await embed({
-    model: CONFIG.embedding.model,
-    value: text.trim().substring(0, 8000), // OpenAI limit
-  })
-  return embedding
+  try {
+    console.log("[v0] Generating embedding for text length:", text.length)
+    const { embedding } = await embed({
+      model: CONFIG.embedding.model,
+      value: text.trim().substring(0, 8000), // OpenAI limit
+    })
+    console.log("[v0] Embedding generated successfully, dimensions:", embedding.length)
+    return embedding
+  } catch (error) {
+    console.error("[v0] Embedding generation failed:", error)
+    throw new Error(`Embedding failed: ${error instanceof Error ? error.message : "Unknown error"}`)
+  }
 }
 
 /**
@@ -46,14 +53,21 @@ export async function generateChatResponse(
   systemPrompt: string,
   userPrompt: string
 ): Promise<string> {
-  const { text } = await generateText({
-    model: CONFIG.llm.model,
-    system: systemPrompt,
-    prompt: userPrompt,
-    temperature: CONFIG.llm.temperature,
-    maxOutputTokens: CONFIG.llm.maxOutputTokens,
-  })
-  return text || "I couldn't generate a response. Please try again."
+  try {
+    console.log("[v0] Generating chat response...")
+    const { text } = await generateText({
+      model: CONFIG.llm.model,
+      system: systemPrompt,
+      prompt: userPrompt,
+      temperature: CONFIG.llm.temperature,
+      maxOutputTokens: CONFIG.llm.maxOutputTokens,
+    })
+    console.log("[v0] Chat response generated successfully")
+    return text || "I couldn't generate a response. Please try again."
+  } catch (error) {
+    console.error("[v0] Chat generation failed:", error)
+    throw new Error(`Chat generation failed: ${error instanceof Error ? error.message : "Unknown error"}`)
+  }
 }
 
 /**
