@@ -7,13 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Sparkles, User, Building2 } from "lucide-react"
+import { Send, ArrowLeft, Sparkles, User, Building2, Play } from "lucide-react"
 import Link from "next/link"
+
+interface MediaItem {
+  id: string
+  url: string
+  type: "image" | "video"
+  title: string
+  description: string
+}
 
 interface Message {
   role: "user" | "assistant"
   content: string
   timestamp: Date
+  media?: MediaItem[]
 }
 
 interface VisitorInfo {
@@ -189,12 +198,13 @@ export function ChatInterface() {
 
       const data = await response.json()
 
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: data.response || data.error || "I couldn't process that question. Please try again.",
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, assistantMessage])
+const assistantMessage: Message = {
+  role: "assistant",
+  content: data.response || data.error || "I couldn't process that question. Please try again.",
+  timestamp: new Date(),
+  media: data.media,
+  }
+  setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
         role: "assistant",
@@ -317,9 +327,41 @@ export function ChatInterface() {
                   message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
                 }`}
               >
-                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                <span className="text-xs opacity-70 mt-2 block">{message.timestamp.toLocaleTimeString()}</span>
-              </Card>
+<p className="text-sm whitespace-pre-wrap">{message.content}</p>
+  {message.media && message.media.length > 0 && (
+    <div className="mt-3 space-y-2">
+      {message.media.map((item) => (
+        <div key={item.id} className="rounded-lg overflow-hidden border">
+          {item.type === "image" ? (
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              <img
+                src={item.url || "/placeholder.svg"}
+                alt={item.title}
+                className="w-full max-h-64 object-cover hover:opacity-90 transition-opacity"
+              />
+            </a>
+          ) : (
+            <div className="relative">
+              <video
+                src={item.url}
+                controls
+                className="w-full max-h-64"
+                poster={item.url}
+              />
+            </div>
+          )}
+          <div className="p-2 bg-background/80">
+            <p className="text-xs font-medium">{item.title}</p>
+            {item.description && (
+              <p className="text-xs text-muted-foreground">{item.description}</p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+  <span className="text-xs opacity-70 mt-2 block">{message.timestamp.toLocaleTimeString()}</span>
+  </Card>
             </div>
           ))}
 

@@ -19,6 +19,9 @@ import {
   LogOut,
   Settings,
   Trash2,
+  ImageIcon,
+  Video,
+  Play,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -72,6 +75,26 @@ export function AdminDashboard() {
   const [passwordError, setPasswordError] = useState("")
   const [passwordSuccess, setPasswordSuccess] = useState("")
   const [isChangingPassword, setIsChangingPassword] = useState(false)
+
+  // Media state
+  interface MediaItem {
+    id: string
+    url: string
+    filename: string
+    type: "image" | "video"
+    mimeType: string
+    title: string
+    description: string
+    tags: string[]
+    size: number
+    uploadedAt: string
+  }
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
+  const [isLoadingMedia, setIsLoadingMedia] = useState(false)
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false)
+  const [mediaTitle, setMediaTitle] = useState("")
+  const [mediaDescription, setMediaDescription] = useState("")
+  const [mediaTags, setMediaTags] = useState("")
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -366,6 +389,7 @@ export function AdminDashboard() {
         )
         fetchStoredChunks()
         fetchAnalytics()
+        fetchMedia()
       } else {
         alert("Cleanup failed: " + (data.error || "Unknown error"))
       }
@@ -374,10 +398,81 @@ export function AdminDashboard() {
     }
   }
 
+  // Media handlers
+  const fetchMedia = async () => {
+    setIsLoadingMedia(true)
+    try {
+      const response = await fetch("/api/media")
+      const data = await response.json()
+      if (data.media) {
+        setMediaItems(data.media)
+      }
+    } catch {
+      // Ignore errors
+    } finally {
+      setIsLoadingMedia(false)
+    }
+  }
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setIsUploadingMedia(true)
+
+    for (const file of Array.from(files)) {
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("title", mediaTitle || file.name)
+      formData.append("description", mediaDescription)
+      formData.append("tags", mediaTags)
+
+      try {
+        const response = await fetch("/api/media", {
+          method: "POST",
+          body: formData,
+        })
+        const data = await response.json()
+        if (data.success && data.media) {
+          setMediaItems((prev) => [data.media, ...prev])
+        } else {
+          alert(`Failed to upload ${file.name}: ${data.error || "Unknown error"}`)
+        }
+      } catch {
+        alert(`Failed to upload ${file.name}`)
+      }
+    }
+
+    setIsUploadingMedia(false)
+    setMediaTitle("")
+    setMediaDescription("")
+    setMediaTags("")
+    e.target.value = ""
+  }
+
+  const handleDeleteMedia = async (id: string) => {
+    if (!confirm("Delete this media item?")) return
+
+    try {
+      const response = await fetch(`/api/media?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      })
+      const data = await response.json()
+      if (data.success) {
+        setMediaItems((prev) => prev.filter((m) => m.id !== id))
+      } else {
+        alert("Failed to delete: " + (data.error || "Unknown error"))
+      }
+    } catch {
+      alert("Failed to delete media")
+    }
+  }
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchStoredChunks()
       fetchAnalytics()
+      fetchMedia()
     }
   }, [isAuthenticated])
 
@@ -466,10 +561,14 @@ export function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline">Upload</span>
+            </TabsTrigger>
+            <TabsTrigger value="media" className="flex items-center gap-2">
+              <ImageIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Media</span>
             </TabsTrigger>
             <TabsTrigger value="chunks" className="flex items-center gap-2">
               <Database className="h-4 w-4" />
@@ -622,6 +721,149 @@ export function AdminDashboard() {
                   </Card>
                 )}
               </div>
+            </Card>
+          </TabsContent>
+
+          {/* Media Tab */}
+          <TabsContent value="media" className="space-y-6">
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Media Library</h2>
+                  <p className="text-muted-foreground">
+                    Upload images and videos of your projects, certificates, or work samples. These can be displayed in chat when recruiters ask relevant questions.
+                  </p>
+                </div>
+
+                {/* Media Upload Form */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Title</label>
+                    <Input
+                      placeholder="e.g., Project Dashboard Screenshot"
+                      value={mediaTitle}
+                      onChange={(e) => setMediaTitle(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Tags (comma separated)</label>
+                    <Input
+                      placeholder="e.g., project, dashboard, analytics"
+                      value={mediaTags}
+                      onChange={(e) => setMediaTags(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Description</label>
+                  <Input
+                    placeholder="Brief description of this media"
+                    value={mediaDescription}
+                    onChange={(e) => setMediaDescription(e.target.value)}
+                  />
+                </div>
+
+                <label htmlFor="media-upload" className="block">
+                  <Card className="border-dashed border-2 p-8 text-center hover:bg-muted/50 transition-colors cursor-pointer">
+                    {isUploadingMedia ? (
+                      <>
+                        <Loader2 className="h-10 w-10 text-muted-foreground mx-auto mb-3 animate-spin" />
+                        <p className="font-medium">Uploading media...</p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex justify-center gap-4 mb-3">
+                          <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                          <Video className="h-10 w-10 text-muted-foreground" />
+                        </div>
+                        <p className="font-medium mb-1">Click or drag to upload images/videos</p>
+                        <p className="text-sm text-muted-foreground">
+                          Images: JPG, PNG, GIF (max 10MB) | Videos: MP4, WebM (max 100MB)
+                        </p>
+                      </>
+                    )}
+                  </Card>
+                  <input
+                    id="media-upload"
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={handleMediaUpload}
+                    className="hidden"
+                    disabled={isUploadingMedia}
+                  />
+                </label>
+              </div>
+            </Card>
+
+            {/* Media Gallery */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-semibold">Uploaded Media</h2>
+                  <p className="text-sm text-muted-foreground">{mediaItems.length} items</p>
+                </div>
+                <Button variant="outline" onClick={fetchMedia} disabled={isLoadingMedia}>
+                  {isLoadingMedia ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
+                </Button>
+              </div>
+
+              {isLoadingMedia ? (
+                <div className="text-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-muted-foreground">Loading media...</p>
+                </div>
+              ) : mediaItems.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <ImageIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No media uploaded yet. Add images or videos of your work.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {mediaItems.map((item) => (
+                    <Card key={item.id} className="overflow-hidden group relative">
+                      {item.type === "image" ? (
+                        <img
+                          src={item.url || "/placeholder.svg"}
+                          alt={item.title}
+                          className="w-full h-40 object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-40 bg-muted flex items-center justify-center relative">
+                          <video
+                            src={item.url}
+                            className="w-full h-full object-cover"
+                            muted
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <Play className="h-10 w-10 text-white" />
+                          </div>
+                        </div>
+                      )}
+                      <div className="p-3">
+                        <p className="font-medium text-sm truncate">{item.title}</p>
+                        {item.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {item.tags.slice(0, 3).map((tag, i) => (
+                              <span key={i} className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteMedia(item.id)}
+                        className="absolute top-2 right-2 h-8 w-8 p-0 bg-black/50 text-white hover:bg-red-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </Card>
           </TabsContent>
 

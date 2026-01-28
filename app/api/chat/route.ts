@@ -18,7 +18,78 @@ import {
   cacheResponse,
   trackAnalytics,
   hashQuestion,
+  getRedis,
 } from "@/lib/services"
+
+// Media keywords that trigger media search
+const MEDIA_KEYWORDS = [
+  "show", "see", "picture", "photo", "image", "video", "demo", "screenshot",
+  "portfolio", "visual", "project", "work", "example", "sample", "dashboard",
+  "certificate", "certification", "proof", "evidence"
+]
+
+// Check if question is asking for media
+function isAskingForMedia(question: string): boolean {
+  const lowerQ = question.toLowerCase()
+  return MEDIA_KEYWORDS.some(keyword => lowerQ.includes(keyword))
+}
+
+// Search media items by tags/title/description
+async function searchRelevantMedia(question: string): Promise<Array<{
+  id: string
+  url: string
+  type: "image" | "video"
+  title: string
+  description: string
+}>> {
+  try {
+    const redis = getRedis()
+    const mediaIds = await redis.smembers("media:items")
+    
+    if (!mediaIds || mediaIds.length === 0) return []
+    
+    const pipeline = redis.pipeline()
+    for (const id of mediaIds) {
+      pipeline.hgetall(`media:${id}`)
+    }
+    
+    const results = await pipeline.exec()
+    const allMedia = results.filter((item): item is any => item !== null && typeof item === "object")
+    
+    // Score media items based on keyword matches
+    const questionWords = question.toLowerCase().split(/\s+/)
+    const scoredMedia = allMedia.map(item => {
+      let score = 0
+      const title = (item.title || "").toLowerCase()
+      const description = (item.description || "").toLowerCase()
+      const tags = typeof item.tags === "string" ? JSON.parse(item.tags) : item.tags || []
+      
+      for (const word of questionWords) {
+        if (word.length < 3) continue
+        if (title.includes(word)) score += 3
+        if (description.includes(word)) score += 2
+        if (tags.some((t: string) => t.toLowerCase().includes(word))) score += 4
+      }
+      
+      return { ...item, score, tags }
+    })
+    
+    // Return top 3 relevant media items
+    return scoredMedia
+      .filter(m => m.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(m => ({
+        id: m.id,
+        url: m.url,
+        type: m.type as "image" | "video",
+        title: m.title,
+        description: m.description,
+      }))
+  } catch {
+    return []
+  }
+}
 
 // Content moderation - check for inappropriate content
 function moderateContent(text: string): { safe: boolean; reason?: string } {
@@ -129,6 +200,12 @@ export async function POST(request: Request) {
     const userPrompt = createRAGPrompt(sanitizedQuestion, context, visitorName)
     const response = await generateChatResponse(RAG_SYSTEM_PROMPT, userPrompt)
 
+    // Search for relevant media if question asks for visuals
+    let media: Array<{id: string, url: string, type: "image" | "video", title: string, description: string}> = []
+    if (isAskingForMedia(sanitizedQuestion)) {
+      media = await searchRelevantMedia(sanitizedQuestion)
+    }
+
     // Cache the response
     await cacheResponse(sanitizedQuestion, response)
 
@@ -147,6 +224,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       response,
       chunksUsed: searchResults.length,
+      media: media.length > 0 ? media : undefined,
     })
   } catch (error) {
     console.error("[v0] Chat API error:", error)

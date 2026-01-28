@@ -194,14 +194,18 @@ export async function POST(request: Request) {
  */
 export async function GET() {
   try {
+    console.log("[v0] GET /api/process - fetching chunks")
     const chunks = await getAllChunks(200)
+    console.log("[v0] Chunks fetched:", chunks.length)
     const count = await getChunkCount()
+    console.log("[v0] Total count:", count)
 
     return NextResponse.json({
       chunks,
       totalCount: count,
     })
   } catch (error) {
+    console.error("[v0] Error fetching chunks:", error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to fetch chunks" },
       { status: 500 }
