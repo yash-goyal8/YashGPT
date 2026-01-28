@@ -107,13 +107,18 @@ export async function searchChunks(
  * Get all stored chunks (for admin view)
  */
 export async function getAllChunks(limit = 100): Promise<StoredChunk[]> {
+  console.log("[v0] getAllChunks called with limit:", limit)
   const index = getVectorIndex()
+  console.log("[v0] Vector index obtained")
   
   const result = await index.range({
     cursor: 0,
     limit,
     includeMetadata: true,
   })
+  
+  console.log("[v0] Range result vectors count:", result.vectors?.length || 0)
+  console.log("[v0] First vector sample:", result.vectors?.[0] ? JSON.stringify(result.vectors[0]).substring(0, 200) : "none")
 
   return result.vectors.map((vector) => {
     const metadata = vector.metadata as ChunkMetadata
