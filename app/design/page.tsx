@@ -700,7 +700,6 @@ export default function PortfolioDesign() {
                       </div>
                       <div className="flex-1">
                         <span className="font-medium text-white">{category.label}</span>
-                        <p className="text-xs text-[#a3a3a3] mt-0.5">{category.questions.length} questions</p>
                       </div>
                       <ChevronRight className="h-5 w-5 text-[#a3a3a3] group-hover:translate-x-1 transition-transform" />
                     </button>
