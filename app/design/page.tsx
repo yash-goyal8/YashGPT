@@ -192,10 +192,11 @@ export default function PortfolioDesign() {
       </nav>
 
       {/* Hero / About Section */}
-      <section id="about" className="relative pt-24 lg:pt-28 pb-16 lg:pb-20 px-4 lg:px-6 min-h-screen flex items-center overflow-hidden">
+      <section id="about" className="relative pt-24 lg:pt-28 pb-16 lg:pb-20 min-h-screen flex items-center overflow-hidden">
         <AnimatedBackground />
         
-        <div className="max-w-5xl xl:max-w-6xl mx-auto relative z-10 w-full">
+        <div className="mx-3 lg:mx-4 w-full relative z-10">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
           {/* Main Hero Content */}
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
             {/* Left Column - Text Content */}
@@ -341,12 +342,14 @@ export default function PortfolioDesign() {
               <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" />
             </div>
           </div>
+          </div>
         </div>
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+      <section id="experience" className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
           <div className="flex items-center gap-3 mb-8 lg:mb-10">
             <Briefcase className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Experience</h2>
@@ -380,12 +383,14 @@ export default function PortfolioDesign() {
               </div>
             ))}
           </div>
+          </div>
         </div>
       </section>
 
       {/* Education Section */}
-      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+      <section className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
           <div className="flex items-center gap-3 mb-8 lg:mb-10">
             <GraduationCap className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Education</h2>
@@ -409,12 +414,14 @@ export default function PortfolioDesign() {
               </div>
             ))}
           </div>
+          </div>
         </div>
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+      <section id="projects" className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
           <div className="flex items-center gap-3 mb-8 lg:mb-10">
             <FolderKanban className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Projects</h2>
@@ -442,14 +449,16 @@ export default function PortfolioDesign() {
               </div>
             ))}
           </div>
+          </div>
         </div>
       </section>
 
       {/* Case Studies Section */}
-      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8 lg:mb-10">
-            <Lightbulb className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+      <section className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
+            <div className="flex items-center gap-3 mb-8 lg:mb-10">
+              <Lightbulb className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Case Studies</h2>
           </div>
 
@@ -484,19 +493,21 @@ export default function PortfolioDesign() {
               </div>
             ))}
           </div>
+          </div>
         </div>
       </section>
 
       {/* Skills Section */}
-      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8 lg:mb-10">
-            <Code2 className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
-          </div>
+      <section className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
+            <div className="flex items-center gap-3 mb-8 lg:mb-10">
+              <Code2 className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
+            </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-            {Object.entries(SKILLS).map(([category, skills], index) => {
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+              {Object.entries(SKILLS).map(([category, skills], index) => {
               const colors = [
                 { bg: "bg-emerald-500/10", text: "text-emerald-400" },
                 { bg: "bg-amber-500/10", text: "text-amber-400" },
@@ -527,19 +538,21 @@ export default function PortfolioDesign() {
                 </div>
               )
             })}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Certifications Section */}
-      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8 lg:mb-10">
-            <Award className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
-          </div>
+      <section className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
+            <div className="flex items-center gap-3 mb-8 lg:mb-10">
+              <Award className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
+            </div>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+            <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
             {CERTIFICATIONS.map((cert, index) => (
               <div 
                 key={index}
@@ -556,82 +569,89 @@ export default function PortfolioDesign() {
                 <p className="text-[10px] lg:text-xs text-[#a3a3a3]">ID: {cert.credentialId}</p>
               </div>
             ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Additional Info Section */}
-      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8 lg:mb-10">
-            <Info className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Additional Information</h2>
-          </div>
+      <section className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
+            <div className="flex items-center gap-3 mb-8 lg:mb-10">
+              <Info className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Additional Information</h2>
+            </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 text-xs lg:text-sm">
-            <div>
-              <h3 className="font-medium text-white mb-2 lg:mb-3">Interests</h3>
-              <p className="text-[#a3a3a3] leading-relaxed">
-                AI/ML, Startups, Product-Led Growth, Building in Public, Open Source
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium text-white mb-2 lg:mb-3">Languages</h3>
-              <p className="text-[#a3a3a3] leading-relaxed">
-                English (Native), Hindi (Native), Spanish (Basic)
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium text-white mb-2 lg:mb-3">Location</h3>
-              <p className="text-[#a3a3a3] leading-relaxed">
-                San Francisco Bay Area · Open to Remote
-              </p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 text-xs lg:text-sm">
+              <div>
+                <h3 className="font-medium text-white mb-2 lg:mb-3">Interests</h3>
+                <p className="text-[#a3a3a3] leading-relaxed">
+                  AI/ML, Startups, Product-Led Growth, Building in Public, Open Source
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium text-white mb-2 lg:mb-3">Languages</h3>
+                <p className="text-[#a3a3a3] leading-relaxed">
+                  English (Native), Hindi (Native), Spanish (Basic)
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium text-white mb-2 lg:mb-3">Location</h3>
+                <p className="text-[#a3a3a3] leading-relaxed">
+                  San Francisco Bay Area · Open to Remote
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto text-center">
-          <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 lg:mb-4">Let's Connect</h2>
-          <p className="text-[#a3a3a3] text-sm lg:text-base max-w-xl mx-auto mb-6 lg:mb-8">
-            Whether you want to discuss opportunities, collaborate on a project, or just say hi - I'd love to hear from you.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 lg:gap-4">
-            <Button 
-              size="lg"
-              asChild
-              className="bg-white text-black hover:bg-white/90 font-medium h-10 lg:h-11 text-sm"
-            >
-              <Link href="/chat">
-                <Bot className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
-                YashGPT
-              </Link>
-            </Button>
-            <Button 
-              size="lg"
-              variant="outline"
-              className="border-white/20 bg-transparent hover:bg-white/5 text-white h-10 lg:h-11 text-sm"
-              asChild
-            >
-              <a href="mailto:yash@example.com">
-                <Mail className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
-                Send Email
-              </a>
-            </Button>
+      <section id="contact" className="py-12 lg:py-16 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6 text-center">
+            <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 lg:mb-4">Let's Connect</h2>
+            <p className="text-[#a3a3a3] text-sm lg:text-base max-w-xl mx-auto mb-6 lg:mb-8">
+              Whether you want to discuss opportunities, collaborate on a project, or just say hi - I'd love to hear from you.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 lg:gap-4">
+              <Button 
+                size="lg"
+                asChild
+                className="bg-white text-black hover:bg-white/90 font-medium h-10 lg:h-11 text-sm"
+              >
+                <Link href="/chat">
+                  <Bot className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
+                  YashGPT
+                </Link>
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-white/20 bg-transparent hover:bg-white/5 text-white h-10 lg:h-11 text-sm"
+                asChild
+              >
+                <a href="mailto:yash@example.com">
+                  <Mail className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
+                  Send Email
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-6 lg:py-8 px-4 lg:px-6 border-t border-white/5">
-        <div className="max-w-5xl xl:max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs lg:text-sm text-[#a3a3a3]">
+      <footer className="py-6 lg:py-8 border-t border-white/5">
+        <div className="mx-3 lg:mx-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs lg:text-sm text-[#a3a3a3]">
           <span>2025 Yash Goyal</span>
-          <div className="flex items-center gap-4 lg:gap-6">
-            <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-            <a href="#" className="hover:text-white transition-colors">GitHub</a>
-            <a href="#" className="hover:text-white transition-colors">Twitter</a>
+            <div className="flex items-center gap-4 lg:gap-6">
+              <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
+              <a href="#" className="hover:text-white transition-colors">GitHub</a>
+              <a href="#" className="hover:text-white transition-colors">Twitter</a>
+            </div>
           </div>
         </div>
       </footer>
