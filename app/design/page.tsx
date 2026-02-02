@@ -16,7 +16,8 @@ import {
   Bot,
   ArrowUpRight,
   Phone,
-  ChevronRight
+  ChevronRight,
+  Award
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -129,7 +130,34 @@ const CASE_STUDIES = [
     title: "Reducing Customer Churn",
     problem: "15% monthly churn in first 90 days",
     solution: "Implemented proactive health scoring and intervention triggers",
-    impact: "Reduced churn to 5%, saved $2M ARR"
+  impact: "Reduced churn to 5%, saved $2M ARR"
+  },
+]
+
+const CERTIFICATIONS = [
+  {
+    title: "AWS Solutions Architect",
+    issuer: "Amazon Web Services",
+    date: "2023",
+    credentialId: "AWS-SAA-123456"
+  },
+  {
+    title: "Product Management Certificate",
+    issuer: "Product School",
+    date: "2022",
+    credentialId: "PS-PM-789012"
+  },
+  {
+    title: "Google Analytics Certified",
+    issuer: "Google",
+    date: "2021",
+    credentialId: "GA-345678"
+  },
+  {
+    title: "Scrum Master Certified",
+    issuer: "Scrum Alliance",
+    date: "2020",
+    credentialId: "CSM-901234"
   },
 ]
 
@@ -385,50 +413,6 @@ export default function PortfolioDesign() {
         </div>
       </section>
 
-      {/* Skills Section */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <Code2 className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {Object.entries(SKILLS).map(([category, skills], index) => {
-              const colors = [
-                { bg: "bg-emerald-500/10", text: "text-emerald-400" },
-                { bg: "bg-amber-500/10", text: "text-amber-400" },
-                { bg: "bg-rose-500/10", text: "text-rose-400" },
-              ]
-              const color = colors[index % colors.length]
-              return (
-                <div 
-                  key={category}
-                  className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-2.5 rounded-lg ${color.bg}`}>
-                      <Code2 className={`h-5 w-5 ${color.text}`} />
-                    </div>
-                    <h3 className="text-base font-medium text-white">{category}</h3>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {skills.map((skill) => (
-                      <span 
-                        key={skill}
-                        className="px-3 py-1.5 text-sm rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors cursor-default"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* Projects Section */}
       <section id="projects" className="py-20 px-6 border-t border-white/5">
         <div className="max-w-6xl mx-auto">
@@ -491,13 +475,86 @@ export default function PortfolioDesign() {
                     <p className="text-white font-medium mt-1">{study.impact}</p>
                   </div>
                 </div>
-                <button 
-                  onClick={() => setChatOpen(true)}
+                <Link 
+                  href="/chat"
                   className="mt-6 text-sm text-[#a3a3a3] hover:text-white flex items-center gap-2 group/btn"
                 >
                   Ask about this case study
                   <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Skills Section */}
+      <section className="py-20 px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-12">
+            <Code2 className="h-5 w-5 text-[#a3a3a3]" />
+            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {Object.entries(SKILLS).map(([category, skills], index) => {
+              const colors = [
+                { bg: "bg-emerald-500/10", text: "text-emerald-400" },
+                { bg: "bg-amber-500/10", text: "text-amber-400" },
+                { bg: "bg-rose-500/10", text: "text-rose-400" },
+              ]
+              const color = colors[index % colors.length]
+              return (
+                <div 
+                  key={category}
+                  className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`p-2.5 rounded-lg ${color.bg}`}>
+                      <Code2 className={`h-5 w-5 ${color.text}`} />
+                    </div>
+                    <h3 className="text-base font-medium text-white">{category}</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {skills.map((skill) => (
+                      <span 
+                        key={skill}
+                        className="px-3 py-1.5 text-sm rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors cursor-default"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Certifications Section */}
+      <section className="py-20 px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-12">
+            <Award className="h-5 w-5 text-[#a3a3a3]" />
+            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {CERTIFICATIONS.map((cert, index) => (
+              <div 
+                key={index}
+                className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 rounded-lg bg-cyan-500/10">
+                    <Award className="h-5 w-5 text-cyan-400" />
+                  </div>
+                  <span className="text-xs font-medium text-[#a3a3a3] px-3 py-1 rounded-full bg-white/5">{cert.date}</span>
+                </div>
+                <h3 className="text-base font-medium text-white mb-1">{cert.title}</h3>
+                <p className="text-sm text-cyan-400 mb-2">{cert.issuer}</p>
+                <p className="text-xs text-[#a3a3a3]">ID: {cert.credentialId}</p>
               </div>
             ))}
           </div>
