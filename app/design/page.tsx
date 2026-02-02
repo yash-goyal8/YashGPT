@@ -22,8 +22,8 @@ import {
   Brain,
   Rocket,
   Sparkles,
-  Phone,
-  ArrowUpRight
+  ArrowUpRight,
+  Twitter
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -337,13 +337,13 @@ export default function PortfolioDesign() {
                 </a>
 
                 <a 
-                  href="tel:+1234567890" 
+                  href="mailto:yash@example.com" 
                   className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                 >
                   <div className="p-2.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
-                    <Phone className="h-5 w-5 text-emerald-400" />
+                    <Mail className="h-5 w-5 text-emerald-400" />
                   </div>
-                  <span className="text-sm font-medium text-white">Phone Contact</span>
+                  <span className="text-sm font-medium text-white">yash@example.com</span>
                   <ArrowUpRight className="h-4 w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
@@ -370,11 +370,13 @@ export default function PortfolioDesign() {
                   </a>
                   
                   <a 
-                    href="mailto:yash@example.com" 
-                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all group backdrop-blur-sm"
+                    href="https://twitter.com/yashgoyal" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                   >
-                    <Mail className="h-5 w-5 text-[#a3a3a3] group-hover:text-rose-400 transition-colors" />
-                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Email</span>
+                    <Twitter className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Twitter</span>
                   </a>
                 </div>
               </div>
