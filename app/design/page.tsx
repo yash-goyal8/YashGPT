@@ -233,7 +233,7 @@ export default function PortfolioDesign() {
             </div>
 
             {/* Right Column - Photo & Contact Cards */}
-            <div className="order-1 lg:order-2 flex flex-col items-center lg:items-end">
+            <div className="order-1 lg:order-2 flex flex-col items-center w-full lg:w-auto">
               {/* Profile Photo with Glow */}
               <div className="relative mb-8">
                 {/* Glow effect */}
@@ -259,7 +259,7 @@ export default function PortfolioDesign() {
               </div>
 
               {/* Contact Buttons - 5 buttons grid */}
-              <div className="w-full max-w-sm space-y-3">
+              <div className="w-full max-w-sm space-y-3 mx-auto lg:mx-0">
                 {/* Top row - 2 full width buttons */}
                 <a 
                   href="#resume" 
