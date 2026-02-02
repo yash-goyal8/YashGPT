@@ -483,13 +483,6 @@ export default function PortfolioDesign() {
                     <p className="text-white font-medium mt-1">{study.impact}</p>
                   </div>
                 </div>
-                <Link 
-                  href="/chat"
-                  className="mt-4 lg:mt-6 text-xs lg:text-sm text-[#a3a3a3] hover:text-white flex items-center gap-2 group/btn"
-                >
-                  Ask about this case study
-                  <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 group-hover/btn:translate-x-1 transition-transform" />
-                </Link>
               </div>
             ))}
           </div>
