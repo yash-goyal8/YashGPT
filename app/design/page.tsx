@@ -167,25 +167,24 @@ export default function PortfolioDesign() {
     <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5]">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-40">
-        <div className="mx-4 mt-4">
-          <div className="max-w-6xl mx-auto px-6 py-3 rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-            <a href="#about" className="font-semibold text-lg text-white hover:text-cyan-400 transition-colors">
+        <div className="mx-3 lg:mx-4 mt-3 lg:mt-4">
+          <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
+            <a href="#about" className="font-semibold text-base lg:text-lg text-white hover:text-cyan-400 transition-colors">
               YG
             </a>
-            <div className="hidden md:flex items-center gap-1 text-sm">
-              <a href="#about" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">About</a>
-              <a href="#experience" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Experience</a>
-              <a href="#projects" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
-              <a href="#contact" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
+            <div className="hidden md:flex items-center gap-0.5 lg:gap-1 text-sm">
+              <a href="#about" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">About</a>
+              <a href="#experience" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Experience</a>
+              <a href="#projects" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
+              <a href="#contact" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
             </div>
             <Button 
               asChild
-              className="bg-white text-black hover:bg-white/90 font-medium rounded-xl h-10"
+              className="bg-white text-black hover:bg-white/90 font-medium rounded-lg lg:rounded-xl h-9 lg:h-10 text-sm"
             >
               <Link href="/chat">
-                <Bot className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">YashGPT</span>
-                <span className="sm:hidden">YashGPT</span>
+                <Bot className="h-4 w-4 mr-1.5 lg:mr-2" />
+                <span>YashGPT</span>
               </Link>
             </Button>
           </div>
@@ -193,53 +192,53 @@ export default function PortfolioDesign() {
       </nav>
 
       {/* Hero / About Section */}
-      <section id="about" className="relative pt-32 pb-24 px-6 min-h-screen flex items-center overflow-hidden">
+      <section id="about" className="relative pt-24 lg:pt-28 pb-16 lg:pb-20 px-4 lg:px-6 min-h-screen flex items-center overflow-hidden">
         <AnimatedBackground />
         
-        <div className="max-w-6xl mx-auto relative z-10 w-full">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto relative z-10 w-full">
           {/* Main Hero Content */}
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center">
             {/* Left Column - Text Content */}
-            <div className="space-y-8 order-2 lg:order-1">
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="space-y-5 lg:space-y-6 order-2 lg:order-1">
+              <div className="space-y-3 lg:space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 lg:px-4 py-1.5 lg:py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-sm text-[#a3a3a3]">Available for opportunities</span>
+                  <span className="text-xs lg:text-sm text-[#a3a3a3]">Available for opportunities</span>
                 </div>
                 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight">
+                <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold text-white leading-[1.1] tracking-tight">
                   <span className="block">Hi, I'm</span>
                   <span className="block bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent animate-gradient">
                     Yash Goyal
                   </span>
                 </h1>
                 
-                <p className="text-xl md:text-2xl text-[#a3a3a3] font-light">
+                <p className="text-lg lg:text-xl text-[#a3a3a3] font-light">
                   Product & Technology Leader
                 </p>
               </div>
 
-              <p className="text-lg leading-relaxed text-[#a3a3a3] max-w-xl">
+              <p className="text-base lg:text-lg leading-relaxed text-[#a3a3a3] max-w-xl">
                 Building products that matter. I combine deep technical expertise with strategic 
                 product thinking to create impactful solutions at scale.
               </p>
 
               {/* Primary CTA */}
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-3 lg:gap-4">
                 <Button 
                   size="lg"
                   asChild
-                  className="bg-white text-black hover:bg-white/90 font-semibold text-base h-14 px-8 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all group"
+                  className="bg-white text-black hover:bg-white/90 font-semibold text-sm lg:text-base h-11 lg:h-12 px-5 lg:px-6 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all group"
                 >
                   <Link href="/chat">
-                    <Bot className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                    <Bot className="h-4 w-4 lg:h-5 lg:w-5 mr-2 group-hover:animate-pulse" />
                     YashGPT
                   </Link>
                 </Button>
                 <Button 
                   size="lg"
                   variant="outline"
-                  className="border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white font-medium text-base h-14 px-8 rounded-xl"
+                  className="border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white font-medium text-sm lg:text-base h-11 lg:h-12 px-5 lg:px-6 rounded-xl"
                   asChild
                 >
                   <a href="#experience">
@@ -253,82 +252,82 @@ export default function PortfolioDesign() {
             {/* Right Column - Photo & Contact Cards */}
             <div className="order-1 lg:order-2 flex flex-col items-center w-full lg:w-auto">
               {/* Profile Photo with Glow */}
-              <div className="relative mb-8">
+              <div className="relative mb-6 lg:mb-8">
                 {/* Glow effect */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 via-violet-500/20 to-cyan-500/20 rounded-3xl blur-2xl animate-pulse-glow" />
+                <div className="absolute -inset-3 lg:-inset-4 bg-gradient-to-r from-cyan-500/20 via-violet-500/20 to-cyan-500/20 rounded-2xl lg:rounded-3xl blur-2xl animate-pulse-glow" />
                 
                 {/* Photo container */}
-                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
+                <div className="relative w-52 h-52 lg:w-60 lg:h-60 xl:w-72 xl:h-72 rounded-xl lg:rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
                   {/* Animated border */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/50 via-violet-500/50 to-cyan-500/50 animate-border-flow opacity-50" style={{ padding: '1px' }}>
-                    <div className="w-full h-full rounded-2xl bg-[#0a0a0b]" />
+                  <div className="absolute inset-0 rounded-xl lg:rounded-2xl bg-gradient-to-r from-cyan-500/50 via-violet-500/50 to-cyan-500/50 animate-border-flow opacity-50" style={{ padding: '1px' }}>
+                    <div className="w-full h-full rounded-xl lg:rounded-2xl bg-[#0a0a0b]" />
                   </div>
                   
                   {/* Photo placeholder */}
-                  <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center">
+                  <div className="absolute inset-[1px] rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center">
                     <div className="text-center">
-                      <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-white/5 flex items-center justify-center">
-                        <span className="text-3xl text-white/30 font-bold">YG</span>
+                      <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 lg:mb-3 rounded-full bg-white/5 flex items-center justify-center">
+                        <span className="text-2xl lg:text-3xl text-white/30 font-bold">YG</span>
                       </div>
-                      <span className="text-[#a3a3a3] text-sm">Profile Photo</span>
+                      <span className="text-[#a3a3a3] text-xs lg:text-sm">Profile Photo</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Contact Buttons - 5 buttons grid */}
-              <div className="w-full max-w-sm space-y-3 mx-auto lg:mx-0">
+              <div className="w-full max-w-xs lg:max-w-sm space-y-2 lg:space-y-3 mx-auto lg:mx-0">
                 {/* Top row - 2 full width buttons */}
                 <a 
                   href="#resume" 
-                  className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                  className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                 >
-                  <div className="p-2.5 rounded-lg bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-colors">
-                    <FileText className="h-5 w-5 text-cyan-400" />
+                  <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-colors">
+                    <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-cyan-400" />
                   </div>
-                  <span className="text-sm font-medium text-white">View Resume</span>
-                  <ArrowUpRight className="h-4 w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <span className="text-xs lg:text-sm font-medium text-white">View Resume</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
                 <a 
                   href="mailto:yash@example.com" 
-                  className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                  className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                 >
-                  <div className="p-2.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
-                    <Mail className="h-5 w-5 text-emerald-400" />
+                  <div className="p-2 lg:p-2.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
+                    <Mail className="h-4 w-4 lg:h-5 lg:w-5 text-emerald-400" />
                   </div>
-                  <span className="text-sm font-medium text-white">yash@example.com</span>
-                  <ArrowUpRight className="h-4 w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <span className="text-xs lg:text-sm font-medium text-white">yash@example.com</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
                 {/* Bottom row - 3 icon buttons */}
-                <div className="flex gap-3">
+                <div className="flex gap-2 lg:gap-3">
                   <a 
                     href="https://linkedin.com/in/yashgoyal" 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-[#0077B5]/20 hover:border-[#0077B5]/50 transition-all group backdrop-blur-sm"
+                    className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-[#0077B5]/20 hover:border-[#0077B5]/50 transition-all group backdrop-blur-sm"
                   >
-                    <Linkedin className="h-5 w-5 text-[#a3a3a3] group-hover:text-[#0077B5] transition-colors" />
-                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">LinkedIn</span>
+                    <Linkedin className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-[#0077B5] transition-colors" />
+                    <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">LinkedIn</span>
                   </a>
                   
                   <a 
                     href="https://github.com/yashgoyal" 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                    className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                   >
-                    <Github className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
-                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">GitHub</span>
+                    <Github className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+                    <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">GitHub</span>
                   </a>
                   
                   <a 
                     href="tel:+1234567890" 
-                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all group backdrop-blur-sm"
+                    className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all group backdrop-blur-sm"
                   >
-                    <Phone className="h-5 w-5 text-[#a3a3a3] group-hover:text-emerald-400 transition-colors" />
-                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Phone</span>
+                    <Phone className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-emerald-400 transition-colors" />
+                    <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Phone</span>
                   </a>
                 </div>
               </div>
@@ -336,7 +335,7 @@ export default function PortfolioDesign() {
           </div>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#a3a3a3]">
+          <div className="absolute bottom-4 lg:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#a3a3a3]">
             <span className="text-xs uppercase tracking-widest">Scroll</span>
             <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
               <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" />
@@ -346,33 +345,33 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <Briefcase className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Experience</h2>
+      <section id="experience" className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 lg:mb-10">
+            <Briefcase className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Experience</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
             {EXPERIENCE.map((exp, index) => (
               <div 
                 key={index}
-                className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2.5 rounded-lg bg-cyan-500/10">
-                    <Briefcase className="h-5 w-5 text-cyan-400" />
+                <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
+                  <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10">
+                    <Briefcase className="h-4 w-4 lg:h-5 lg:w-5 text-cyan-400" />
                   </div>
-                  <span className="text-xs font-medium text-[#a3a3a3] px-3 py-1 rounded-full bg-white/5">{exp.period}</span>
+                  <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] px-2 lg:px-3 py-1 rounded-full bg-white/5">{exp.period}</span>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-1">{exp.role}</h3>
-                <p className="text-sm text-cyan-400 mb-3">{exp.company}</p>
-                <p className="text-sm text-[#a3a3a3] mb-4 leading-relaxed">{exp.description}</p>
-                <div className="flex flex-wrap gap-2">
+                <h3 className="text-base lg:text-lg font-medium text-white mb-1">{exp.role}</h3>
+                <p className="text-xs lg:text-sm text-cyan-400 mb-2 lg:mb-3">{exp.company}</p>
+                <p className="text-xs lg:text-sm text-[#a3a3a3] mb-3 lg:mb-4 leading-relaxed">{exp.description}</p>
+                <div className="flex flex-wrap gap-1.5 lg:gap-2">
                   {exp.skills.map((skill) => (
                     <span 
                       key={skill}
-                      className="px-2 py-1 text-xs rounded bg-white/5 text-[#a3a3a3]"
+                      className="px-2 py-0.5 lg:py-1 text-[10px] lg:text-xs rounded bg-white/5 text-[#a3a3a3]"
                     >
                       {skill}
                     </span>
@@ -385,28 +384,28 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Education Section */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <GraduationCap className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Education</h2>
+      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 lg:mb-10">
+            <GraduationCap className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Education</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
             {EDUCATION.map((edu, index) => (
               <div 
                 key={index}
-                className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2.5 rounded-lg bg-violet-500/10">
-                    <GraduationCap className="h-5 w-5 text-violet-400" />
+                <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
+                  <div className="p-2 lg:p-2.5 rounded-lg bg-violet-500/10">
+                    <GraduationCap className="h-4 w-4 lg:h-5 lg:w-5 text-violet-400" />
                   </div>
-                  <span className="text-xs font-medium text-[#a3a3a3] px-3 py-1 rounded-full bg-white/5">{edu.period}</span>
+                  <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] px-2 lg:px-3 py-1 rounded-full bg-white/5">{edu.period}</span>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-1">{edu.degree}</h3>
-                <p className="text-sm text-violet-400 mb-3">{edu.school}</p>
-                <p className="text-sm text-[#a3a3a3] leading-relaxed">{edu.focus}</p>
+                <h3 className="text-base lg:text-lg font-medium text-white mb-1">{edu.degree}</h3>
+                <p className="text-xs lg:text-sm text-violet-400 mb-2 lg:mb-3">{edu.school}</p>
+                <p className="text-xs lg:text-sm text-[#a3a3a3] leading-relaxed">{edu.focus}</p>
               </div>
             ))}
           </div>
@@ -414,28 +413,28 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <FolderKanban className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Projects</h2>
+      <section id="projects" className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 lg:mb-10">
+            <FolderKanban className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Projects</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
             {PROJECTS.map((project, index) => (
               <div 
                 key={index}
-                className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
               >
                 {/* Project Image Placeholder */}
-                <div className="aspect-video rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-4 flex items-center justify-center">
+                <div className="aspect-video rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-3 lg:mb-4 flex items-center justify-center">
                   <span className="text-xs text-[#a3a3a3]">Project Image</span>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-2">{project.title}</h3>
-                <p className="text-sm text-[#a3a3a3] mb-4 leading-relaxed">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
+                <h3 className="text-base lg:text-lg font-medium text-white mb-1.5 lg:mb-2">{project.title}</h3>
+                <p className="text-xs lg:text-sm text-[#a3a3a3] mb-3 lg:mb-4 leading-relaxed">{project.description}</p>
+                <div className="flex flex-wrap gap-1.5 lg:gap-2">
                   {project.tech.map((t) => (
-                    <span key={t} className="px-2 py-1 text-xs rounded bg-white/5 text-[#a3a3a3]">
+                    <span key={t} className="px-2 py-0.5 lg:py-1 text-[10px] lg:text-xs rounded bg-white/5 text-[#a3a3a3]">
                       {t}
                     </span>
                   ))}
@@ -447,40 +446,40 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Case Studies Section */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <Lightbulb className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Case Studies</h2>
+      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 lg:mb-10">
+            <Lightbulb className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Case Studies</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
             {CASE_STUDIES.map((study, index) => (
               <div 
                 key={index}
-                className="group p-6 rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all"
               >
-                <h3 className="text-xl font-medium text-white mb-6">{study.title}</h3>
-                <div className="space-y-4 text-sm">
+                <h3 className="text-lg lg:text-xl font-medium text-white mb-4 lg:mb-6">{study.title}</h3>
+                <div className="space-y-3 lg:space-y-4 text-xs lg:text-sm">
                   <div>
-                    <span className="text-[#a3a3a3] uppercase tracking-wider text-xs">Problem</span>
+                    <span className="text-[#a3a3a3] uppercase tracking-wider text-[10px] lg:text-xs">Problem</span>
                     <p className="text-[#e5e5e5] mt-1">{study.problem}</p>
                   </div>
                   <div>
-                    <span className="text-[#a3a3a3] uppercase tracking-wider text-xs">Solution</span>
+                    <span className="text-[#a3a3a3] uppercase tracking-wider text-[10px] lg:text-xs">Solution</span>
                     <p className="text-[#e5e5e5] mt-1">{study.solution}</p>
                   </div>
                   <div>
-                    <span className="text-emerald-400 uppercase tracking-wider text-xs">Impact</span>
+                    <span className="text-emerald-400 uppercase tracking-wider text-[10px] lg:text-xs">Impact</span>
                     <p className="text-white font-medium mt-1">{study.impact}</p>
                   </div>
                 </div>
                 <Link 
                   href="/chat"
-                  className="mt-6 text-sm text-[#a3a3a3] hover:text-white flex items-center gap-2 group/btn"
+                  className="mt-4 lg:mt-6 text-xs lg:text-sm text-[#a3a3a3] hover:text-white flex items-center gap-2 group/btn"
                 >
                   Ask about this case study
-                  <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                  <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 group-hover/btn:translate-x-1 transition-transform" />
                 </Link>
               </div>
             ))}
@@ -489,14 +488,14 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Skills Section */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <Code2 className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
+      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 lg:mb-10">
+            <Code2 className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
             {Object.entries(SKILLS).map(([category, skills], index) => {
               const colors = [
                 { bg: "bg-emerald-500/10", text: "text-emerald-400" },
@@ -507,19 +506,19 @@ export default function PortfolioDesign() {
               return (
                 <div 
                   key={category}
-                  className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                  className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-2.5 rounded-lg ${color.bg}`}>
-                      <Code2 className={`h-5 w-5 ${color.text}`} />
+                  <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
+                    <div className={`p-2 lg:p-2.5 rounded-lg ${color.bg}`}>
+                      <Code2 className={`h-4 w-4 lg:h-5 lg:w-5 ${color.text}`} />
                     </div>
-                    <h3 className="text-base font-medium text-white">{category}</h3>
+                    <h3 className="text-sm lg:text-base font-medium text-white">{category}</h3>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 lg:gap-2">
                     {skills.map((skill) => (
                       <span 
                         key={skill}
-                        className="px-3 py-1.5 text-sm rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors cursor-default"
+                        className="px-2 lg:px-3 py-1 lg:py-1.5 text-xs lg:text-sm rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors cursor-default"
                       >
                         {skill}
                       </span>
@@ -533,28 +532,28 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Certifications Section */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <Award className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
+      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 lg:mb-10">
+            <Award className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
             {CERTIFICATIONS.map((cert, index) => (
               <div 
                 key={index}
-                className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2.5 rounded-lg bg-cyan-500/10">
-                    <Award className="h-5 w-5 text-cyan-400" />
+                <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
+                  <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10">
+                    <Award className="h-4 w-4 lg:h-5 lg:w-5 text-cyan-400" />
                   </div>
-                  <span className="text-xs font-medium text-[#a3a3a3] px-3 py-1 rounded-full bg-white/5">{cert.date}</span>
+                  <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] px-2 lg:px-3 py-1 rounded-full bg-white/5">{cert.date}</span>
                 </div>
-                <h3 className="text-base font-medium text-white mb-1">{cert.title}</h3>
-                <p className="text-sm text-cyan-400 mb-2">{cert.issuer}</p>
-                <p className="text-xs text-[#a3a3a3]">ID: {cert.credentialId}</p>
+                <h3 className="text-sm lg:text-base font-medium text-white mb-1">{cert.title}</h3>
+                <p className="text-xs lg:text-sm text-cyan-400 mb-1.5 lg:mb-2">{cert.issuer}</p>
+                <p className="text-[10px] lg:text-xs text-[#a3a3a3]">ID: {cert.credentialId}</p>
               </div>
             ))}
           </div>
@@ -562,28 +561,28 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Additional Info Section */}
-      <section className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-12">
-            <Info className="h-5 w-5 text-[#a3a3a3]" />
-            <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Additional Information</h2>
+      <section className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 lg:mb-10">
+            <Info className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Additional Information</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 text-sm">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 text-xs lg:text-sm">
             <div>
-              <h3 className="font-medium text-white mb-3">Interests</h3>
+              <h3 className="font-medium text-white mb-2 lg:mb-3">Interests</h3>
               <p className="text-[#a3a3a3] leading-relaxed">
                 AI/ML, Startups, Product-Led Growth, Building in Public, Open Source
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-white mb-3">Languages</h3>
+              <h3 className="font-medium text-white mb-2 lg:mb-3">Languages</h3>
               <p className="text-[#a3a3a3] leading-relaxed">
                 English (Native), Hindi (Native), Spanish (Basic)
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-white mb-3">Location</h3>
+              <h3 className="font-medium text-white mb-2 lg:mb-3">Location</h3>
               <p className="text-[#a3a3a3] leading-relaxed">
                 San Francisco Bay Area · Open to Remote
               </p>
@@ -593,31 +592,31 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Let's Connect</h2>
-          <p className="text-[#a3a3a3] text-lg max-w-xl mx-auto mb-8">
+      <section id="contact" className="py-12 lg:py-16 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto text-center">
+          <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 lg:mb-4">Let's Connect</h2>
+          <p className="text-[#a3a3a3] text-sm lg:text-base max-w-xl mx-auto mb-6 lg:mb-8">
             Whether you want to discuss opportunities, collaborate on a project, or just say hi - I'd love to hear from you.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3 lg:gap-4">
             <Button 
               size="lg"
               asChild
-              className="bg-white text-black hover:bg-white/90 font-medium"
+              className="bg-white text-black hover:bg-white/90 font-medium h-10 lg:h-11 text-sm"
             >
               <Link href="/chat">
-                <Bot className="h-5 w-5 mr-2" />
+                <Bot className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
                 YashGPT
               </Link>
             </Button>
             <Button 
               size="lg"
               variant="outline"
-              className="border-white/20 bg-transparent hover:bg-white/5 text-white"
+              className="border-white/20 bg-transparent hover:bg-white/5 text-white h-10 lg:h-11 text-sm"
               asChild
             >
               <a href="mailto:yash@example.com">
-                <Mail className="h-5 w-5 mr-2" />
+                <Mail className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
                 Send Email
               </a>
             </Button>
@@ -626,10 +625,10 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#a3a3a3]">
+      <footer className="py-6 lg:py-8 px-4 lg:px-6 border-t border-white/5">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs lg:text-sm text-[#a3a3a3]">
           <span>2025 Yash Goyal</span>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 lg:gap-6">
             <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
             <a href="#" className="hover:text-white transition-colors">GitHub</a>
             <a href="#" className="hover:text-white transition-colors">Twitter</a>
