@@ -196,16 +196,6 @@ export default function PortfolioDesign() {
                 product thinking to create impactful solutions at scale.
               </p>
 
-              {/* AI Prompt Teaser */}
-              <Link 
-                href="/chat?q=What makes Yash a great product leader?"
-                className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-white/[0.03] border border-white/10 hover:border-white/20 hover:bg-white/[0.06] transition-all cursor-pointer"
-              >
-                <Bot className="h-4 w-4 text-cyan-400" />
-                <span className="text-sm text-[#a3a3a3] group-hover:text-white transition-colors">What makes Yash a great product leader?</span>
-                <ArrowUpRight className="h-3.5 w-3.5 text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-              </Link>
-
               {/* Primary CTA */}
               <div className="flex flex-wrap gap-4">
                 <Button 
