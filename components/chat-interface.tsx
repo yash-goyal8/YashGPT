@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Sparkles, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight } from "lucide-react"
+import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight } from "lucide-react"
 import Link from "next/link"
 
 // Animated background component
@@ -250,7 +250,7 @@ const assistantMessage: Message = {
                 <ArrowLeft className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
                 <div>
                   <h1 className="font-semibold flex items-center gap-2 text-white">
-                    <Sparkles className="h-4 w-4 text-cyan-400" />
+                    <Bot className="h-4 w-4 text-cyan-400" />
                     YashGPT
                   </h1>
                   <p className="text-xs text-[#a3a3a3]">Your AI assistant</p>
@@ -264,7 +264,7 @@ const assistantMessage: Message = {
           <div className="w-full max-w-md p-8 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10">
             <div className="text-center mb-8">
               <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 flex items-center justify-center mx-auto mb-4 border border-white/10">
-                <Sparkles className="h-8 w-8 text-cyan-400" />
+                <Bot className="h-8 w-8 text-cyan-400" />
               </div>
               <h2 className="text-2xl font-bold text-white">Welcome to YashGPT</h2>
               <p className="text-[#a3a3a3] mt-2">Before we start, I'd love to know who I'm speaking with.</p>
@@ -330,7 +330,7 @@ const assistantMessage: Message = {
               <ArrowLeft className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
               <div>
                 <h1 className="font-semibold flex items-center gap-2 text-white">
-                  <Sparkles className="h-4 w-4 text-cyan-400" />
+                  <Bot className="h-4 w-4 text-cyan-400" />
                   YashGPT
                 </h1>
                 <p className="text-xs text-[#a3a3a3]">

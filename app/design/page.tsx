@@ -13,7 +13,7 @@ import {
   FolderKanban,
   Lightbulb,
   Info,
-  Sparkles,
+  Bot,
   ArrowUpRight,
   Phone,
   ChevronRight
@@ -155,7 +155,7 @@ export default function PortfolioDesign() {
               className="bg-white text-black hover:bg-white/90 font-medium rounded-xl h-10"
             >
               <Link href="/chat">
-                <Sparkles className="h-4 w-4 mr-2" />
+                <Bot className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">YashGPT</span>
                 <span className="sm:hidden">YashGPT</span>
               </Link>
@@ -201,7 +201,7 @@ export default function PortfolioDesign() {
                 href="/chat?q=What makes Yash a great product leader?"
                 className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-white/[0.03] border border-white/10 hover:border-white/20 hover:bg-white/[0.06] transition-all cursor-pointer"
               >
-                <Sparkles className="h-4 w-4 text-cyan-400" />
+                <Bot className="h-4 w-4 text-cyan-400" />
                 <span className="text-sm text-[#a3a3a3] group-hover:text-white transition-colors">What makes Yash a great product leader?</span>
                 <ArrowUpRight className="h-3.5 w-3.5 text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </Link>
@@ -214,7 +214,7 @@ export default function PortfolioDesign() {
                   className="bg-white text-black hover:bg-white/90 font-semibold text-base h-14 px-8 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all group"
                 >
                   <Link href="/chat">
-                    <Sparkles className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                    <Bot className="h-5 w-5 mr-2 group-hover:animate-pulse" />
                     YashGPT
                   </Link>
                 </Button>
@@ -544,7 +544,7 @@ export default function PortfolioDesign() {
               className="bg-white text-black hover:bg-white/90 font-medium"
             >
               <Link href="/chat">
-                <Sparkles className="h-5 w-5 mr-2" />
+                <Bot className="h-5 w-5 mr-2" />
                 YashGPT
               </Link>
             </Button>
@@ -580,7 +580,7 @@ export default function PortfolioDesign() {
         href="/chat"
         className="fixed bottom-6 right-6 md:hidden p-4 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform"
       >
-        <Sparkles className="h-6 w-6" />
+        <Bot className="h-6 w-6" />
       </Link>
     </div>
   )
