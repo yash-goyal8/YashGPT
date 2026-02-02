@@ -1,9 +1,5 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { 
-  MessageSquare, 
   FileText, 
   Mail, 
   Linkedin, 
@@ -15,12 +11,6 @@ import {
   FolderKanban,
   Lightbulb,
   Info,
-  ChevronRight,
-  X,
-  Target,
-  Users,
-  Brain,
-  Rocket,
   Sparkles,
   ArrowUpRight,
   Phone
@@ -57,75 +47,6 @@ function AnimatedBackground() {
     </div>
   )
 }
-
-// Question categories for the chat modal
-const QUESTION_CATEGORIES = [
-  {
-    id: "behavioral",
-    label: "Behavioral",
-    icon: Brain,
-    color: "text-emerald-400",
-    bgColor: "bg-emerald-400/10",
-    questions: [
-      "Tell me about a time you failed and what you learned",
-      "How do you handle pressure and tight deadlines?",
-      "Describe a situation where you went above and beyond",
-      "How do you handle conflicts in a team?",
-    ]
-  },
-  {
-    id: "product-strategy",
-    label: "Product Strategy",
-    icon: Target,
-    color: "text-amber-400",
-    bgColor: "bg-amber-400/10",
-    questions: [
-      "How do you prioritize features in a product roadmap?",
-      "Walk me through your product discovery process",
-      "How do you measure product success?",
-      "Tell me about a product decision that didn't go as planned",
-    ]
-  },
-  {
-    id: "leadership",
-    label: "Leadership",
-    icon: Users,
-    color: "text-cyan-400",
-    bgColor: "bg-cyan-400/10",
-    questions: [
-      "Describe your leadership style",
-      "How do you mentor and develop team members?",
-      "Tell me about a time you led through ambiguity",
-      "How do you build alignment across stakeholders?",
-    ]
-  },
-  {
-    id: "technical",
-    label: "Technical",
-    icon: Code2,
-    color: "text-rose-400",
-    bgColor: "bg-rose-400/10",
-    questions: [
-      "What technologies do you specialize in?",
-      "How do you approach system design?",
-      "Tell me about your experience with AI/ML",
-      "Describe a complex technical problem you solved",
-    ]
-  },
-  {
-    id: "career",
-    label: "Career & Goals",
-    icon: Rocket,
-    color: "text-violet-400",
-    bgColor: "bg-violet-400/10",
-    questions: [
-      "What motivates you professionally?",
-      "Where do you see yourself in 5 years?",
-      "Why MBA after your technical background?",
-      "What kind of role are you looking for?",
-    ]
-  },
-]
 
 // Placeholder data - to be replaced with real content
 const EXPERIENCE = [
@@ -210,8 +131,6 @@ const CASE_STUDIES = [
 ]
 
 export default function PortfolioDesign() {
-  const [chatOpen, setChatOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5]">
@@ -229,12 +148,14 @@ export default function PortfolioDesign() {
               <a href="#contact" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
             </div>
             <Button 
-              onClick={() => setChatOpen(true)}
+              asChild
               className="bg-white text-black hover:bg-white/90 font-medium rounded-xl h-10"
             >
-              <Sparkles className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">YashGPT</span>
-              <span className="sm:hidden">YashGPT</span>
+              <Link href="/chat">
+                <Sparkles className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">YashGPT</span>
+                <span className="sm:hidden">YashGPT</span>
+              </Link>
             </Button>
           </div>
         </div>
@@ -273,24 +194,26 @@ export default function PortfolioDesign() {
               </p>
 
               {/* AI Prompt Teaser */}
-              <button 
-                onClick={() => setChatOpen(true)}
+              <Link 
+                href="/chat?q=What makes Yash a great product leader?"
                 className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-white/[0.03] border border-white/10 hover:border-white/20 hover:bg-white/[0.06] transition-all cursor-pointer"
               >
                 <Sparkles className="h-4 w-4 text-cyan-400" />
                 <span className="text-sm text-[#a3a3a3] group-hover:text-white transition-colors">What makes Yash a great product leader?</span>
                 <ArrowUpRight className="h-3.5 w-3.5 text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-              </button>
+              </Link>
 
               {/* Primary CTA */}
               <div className="flex flex-wrap gap-4">
                 <Button 
                   size="lg"
-                  onClick={() => setChatOpen(true)}
+                  asChild
                   className="bg-white text-black hover:bg-white/90 font-semibold text-base h-14 px-8 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all group"
                 >
-                  <Sparkles className="h-5 w-5 mr-2 group-hover:animate-pulse" />
-                  YashGPT
+                  <Link href="/chat">
+                    <Sparkles className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                    YashGPT
+                  </Link>
                 </Button>
                 <Button 
                   size="lg"
@@ -614,11 +537,13 @@ export default function PortfolioDesign() {
           <div className="flex flex-wrap justify-center gap-4">
             <Button 
               size="lg"
-              onClick={() => setChatOpen(true)}
+              asChild
               className="bg-white text-black hover:bg-white/90 font-medium"
             >
-              <Sparkles className="h-5 w-5 mr-2" />
-              YashGPT
+              <Link href="/chat">
+                <Sparkles className="h-5 w-5 mr-2" />
+                YashGPT
+              </Link>
             </Button>
             <Button 
               size="lg"
@@ -647,111 +572,13 @@ export default function PortfolioDesign() {
         </div>
       </footer>
 
-      {/* Chat Modal */}
-      {chatOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-            onClick={() => {
-              setChatOpen(false)
-              setSelectedCategory(null)
-            }}
-          />
-          
-          {/* Modal */}
-          <div className="relative w-full max-w-2xl bg-[#141415] rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white">YashGPT</h3>
-                  <p className="text-xs text-[#a3a3a3]">Your personal AI assistant to learn about Yash</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => {
-                  setChatOpen(false)
-                  setSelectedCategory(null)
-                }}
-                className="p-2 rounded-lg hover:bg-white/5 transition-colors"
-              >
-                <X className="h-5 w-5 text-[#a3a3a3]" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 max-h-[60vh] overflow-y-auto">
-              {!selectedCategory ? (
-                /* Category Selection */
-                <div className="space-y-3">
-                  <p className="text-sm text-[#a3a3a3] mb-4">Choose a category to see relevant questions:</p>
-                  {QUESTION_CATEGORIES.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className="w-full flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all text-left group"
-                    >
-                      <div className={`p-3 rounded-lg ${category.bgColor}`}>
-                        <category.icon className={`h-5 w-5 ${category.color}`} />
-                      </div>
-                      <div className="flex-1">
-                        <span className="font-medium text-white">{category.label}</span>
-                      </div>
-                      <ChevronRight className="h-5 w-5 text-[#a3a3a3] group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                /* Questions List */
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setSelectedCategory(null)}
-                    className="flex items-center gap-2 text-sm text-[#a3a3a3] hover:text-white transition-colors mb-4"
-                  >
-                    <ChevronRight className="h-4 w-4 rotate-180" />
-                    Back to categories
-                  </button>
-                  
-                  {QUESTION_CATEGORIES.find(c => c.id === selectedCategory)?.questions.map((question, index) => (
-                    <Link
-                      key={index}
-                      href={`/chat?q=${encodeURIComponent(question)}`}
-                      className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all group"
-                    >
-                      <MessageSquare className="h-4 w-4 text-[#a3a3a3] flex-shrink-0" />
-                      <span className="text-sm text-[#e5e5e5]">{question}</span>
-                      <ChevronRight className="h-4 w-4 text-[#a3a3a3] ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-white/5 bg-white/[0.02]">
-              <Link
-                href="/chat"
-                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white text-black font-medium hover:bg-white/90 transition-colors"
-              >
-                <Sparkles className="h-4 w-4" />
-                Start Chatting with YashGPT
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Floating Chat Button (Mobile) */}
-      <button
-        onClick={() => setChatOpen(true)}
+      <Link
+        href="/chat"
         className="fixed bottom-6 right-6 md:hidden p-4 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform"
       >
         <Sparkles className="h-6 w-6" />
-      </button>
+      </Link>
     </div>
   )
 }

@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Sparkles, User, Building2, ChevronRight, Brain, Target, Users, Rocket, Code2 } from "lucide-react"
+import { Send, ArrowLeft, Sparkles, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight } from "lucide-react"
 import Link from "next/link"
 
 // Animated background component
@@ -314,8 +314,6 @@ const assistantMessage: Message = {
     )
   }
 
-  // State for question category selection
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const showQuestionBank = messages.length <= 1
 
   // Chat interface
@@ -324,8 +322,8 @@ const assistantMessage: Message = {
       <AnimatedBackground />
       
       {/* Header */}
-      <header className="relative z-10 px-4 py-4">
-        <div className="max-w-4xl mx-auto">
+      <header className="relative z-10 px-4 py-4 flex-shrink-0">
+        <div className="max-w-6xl mx-auto">
           <div className="px-6 py-3 rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
             <Link href="/design" className="flex items-center gap-3 group">
               <ArrowLeft className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
@@ -345,107 +343,103 @@ const assistantMessage: Message = {
       </header>
 
       <div className="flex-1 overflow-y-auto relative z-10">
-        <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        <div className="max-w-6xl mx-auto px-4 py-6">
           {/* Messages */}
-          {messages.map((message, index) => (
-            <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`max-w-[80%] p-4 rounded-2xl ${
-                  message.role === "user" 
-                    ? "bg-white text-black" 
-                    : "bg-white/[0.03] border border-white/10 text-white"
-                }`}
-              >
-                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                {message.media && message.media.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    {message.media.map((item) => (
-                      <div key={item.id} className="rounded-xl overflow-hidden border border-white/10">
-                        {item.type === "image" ? (
-                          <a href={item.url} target="_blank" rel="noopener noreferrer">
-                            <img
-                              src={item.url || "/placeholder.svg"}
-                              alt={item.title}
-                              className="w-full max-h-64 object-cover hover:opacity-90 transition-opacity"
-                            />
-                          </a>
-                        ) : (
-                          <video src={item.url} controls className="w-full max-h-64" poster={item.url} />
-                        )}
-                        <div className="p-2 bg-white/5">
-                          <p className="text-xs font-medium">{item.title}</p>
-                          {item.description && <p className="text-xs text-[#a3a3a3]">{item.description}</p>}
-                        </div>
+          {messages.length > 0 && (
+            <div className="space-y-6 mb-8">
+              {messages.map((message, index) => (
+                <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[80%] p-4 rounded-2xl ${
+                      message.role === "user" 
+                        ? "bg-white text-black" 
+                        : "bg-white/[0.03] border border-white/10 text-white"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    {message.media && message.media.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {message.media.map((item) => (
+                          <div key={item.id} className="rounded-xl overflow-hidden border border-white/10">
+                            {item.type === "image" ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer">
+                                <img
+                                  src={item.url || "/placeholder.svg"}
+                                  alt={item.title}
+                                  className="w-full max-h-64 object-cover hover:opacity-90 transition-opacity"
+                                />
+                              </a>
+                            ) : (
+                              <video src={item.url} controls className="w-full max-h-64" poster={item.url} />
+                            )}
+                            <div className="p-2 bg-white/5">
+                              <p className="text-xs font-medium">{item.title}</p>
+                              {item.description && <p className="text-xs text-[#a3a3a3]">{item.description}</p>}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
+                    <span className={`text-xs mt-2 block ${message.role === "user" ? "opacity-50" : "text-[#a3a3a3]"}`}>
+                      {message.timestamp.toLocaleTimeString()}
+                    </span>
                   </div>
-                )}
-                <span className={`text-xs mt-2 block ${message.role === "user" ? "opacity-50" : "text-[#a3a3a3]"}`}>
-                  {message.timestamp.toLocaleTimeString()}
-                </span>
-              </div>
-            </div>
-          ))}
-
-          {/* Loading indicator */}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
-                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "0.1s" }} />
-                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "0.2s" }} />
                 </div>
-              </div>
+              ))}
+
+              {/* Loading indicator */}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                    <div className="flex gap-2">
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "0.1s" }} />
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "0.2s" }} />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Question Bank - show when conversation just started */}
+          {/* Question Bank - All categories visible with questions */}
           {showQuestionBank && !isLoading && (
-            <div className="mt-8">
-              <p className="text-sm text-[#a3a3a3] mb-4">Choose a topic to get started:</p>
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-white mb-2">What would you like to know?</h2>
+                <p className="text-[#a3a3a3]">Click any question below or type your own</p>
+              </div>
               
-              {!selectedCategory ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {QUESTION_CATEGORIES.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all group"
-                    >
-                      <div className={`p-3 rounded-lg ${category.bgColor}`}>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {QUESTION_CATEGORIES.map((category) => (
+                  <div 
+                    key={category.id}
+                    className="rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden"
+                  >
+                    {/* Category Header */}
+                    <div className="flex items-center gap-3 p-4 border-b border-white/5">
+                      <div className={`p-2.5 rounded-lg ${category.bgColor}`}>
                         <category.icon className={`h-5 w-5 ${category.color}`} />
                       </div>
-                      <span className="text-sm font-medium text-white">{category.label}</span>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setSelectedCategory(null)}
-                    className="flex items-center gap-2 text-sm text-[#a3a3a3] hover:text-white transition-colors mb-4"
-                  >
-                    <ChevronRight className="h-4 w-4 rotate-180" />
-                    Back to categories
-                  </button>
-                  
-                  {QUESTION_CATEGORIES.find(c => c.id === selectedCategory)?.questions.map((question, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        handleSendMessage(question)
-                        setSelectedCategory(null)
-                      }}
-                      className="w-full flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all group text-left"
-                    >
-                      <Sparkles className="h-4 w-4 text-cyan-400 flex-shrink-0" />
-                      <span className="text-sm text-[#e5e5e5]">{question}</span>
-                      <ChevronRight className="h-4 w-4 text-[#a3a3a3] ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                    </button>
-                  ))}
-                </div>
-              )}
+                      <span className="font-medium text-white">{category.label}</span>
+                    </div>
+                    
+                    {/* Questions */}
+                    <div className="p-2">
+                      {category.questions.slice(0, 3).map((question, qIndex) => (
+                        <button
+                          key={qIndex}
+                          onClick={() => handleSendMessage(question)}
+                          className="w-full text-left p-3 rounded-xl text-sm text-[#a3a3a3] hover:text-white hover:bg-white/[0.04] transition-all group flex items-start gap-2"
+                        >
+                          <ChevronRight className={`h-4 w-4 mt-0.5 flex-shrink-0 ${category.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                          <span className="line-clamp-2">{question}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -453,9 +447,9 @@ const assistantMessage: Message = {
         </div>
       </div>
 
-      {/* Input area */}
-      <div className="relative z-10 border-t border-white/5 bg-[#0a0a0b]/80 backdrop-blur-xl">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+      {/* Input area - Fixed at bottom */}
+      <div className="relative z-10 border-t border-white/5 bg-[#0a0a0b]/80 backdrop-blur-xl flex-shrink-0">
+        <div className="max-w-6xl mx-auto px-4 py-4">
           <form
             onSubmit={(e) => {
               e.preventDefault()
