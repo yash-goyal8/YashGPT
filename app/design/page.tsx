@@ -23,7 +23,7 @@ import {
   Rocket,
   Sparkles,
   ArrowUpRight,
-  Twitter
+  Phone
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -370,13 +370,11 @@ export default function PortfolioDesign() {
                   </a>
                   
                   <a 
-                    href="https://twitter.com/yashgoyal" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                    href="tel:+1234567890" 
+                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all group backdrop-blur-sm"
                   >
-                    <Twitter className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
-                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Twitter</span>
+                    <Phone className="h-5 w-5 text-[#a3a3a3] group-hover:text-emerald-400 transition-colors" />
+                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Phone</span>
                   </a>
                 </div>
               </div>
