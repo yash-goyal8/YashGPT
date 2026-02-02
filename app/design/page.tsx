@@ -232,9 +232,9 @@ export default function PortfolioDesign() {
               onClick={() => setChatOpen(true)}
               className="bg-white text-black hover:bg-white/90 font-medium rounded-xl h-10"
             >
-              <MessageSquare className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Ask Me Anything</span>
-              <span className="sm:hidden">Chat</span>
+              <Sparkles className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">YashGPT</span>
+              <span className="sm:hidden">YashGPT</span>
             </Button>
           </div>
         </div>
@@ -272,15 +272,25 @@ export default function PortfolioDesign() {
                 product thinking to create impactful solutions at scale.
               </p>
 
+              {/* AI Prompt Teaser */}
+              <button 
+                onClick={() => setChatOpen(true)}
+                className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-white/[0.03] border border-white/10 hover:border-white/20 hover:bg-white/[0.06] transition-all cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4 text-cyan-400" />
+                <span className="text-sm text-[#a3a3a3] group-hover:text-white transition-colors">What makes Yash a great product leader?</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+              </button>
+
               {/* Primary CTA */}
               <div className="flex flex-wrap gap-4">
                 <Button 
                   size="lg"
                   onClick={() => setChatOpen(true)}
-                  className="bg-white text-black hover:bg-white/90 font-semibold text-base h-14 px-8 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all"
+                  className="bg-white text-black hover:bg-white/90 font-semibold text-base h-14 px-8 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all group"
                 >
-                  <MessageSquare className="h-5 w-5 mr-2" />
-                  Ask Me Anything
+                  <Sparkles className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                  YashGPT
                 </Button>
                 <Button 
                   size="lg"
@@ -607,8 +617,8 @@ export default function PortfolioDesign() {
               onClick={() => setChatOpen(true)}
               className="bg-white text-black hover:bg-white/90 font-medium"
             >
-              <MessageSquare className="h-5 w-5 mr-2" />
-              Chat with my AI
+              <Sparkles className="h-5 w-5 mr-2" />
+              YashGPT
             </Button>
             <Button 
               size="lg"
@@ -658,8 +668,8 @@ export default function PortfolioDesign() {
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Ask me anything</h3>
-                  <p className="text-xs text-[#a3a3a3]">Select a category or start chatting</p>
+                  <h3 className="font-semibold text-white">YashGPT</h3>
+                  <p className="text-xs text-[#a3a3a3]">Your personal AI assistant to learn about Yash</p>
                 </div>
               </div>
               <button 
@@ -728,8 +738,8 @@ export default function PortfolioDesign() {
                 href="/chat"
                 className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white text-black font-medium hover:bg-white/90 transition-colors"
               >
-                <MessageSquare className="h-4 w-4" />
-                Start Free Chat
+                <Sparkles className="h-4 w-4" />
+                Start Chatting with YashGPT
               </Link>
             </div>
           </div>
@@ -741,7 +751,7 @@ export default function PortfolioDesign() {
         onClick={() => setChatOpen(true)}
         className="fixed bottom-6 right-6 md:hidden p-4 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform"
       >
-        <MessageSquare className="h-6 w-6" />
+        <Sparkles className="h-6 w-6" />
       </button>
     </div>
   )
