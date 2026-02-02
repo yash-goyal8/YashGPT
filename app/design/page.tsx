@@ -13,7 +13,8 @@ import {
   Info,
   Sparkles,
   ArrowUpRight,
-  Phone
+  Phone,
+  ChevronRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
