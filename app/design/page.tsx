@@ -325,32 +325,30 @@ export default function PortfolioDesign() {
             <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Experience</h2>
           </div>
 
-          <div className="space-y-1">
+          <div className="grid md:grid-cols-2 gap-6">
             {EXPERIENCE.map((exp, index) => (
               <div 
                 key={index}
-                className="group grid md:grid-cols-[180px_1fr] gap-4 md:gap-8 p-6 -mx-6 rounded-2xl hover:bg-white/[0.02] transition-colors"
+                className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
               >
-                <span className="text-sm text-[#a3a3a3]">{exp.period}</span>
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="text-lg font-medium text-white group-hover:text-white/90">
-                      {exp.role}
-                      <span className="text-[#a3a3a3] font-normal"> · {exp.company}</span>
-                      <ExternalLink className="h-4 w-4 inline ml-2 opacity-0 group-hover:opacity-50 transition-opacity" />
-                    </h3>
-                    <p className="text-[#a3a3a3] mt-2 leading-relaxed">{exp.description}</p>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 rounded-lg bg-cyan-500/10">
+                    <Briefcase className="h-5 w-5 text-cyan-400" />
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {exp.skills.map((skill) => (
-                      <span 
-                        key={skill}
-                        className="px-3 py-1 text-xs rounded-full bg-white/5 text-[#a3a3a3]"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
+                  <span className="text-xs font-medium text-[#a3a3a3] px-3 py-1 rounded-full bg-white/5">{exp.period}</span>
+                </div>
+                <h3 className="text-lg font-medium text-white mb-1">{exp.role}</h3>
+                <p className="text-sm text-cyan-400 mb-3">{exp.company}</p>
+                <p className="text-sm text-[#a3a3a3] mb-4 leading-relaxed">{exp.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {exp.skills.map((skill) => (
+                    <span 
+                      key={skill}
+                      className="px-2 py-1 text-xs rounded bg-white/5 text-[#a3a3a3]"
+                    >
+                      {skill}
+                    </span>
+                  ))}
                 </div>
               </div>
             ))}
@@ -366,20 +364,21 @@ export default function PortfolioDesign() {
             <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Education</h2>
           </div>
 
-          <div className="space-y-1">
+          <div className="grid md:grid-cols-2 gap-6">
             {EDUCATION.map((edu, index) => (
               <div 
                 key={index}
-                className="grid md:grid-cols-[180px_1fr] gap-4 md:gap-8 p-6 -mx-6 rounded-2xl hover:bg-white/[0.02] transition-colors"
+                className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
               >
-                <span className="text-sm text-[#a3a3a3]">{edu.period}</span>
-                <div>
-                  <h3 className="text-lg font-medium text-white">
-                    {edu.degree}
-                    <span className="text-[#a3a3a3] font-normal"> · {edu.school}</span>
-                  </h3>
-                  <p className="text-[#a3a3a3] mt-1">{edu.focus}</p>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 rounded-lg bg-violet-500/10">
+                    <GraduationCap className="h-5 w-5 text-violet-400" />
+                  </div>
+                  <span className="text-xs font-medium text-[#a3a3a3] px-3 py-1 rounded-full bg-white/5">{edu.period}</span>
                 </div>
+                <h3 className="text-lg font-medium text-white mb-1">{edu.degree}</h3>
+                <p className="text-sm text-violet-400 mb-3">{edu.school}</p>
+                <p className="text-sm text-[#a3a3a3] leading-relaxed">{edu.focus}</p>
               </div>
             ))}
           </div>
@@ -394,22 +393,38 @@ export default function PortfolioDesign() {
             <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {Object.entries(SKILLS).map(([category, skills]) => (
-              <div key={category}>
-                <h3 className="text-sm font-medium text-white mb-4">{category}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {skills.map((skill) => (
-                    <span 
-                      key={skill}
-                      className="px-3 py-1.5 text-sm rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+          <div className="grid md:grid-cols-3 gap-6">
+            {Object.entries(SKILLS).map(([category, skills], index) => {
+              const colors = [
+                { bg: "bg-emerald-500/10", text: "text-emerald-400" },
+                { bg: "bg-amber-500/10", text: "text-amber-400" },
+                { bg: "bg-rose-500/10", text: "text-rose-400" },
+              ]
+              const color = colors[index % colors.length]
+              return (
+                <div 
+                  key={category}
+                  className="group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`p-2.5 rounded-lg ${color.bg}`}>
+                      <Code2 className={`h-5 w-5 ${color.text}`} />
+                    </div>
+                    <h3 className="text-base font-medium text-white">{category}</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {skills.map((skill) => (
+                      <span 
+                        key={skill}
+                        className="px-3 py-1.5 text-sm rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors cursor-default"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
