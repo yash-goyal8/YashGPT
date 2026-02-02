@@ -186,7 +186,8 @@ export function ChatInterface() {
     if (initialQuestion && visitorInfo && messages.length === 1) {
       handleSendMessage(initialQuestion)
     }
-  }, [initialQuestion, visitorInfo])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuestion, visitorInfo, messages.length])
 
   const handleSendMessage = async (question?: string) => {
     const messageText = question || input
