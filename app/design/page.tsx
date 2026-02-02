@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { 
   MessageSquare, 
@@ -21,9 +21,42 @@ import {
   Users,
   Brain,
   Rocket,
-  Sparkles
+  Sparkles,
+  Phone,
+  ArrowUpRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+
+// Animated background grid component
+function AnimatedBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Gradient orbs */}
+      <div className="absolute top-0 -left-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute top-40 -right-40 w-96 h-96 bg-violet-500/15 rounded-full blur-[120px] animate-pulse delay-1000" />
+      <div className="absolute -bottom-20 left-1/3 w-72 h-72 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse delay-500" />
+      
+      {/* Animated grid */}
+      <div 
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+        }}
+      />
+      
+      {/* Floating particles */}
+      <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white/40 rounded-full animate-float" />
+      <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-cyan-400/40 rounded-full animate-float-delayed" />
+      <div className="absolute top-2/3 left-1/2 w-1 h-1 bg-violet-400/40 rounded-full animate-float" />
+      <div className="absolute top-1/2 right-1/4 w-2 h-2 bg-white/20 rounded-full animate-float-slow" />
+      <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-emerald-400/40 rounded-full animate-float-delayed" />
+    </div>
+  )
+}
 
 // Question categories for the chat modal
 const QUESTION_CATEGORIES = [
@@ -183,111 +216,176 @@ export default function PortfolioDesign() {
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5]">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#0a0a0b]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="font-semibold text-lg text-white">Yash Goyal</span>
-          <div className="hidden md:flex items-center gap-8 text-sm text-[#a3a3a3]">
-            <a href="#about" className="hover:text-white transition-colors">About</a>
-            <a href="#experience" className="hover:text-white transition-colors">Experience</a>
-            <a href="#projects" className="hover:text-white transition-colors">Projects</a>
-            <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+      <nav className="fixed top-0 left-0 right-0 z-40">
+        <div className="mx-4 mt-4">
+          <div className="max-w-6xl mx-auto px-6 py-3 rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
+            <a href="#about" className="font-semibold text-lg text-white hover:text-cyan-400 transition-colors">
+              YG
+            </a>
+            <div className="hidden md:flex items-center gap-1 text-sm">
+              <a href="#about" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">About</a>
+              <a href="#experience" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Experience</a>
+              <a href="#projects" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
+              <a href="#contact" className="px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
+            </div>
+            <Button 
+              onClick={() => setChatOpen(true)}
+              className="bg-white text-black hover:bg-white/90 font-medium rounded-xl h-10"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Ask Me Anything</span>
+              <span className="sm:hidden">Chat</span>
+            </Button>
           </div>
-          <Button 
-            onClick={() => setChatOpen(true)}
-            className="bg-white text-black hover:bg-white/90 font-medium"
-          >
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Ask Me Anything
-          </Button>
         </div>
       </nav>
 
       {/* Hero / About Section */}
-      <section id="about" className="pt-32 pb-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-[300px_1fr] gap-16 items-start">
-            {/* Left Column - Photo & Quick Info */}
-            <div className="space-y-6">
-              {/* Profile Photo Placeholder */}
-              <div className="w-48 h-48 lg:w-full lg:h-auto lg:aspect-square rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center">
-                <span className="text-[#a3a3a3] text-sm">Profile Photo</span>
-              </div>
-              
-              {/* Quick Links */}
-              <div className="flex flex-col gap-2">
-                <a 
-                  href="#resume" 
-                  className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group"
-                >
-                  <FileText className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
-                  <span className="text-sm">View Resume</span>
-                  <ExternalLink className="h-4 w-4 ml-auto text-[#a3a3a3]" />
-                </a>
-                <a 
-                  href="mailto:yash@example.com" 
-                  className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group"
-                >
-                  <Mail className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
-                  <span className="text-sm">yash@example.com</span>
-                </a>
-              </div>
-
-              {/* Social Links */}
-              <div className="flex gap-3">
-                <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-                  <Linkedin className="h-5 w-5" />
-                </a>
-                <a href="#" className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-                  <Github className="h-5 w-5" />
-                </a>
-              </div>
-            </div>
-
-            {/* Right Column - Bio */}
-            <div className="space-y-8">
-              <div>
-                <p className="text-[#a3a3a3] text-sm mb-2">Product & Technology Leader</p>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight text-balance">
-                  Building products that matter
+      <section id="about" className="relative pt-32 pb-24 px-6 min-h-screen flex items-center overflow-hidden">
+        <AnimatedBackground />
+        
+        <div className="max-w-6xl mx-auto relative z-10 w-full">
+          {/* Main Hero Content */}
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Column - Text Content */}
+            <div className="space-y-8 order-2 lg:order-1">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-sm text-[#a3a3a3]">Available for opportunities</span>
+                </div>
+                
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight">
+                  <span className="block">Hi, I'm</span>
+                  <span className="block bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent animate-gradient">
+                    Yash Goyal
+                  </span>
                 </h1>
-              </div>
-
-              <div className="space-y-6 text-lg leading-relaxed text-[#a3a3a3]">
-                <p>
-                  I'm a <span className="text-white font-medium">Product Manager</span> with a strong technical foundation, 
-                  passionate about building products that solve real problems. Currently pursuing my 
-                  <span className="text-white font-medium"> MBA</span> while working on enterprise solutions.
-                </p>
-                <p>
-                  With over <span className="text-white font-medium">5 years of experience</span> spanning 
-                  software engineering and product management, I bring a unique perspective to building 
-                  and scaling products from 0 to 1 and beyond.
-                </p>
-                <p>
-                  I've led cross-functional teams, shipped products used by millions, and 
-                  driven significant business impact through data-informed decisions.
+                
+                <p className="text-xl md:text-2xl text-[#a3a3a3] font-light">
+                  Product & Technology Leader
                 </p>
               </div>
 
-              {/* CTA */}
-              <div className="flex flex-wrap gap-4 pt-4">
+              <p className="text-lg leading-relaxed text-[#a3a3a3] max-w-xl">
+                Building products that matter. I combine deep technical expertise with strategic 
+                product thinking to create impactful solutions at scale.
+              </p>
+
+              {/* Primary CTA */}
+              <div className="flex flex-wrap gap-4">
                 <Button 
                   size="lg"
                   onClick={() => setChatOpen(true)}
-                  className="bg-white text-black hover:bg-white/90 font-medium text-base"
+                  className="bg-white text-black hover:bg-white/90 font-semibold text-base h-14 px-8 rounded-xl shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-all"
                 >
                   <MessageSquare className="h-5 w-5 mr-2" />
-                  Chat with my AI
+                  Ask Me Anything
                 </Button>
                 <Button 
                   size="lg"
                   variant="outline"
-                  className="border-white/20 bg-transparent hover:bg-white/5 text-white font-medium text-base"
+                  className="border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 text-white font-medium text-base h-14 px-8 rounded-xl"
                   asChild
                 >
-                  <a href="#contact">Get in Touch</a>
+                  <a href="#experience">
+                    Explore My Work
+                    <ArrowUpRight className="h-4 w-4 ml-2" />
+                  </a>
                 </Button>
               </div>
+            </div>
+
+            {/* Right Column - Photo & Contact Cards */}
+            <div className="order-1 lg:order-2 flex flex-col items-center lg:items-end">
+              {/* Profile Photo with Glow */}
+              <div className="relative mb-8">
+                {/* Glow effect */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 via-violet-500/20 to-cyan-500/20 rounded-3xl blur-2xl animate-pulse-glow" />
+                
+                {/* Photo container */}
+                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm">
+                  {/* Animated border */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/50 via-violet-500/50 to-cyan-500/50 animate-border-flow opacity-50" style={{ padding: '1px' }}>
+                    <div className="w-full h-full rounded-2xl bg-[#0a0a0b]" />
+                  </div>
+                  
+                  {/* Photo placeholder */}
+                  <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-white/5 flex items-center justify-center">
+                        <span className="text-3xl text-white/30 font-bold">YG</span>
+                      </div>
+                      <span className="text-[#a3a3a3] text-sm">Profile Photo</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Buttons - 5 buttons grid */}
+              <div className="w-full max-w-sm space-y-3">
+                {/* Top row - 2 full width buttons */}
+                <a 
+                  href="#resume" 
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                >
+                  <div className="p-2.5 rounded-lg bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-colors">
+                    <FileText className="h-5 w-5 text-cyan-400" />
+                  </div>
+                  <span className="text-sm font-medium text-white">View Resume</span>
+                  <ArrowUpRight className="h-4 w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                </a>
+
+                <a 
+                  href="tel:+1234567890" 
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                >
+                  <div className="p-2.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
+                    <Phone className="h-5 w-5 text-emerald-400" />
+                  </div>
+                  <span className="text-sm font-medium text-white">Phone Contact</span>
+                  <ArrowUpRight className="h-4 w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                </a>
+
+                {/* Bottom row - 3 icon buttons */}
+                <div className="flex gap-3">
+                  <a 
+                    href="https://linkedin.com/in/yashgoyal" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-[#0077B5]/20 hover:border-[#0077B5]/50 transition-all group backdrop-blur-sm"
+                  >
+                    <Linkedin className="h-5 w-5 text-[#a3a3a3] group-hover:text-[#0077B5] transition-colors" />
+                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">LinkedIn</span>
+                  </a>
+                  
+                  <a 
+                    href="https://github.com/yashgoyal" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                  >
+                    <Github className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">GitHub</span>
+                  </a>
+                  
+                  <a 
+                    href="mailto:yash@example.com" 
+                    className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all group backdrop-blur-sm"
+                  >
+                    <Mail className="h-5 w-5 text-[#a3a3a3] group-hover:text-rose-400 transition-colors" />
+                    <span className="text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Email</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Scroll indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#a3a3a3]">
+            <span className="text-xs uppercase tracking-widest">Scroll</span>
+            <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
+              <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" />
             </div>
           </div>
         </div>
