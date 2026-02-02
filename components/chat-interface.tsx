@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight } from "lucide-react"
+import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Phone } from "lucide-react"
 import Link from "next/link"
 
 // Animated background component
@@ -92,6 +92,19 @@ const QUESTION_CATEGORIES = [
       "Where do you see yourself in 5 years?",
       "Why MBA after your technical background?",
       "What kind of role are you looking for?",
+    ],
+  },
+  {
+    id: "adaptability",
+    label: "Adaptability",
+    icon: Shuffle,
+    color: "text-sky-400",
+    bgColor: "bg-sky-500/10",
+    questions: [
+      "How do you handle ambiguity in projects?",
+      "Tell me about a time you had to pivot quickly",
+      "How do you adapt to rapidly changing requirements?",
+      "Describe navigating uncertainty in a startup",
     ],
   },
 ]
@@ -245,29 +258,63 @@ const assistantMessage: Message = {
         {/* Header */}
         <header className="relative z-10 px-4 py-4">
           <div className="max-w-6xl mx-auto">
-            <div className="px-6 py-3 rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-              <Link href="/design" className="flex items-center gap-3 group">
-                <ArrowLeft className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+            <div className="px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
+              <Link href="/design" className="flex items-center gap-2 lg:gap-3 group">
+                <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
                 <div>
-                  <h1 className="font-semibold flex items-center gap-2 text-white">
-                    <Bot className="h-4 w-4 text-cyan-400" />
+                  <h1 className="font-semibold flex items-center gap-2 text-sm lg:text-base text-white">
+                    <Bot className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-cyan-400" />
                     YashGPT
                   </h1>
-                  <p className="text-xs text-[#a3a3a3]">Your AI assistant</p>
+                  <p className="text-[10px] lg:text-xs text-[#a3a3a3]">Your AI assistant</p>
                 </div>
               </Link>
+              
+              {/* Quick Action Buttons */}
+              <div className="flex items-center gap-1 lg:gap-2">
+                <a 
+                  href="#resume" 
+                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                  title="View Resume"
+                >
+                  <FileText className="h-4 w-4" />
+                </a>
+                <a 
+                  href="https://linkedin.com/in/yashgoyal" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                  title="LinkedIn"
+                >
+                  <Linkedin className="h-4 w-4" />
+                </a>
+                <a 
+                  href="mailto:yash@example.com" 
+                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                  title="Email"
+                >
+                  <Mail className="h-4 w-4" />
+                </a>
+                <a 
+                  href="tel:+1234567890" 
+                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                  title="Phone"
+                >
+                  <Phone className="h-4 w-4" />
+                </a>
+              </div>
             </div>
           </div>
         </header>
 
-        <div className="flex-1 flex items-center justify-center p-4 relative z-10">
-          <div className="w-full max-w-md p-8 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10">
-            <div className="text-center mb-8">
-              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 flex items-center justify-center mx-auto mb-4 border border-white/10">
-                <Bot className="h-8 w-8 text-cyan-400" />
+        <div className="flex-1 flex items-center justify-center p-4 relative z-10 overflow-auto">
+          <div className="w-full max-w-md p-6 lg:p-8 rounded-xl lg:rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 my-4">
+            <div className="text-center mb-6 lg:mb-8">
+              <div className="h-12 w-12 lg:h-16 lg:w-16 rounded-xl lg:rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 flex items-center justify-center mx-auto mb-3 lg:mb-4 border border-white/10">
+                <Bot className="h-6 w-6 lg:h-8 lg:w-8 text-cyan-400" />
               </div>
-              <h2 className="text-2xl font-bold text-white">Welcome to YashGPT</h2>
-              <p className="text-[#a3a3a3] mt-2">Before we start, I'd love to know who I'm speaking with.</p>
+              <h2 className="text-xl lg:text-2xl font-bold text-white">Welcome to YashGPT</h2>
+              <p className="text-sm lg:text-base text-[#a3a3a3] mt-2">Before we start, I'd love to know who I'm speaking with.</p>
             </div>
 
             <form onSubmit={handleVisitorSubmit} className="space-y-5">
@@ -323,22 +370,56 @@ const assistantMessage: Message = {
       <AnimatedBackground />
       
       {/* Header */}
-      <header className="relative z-10 px-4 py-4 flex-shrink-0">
-        <div className="max-w-6xl mx-auto">
-          <div className="px-6 py-3 rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-            <Link href="/design" className="flex items-center gap-3 group">
-              <ArrowLeft className="h-5 w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+      <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4 flex-shrink-0">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
+            <Link href="/design" className="flex items-center gap-2 lg:gap-3 group">
+              <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
               <div>
-                <h1 className="font-semibold flex items-center gap-2 text-white">
-                  <Bot className="h-4 w-4 text-cyan-400" />
+                <h1 className="font-semibold flex items-center gap-2 text-sm lg:text-base text-white">
+                  <Bot className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-cyan-400" />
                   YashGPT
                 </h1>
-                <p className="text-xs text-[#a3a3a3]">
+                <p className="text-[10px] lg:text-xs text-[#a3a3a3]">
                   Chatting with {visitorInfo.name}
                   {visitorInfo.company && ` from ${visitorInfo.company}`}
                 </p>
               </div>
             </Link>
+            
+            {/* Quick Action Buttons */}
+            <div className="flex items-center gap-1 lg:gap-2">
+              <a 
+                href="#resume" 
+                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                title="View Resume"
+              >
+                <FileText className="h-4 w-4" />
+              </a>
+              <a 
+                href="https://linkedin.com/in/yashgoyal" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                title="LinkedIn"
+              >
+                <Linkedin className="h-4 w-4" />
+              </a>
+              <a 
+                href="mailto:yash@example.com" 
+                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                title="Email"
+              >
+                <Mail className="h-4 w-4" />
+              </a>
+              <a 
+                href="tel:+1234567890" 
+                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                title="Phone"
+              >
+                <Phone className="h-4 w-4" />
+              </a>
+            </div>
           </div>
         </div>
       </header>
