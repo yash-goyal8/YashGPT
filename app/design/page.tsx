@@ -257,7 +257,9 @@ export default function PortfolioDesign() {
             <div className="hidden md:flex items-center gap-0.5 lg:gap-1 text-sm">
               <a href="#about" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">About</a>
               <a href="#experience" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Experience</a>
+              <a href="#education" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Education</a>
               <a href="#projects" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
+              <a href="#case-studies" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Case Studies</a>
               <a href="#contact" className="px-3 lg:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
             </div>
             <Button 
