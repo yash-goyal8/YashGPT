@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useState, useEffect } from "react"
 import { 
   FileText, 
   Mail, 
@@ -20,6 +21,57 @@ import {
   Award
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+
+// Types for card data
+interface ExperienceCard {
+  slug: string
+  period: string
+  role: string
+  company: string
+  description: string
+  skills: string[]
+}
+
+interface EducationCard {
+  slug: string
+  period: string
+  degree: string
+  school: string
+  focus: string
+}
+
+interface ProjectCard {
+  slug: string
+  title: string
+  description: string
+  tech: string[]
+  image: string | null
+}
+
+interface CaseStudyCard {
+  slug: string
+  title: string
+  problem: string
+  solution: string
+  impact: string
+}
+
+interface CertificationCard {
+  slug: string
+  title: string
+  issuer: string
+  date: string
+  credentialId: string
+}
+
+interface CardsData {
+  experience: ExperienceCard[]
+  education: EducationCard[]
+  project: ProjectCard[]
+  "case-study": CaseStudyCard[]
+  certification: CertificationCard[]
+  skills: Record<string, string[]>
+}
 
 // Animated background grid component
 function AnimatedBackground() {
@@ -176,7 +228,23 @@ const CERTIFICATIONS = [
 ]
 
 export default function PortfolioDesign() {
-
+  const [cards, setCards] = useState<CardsData | null>(null)
+  
+  useEffect(() => {
+    fetch("/api/cards")
+      .then(res => res.json())
+      .then(data => setCards(data))
+      .catch(() => setCards(null))
+  }, [])
+  
+  // Use fetched data or fallback to defaults
+  const experienceData = cards?.experience || EXPERIENCE
+  const educationData = cards?.education || EDUCATION
+  const projectsData = cards?.project || PROJECTS
+  const caseStudiesData = cards?.["case-study"] || CASE_STUDIES
+  const certificationsData = cards?.certification || CERTIFICATIONS
+  const skillsData = cards?.skills || SKILLS
+  
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5]">
       {/* Navigation */}
@@ -370,7 +438,7 @@ export default function PortfolioDesign() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
-            {EXPERIENCE.map((exp, index) => (
+            {experienceData.map((exp, index) => (
               <Link 
                 key={index}
                 href={`/detail/experience/${exp.slug}`}
@@ -412,7 +480,7 @@ export default function PortfolioDesign() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
-            {EDUCATION.map((edu, index) => (
+            {educationData.map((edu, index) => (
               <Link 
                 key={index}
                 href={`/detail/education/${edu.slug}`}
@@ -444,7 +512,7 @@ export default function PortfolioDesign() {
           </div>
 
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-            {PROJECTS.map((project, index) => (
+            {projectsData.map((project, index) => (
               <Link 
                 key={index}
                 href={`/detail/project/${project.slug}`}
@@ -480,7 +548,7 @@ export default function PortfolioDesign() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
-            {CASE_STUDIES.map((study, index) => (
+            {caseStudiesData.map((study, index) => (
               <Link 
                 key={index}
                 href={`/detail/case-study/${study.slug}`}
@@ -518,7 +586,7 @@ export default function PortfolioDesign() {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-              {Object.entries(SKILLS).map(([category, skills], index) => {
+              {Object.entries(skillsData).map(([category, skills], index) => {
               const colors = [
                 { bg: "bg-emerald-500/10", text: "text-emerald-400" },
                 { bg: "bg-amber-500/10", text: "text-amber-400" },
@@ -564,7 +632,7 @@ export default function PortfolioDesign() {
             </div>
 
             <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
-            {CERTIFICATIONS.map((cert, index) => (
+            {certificationsData.map((cert, index) => (
               <Link 
                 key={index}
                 href={`/detail/certification/${cert.slug}`}
