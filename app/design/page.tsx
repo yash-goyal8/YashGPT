@@ -473,7 +473,7 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Education Section */}
-      <section className="py-12 lg:py-16 border-t border-white/5">
+      <section id="education" className="py-12 lg:py-16 border-t border-white/5">
         <div className="mx-3 lg:mx-4">
           <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
           <div className="flex items-center gap-3 mb-8 lg:mb-10">
@@ -541,7 +541,7 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Case Studies Section */}
-      <section className="py-12 lg:py-16 border-t border-white/5">
+      <section id="case-studies" className="py-12 lg:py-16 border-t border-white/5">
         <div className="mx-3 lg:mx-4">
           <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6">
             <div className="flex items-center gap-3 mb-8 lg:mb-10">
