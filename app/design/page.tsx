@@ -55,6 +55,7 @@ function AnimatedBackground() {
 // Placeholder data - to be replaced with real content
 const EXPERIENCE = [
   {
+    slug: "senior-pm-tech-company",
     period: "2022 - Present",
     role: "Senior Product Manager",
     company: "Tech Company",
@@ -62,6 +63,7 @@ const EXPERIENCE = [
     skills: ["Product Strategy", "Data Analytics", "Cross-functional Leadership"]
   },
   {
+    slug: "pm-startup-inc",
     period: "2020 - 2022",
     role: "Product Manager",
     company: "Startup Inc",
@@ -69,6 +71,7 @@ const EXPERIENCE = [
     skills: ["Agile", "User Research", "Go-to-Market"]
   },
   {
+    slug: "software-engineer-enterprise",
     period: "2018 - 2020",
     role: "Software Engineer",
     company: "Enterprise Corp",
@@ -79,12 +82,14 @@ const EXPERIENCE = [
 
 const EDUCATION = [
   {
+    slug: "mba-business-school",
     period: "2023 - 2025",
     degree: "MBA",
     school: "Business School",
     focus: "Technology & Strategy"
   },
   {
+    slug: "btech-computer-science",
     period: "2014 - 2018",
     degree: "B.Tech Computer Science",
     school: "University",
@@ -100,18 +105,21 @@ const SKILLS = {
 
 const PROJECTS = [
   {
+    slug: "ai-analytics-platform",
     title: "AI-Powered Analytics Platform",
     description: "Built a real-time analytics dashboard with predictive insights, reducing decision time by 60%.",
     tech: ["Python", "React", "TensorFlow", "AWS"],
     image: null
   },
   {
+    slug: "ecommerce-personalization",
     title: "E-commerce Personalization Engine",
     description: "Developed recommendation system increasing conversion by 25% through personalized experiences.",
     tech: ["ML", "Node.js", "Redis", "PostgreSQL"],
     image: null
   },
   {
+    slug: "developer-platform",
     title: "Developer Platform",
     description: "Led the creation of internal developer tools used by 500+ engineers daily.",
     tech: ["TypeScript", "GraphQL", "Kubernetes"],
@@ -121,39 +129,45 @@ const PROJECTS = [
 
 const CASE_STUDIES = [
   {
+    slug: "scaling-b2b-saas",
     title: "Scaling a B2B SaaS Product",
     problem: "Low enterprise adoption despite strong SMB traction",
     solution: "Redesigned onboarding, added SSO, built admin dashboard",
     impact: "3x enterprise deals in 6 months"
   },
   {
+    slug: "reducing-customer-churn",
     title: "Reducing Customer Churn",
     problem: "15% monthly churn in first 90 days",
     solution: "Implemented proactive health scoring and intervention triggers",
-  impact: "Reduced churn to 5%, saved $2M ARR"
+    impact: "Reduced churn to 5%, saved $2M ARR"
   },
 ]
 
 const CERTIFICATIONS = [
   {
+    slug: "aws-solutions-architect",
     title: "AWS Solutions Architect",
     issuer: "Amazon Web Services",
     date: "2023",
     credentialId: "AWS-SAA-123456"
   },
   {
+    slug: "product-management-certificate",
     title: "Product Management Certificate",
     issuer: "Product School",
     date: "2022",
     credentialId: "PS-PM-789012"
   },
   {
+    slug: "google-analytics",
     title: "Google Analytics Certified",
     issuer: "Google",
     date: "2021",
     credentialId: "GA-345678"
   },
   {
+    slug: "scrum-master",
     title: "Scrum Master Certified",
     issuer: "Scrum Alliance",
     date: "2020",
@@ -357,9 +371,10 @@ export default function PortfolioDesign() {
 
           <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
             {EXPERIENCE.map((exp, index) => (
-              <div 
+              <Link 
                 key={index}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                href={`/detail/experience/${exp.slug}`}
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
                   <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10">
@@ -367,7 +382,7 @@ export default function PortfolioDesign() {
                   </div>
                   <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] px-2 lg:px-3 py-1 rounded-full bg-white/5">{exp.period}</span>
                 </div>
-                <h3 className="text-base lg:text-lg font-medium text-white mb-1">{exp.role}</h3>
+                <h3 className="text-base lg:text-lg font-medium text-white mb-1 group-hover:text-cyan-400 transition-colors">{exp.role}</h3>
                 <p className="text-xs lg:text-sm text-cyan-400 mb-2 lg:mb-3">{exp.company}</p>
                 <p className="text-xs lg:text-sm text-[#a3a3a3] mb-3 lg:mb-4 leading-relaxed">{exp.description}</p>
                 <div className="flex flex-wrap gap-1.5 lg:gap-2">
@@ -380,7 +395,7 @@ export default function PortfolioDesign() {
                     </span>
                   ))}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           </div>
@@ -398,9 +413,10 @@ export default function PortfolioDesign() {
 
           <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
             {EDUCATION.map((edu, index) => (
-              <div 
+              <Link 
                 key={index}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                href={`/detail/education/${edu.slug}`}
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
                   <div className="p-2 lg:p-2.5 rounded-lg bg-violet-500/10">
@@ -408,10 +424,10 @@ export default function PortfolioDesign() {
                   </div>
                   <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] px-2 lg:px-3 py-1 rounded-full bg-white/5">{edu.period}</span>
                 </div>
-                <h3 className="text-base lg:text-lg font-medium text-white mb-1">{edu.degree}</h3>
+                <h3 className="text-base lg:text-lg font-medium text-white mb-1 group-hover:text-violet-400 transition-colors">{edu.degree}</h3>
                 <p className="text-xs lg:text-sm text-violet-400 mb-2 lg:mb-3">{edu.school}</p>
                 <p className="text-xs lg:text-sm text-[#a3a3a3] leading-relaxed">{edu.focus}</p>
-              </div>
+              </Link>
             ))}
           </div>
           </div>
@@ -429,15 +445,16 @@ export default function PortfolioDesign() {
 
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
             {PROJECTS.map((project, index) => (
-              <div 
+              <Link 
                 key={index}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                href={`/detail/project/${project.slug}`}
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
               >
                 {/* Project Image Placeholder */}
                 <div className="aspect-video rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-3 lg:mb-4 flex items-center justify-center">
                   <span className="text-xs text-[#a3a3a3]">Project Image</span>
                 </div>
-                <h3 className="text-base lg:text-lg font-medium text-white mb-1.5 lg:mb-2">{project.title}</h3>
+                <h3 className="text-base lg:text-lg font-medium text-white mb-1.5 lg:mb-2 group-hover:text-emerald-400 transition-colors">{project.title}</h3>
                 <p className="text-xs lg:text-sm text-[#a3a3a3] mb-3 lg:mb-4 leading-relaxed">{project.description}</p>
                 <div className="flex flex-wrap gap-1.5 lg:gap-2">
                   {project.tech.map((t) => (
@@ -446,7 +463,7 @@ export default function PortfolioDesign() {
                     </span>
                   ))}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           </div>
@@ -464,11 +481,12 @@ export default function PortfolioDesign() {
 
           <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
             {CASE_STUDIES.map((study, index) => (
-              <div 
+              <Link 
                 key={index}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all"
+                href={`/detail/case-study/${study.slug}`}
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all cursor-pointer"
               >
-                <h3 className="text-lg lg:text-xl font-medium text-white mb-4 lg:mb-6">{study.title}</h3>
+                <h3 className="text-lg lg:text-xl font-medium text-white mb-4 lg:mb-6 group-hover:text-amber-400 transition-colors">{study.title}</h3>
                 <div className="space-y-3 lg:space-y-4 text-xs lg:text-sm">
                   <div>
                     <span className="text-[#a3a3a3] uppercase tracking-wider text-[10px] lg:text-xs">Problem</span>
@@ -483,7 +501,7 @@ export default function PortfolioDesign() {
                     <p className="text-white font-medium mt-1">{study.impact}</p>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           </div>
@@ -547,9 +565,10 @@ export default function PortfolioDesign() {
 
             <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
             {CERTIFICATIONS.map((cert, index) => (
-              <div 
+              <Link 
                 key={index}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                href={`/detail/certification/${cert.slug}`}
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
                   <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10">
@@ -557,10 +576,10 @@ export default function PortfolioDesign() {
                   </div>
                   <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] px-2 lg:px-3 py-1 rounded-full bg-white/5">{cert.date}</span>
                 </div>
-                <h3 className="text-sm lg:text-base font-medium text-white mb-1">{cert.title}</h3>
+                <h3 className="text-sm lg:text-base font-medium text-white mb-1 group-hover:text-cyan-400 transition-colors">{cert.title}</h3>
                 <p className="text-xs lg:text-sm text-cyan-400 mb-1.5 lg:mb-2">{cert.issuer}</p>
                 <p className="text-[10px] lg:text-xs text-[#a3a3a3]">ID: {cert.credentialId}</p>
-              </div>
+              </Link>
             ))}
             </div>
           </div>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Phone } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Link from "next/link"
 
 // Animated background component
@@ -271,38 +272,56 @@ const assistantMessage: Message = {
               </Link>
               
               {/* Quick Action Buttons */}
-              <div className="flex items-center gap-1 lg:gap-2">
-                <a 
-                  href="#resume" 
-                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                  title="View Resume"
-                >
-                  <FileText className="h-4 w-4" />
-                </a>
-                <a 
-                  href="https://linkedin.com/in/yashgoyal" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
-                  title="LinkedIn"
-                >
-                  <Linkedin className="h-4 w-4" />
-                </a>
-                <a 
-                  href="mailto:yash@example.com" 
-                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
-                  title="Email"
-                >
-                  <Mail className="h-4 w-4" />
-                </a>
-                <a 
-                  href="tel:+1234567890" 
-                  className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
-                  title="Phone"
-                >
-                  <Phone className="h-4 w-4" />
-                </a>
-              </div>
+              <TooltipProvider delayDuration={100}>
+                <div className="flex items-center gap-1 lg:gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="#resume" 
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                      >
+                        <FileText className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>View Resume</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="https://linkedin.com/in/yashgoyal" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>LinkedIn</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="mailto:yash@example.com" 
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                      >
+                        <Mail className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>Email</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="tel:+1234567890" 
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                      >
+                        <Phone className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>Phone</TooltipContent>
+                  </Tooltip>
+                </div>
+              </TooltipProvider>
             </div>
           </div>
         </header>
@@ -388,38 +407,56 @@ const assistantMessage: Message = {
             </Link>
             
             {/* Quick Action Buttons */}
-            <div className="flex items-center gap-1 lg:gap-2">
-              <a 
-                href="#resume" 
-                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                title="View Resume"
-              >
-                <FileText className="h-4 w-4" />
-              </a>
-              <a 
-                href="https://linkedin.com/in/yashgoyal" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
-                title="LinkedIn"
-              >
-                <Linkedin className="h-4 w-4" />
-              </a>
-              <a 
-                href="mailto:yash@example.com" 
-                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
-                title="Email"
-              >
-                <Mail className="h-4 w-4" />
-              </a>
-              <a 
-                href="tel:+1234567890" 
-                className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
-                title="Phone"
-              >
-                <Phone className="h-4 w-4" />
-              </a>
-            </div>
+            <TooltipProvider delayDuration={100}>
+              <div className="flex items-center gap-1 lg:gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="#resume" 
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                    >
+                      <FileText className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>View Resume</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="https://linkedin.com/in/yashgoyal" 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                    >
+                      <Linkedin className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>LinkedIn</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="mailto:yash@example.com" 
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                    >
+                      <Mail className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>Email</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="tel:+1234567890" 
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                    >
+                      <Phone className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>Phone</TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
           </div>
         </div>
       </header>

@@ -22,7 +22,17 @@ import {
   ImageIcon,
   Video,
   Play,
+  Layers,
+  Plus,
+  Save,
+  Briefcase,
+  GraduationCap,
+  FolderKanban,
+  Lightbulb,
+  Award,
 } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import Link from "next/link"
 
 interface UploadedDocument {
@@ -95,6 +105,49 @@ export function AdminDashboard() {
   const [mediaTitle, setMediaTitle] = useState("")
   const [mediaDescription, setMediaDescription] = useState("")
   const [mediaTags, setMediaTags] = useState("")
+
+  // Detail Pages state
+  interface DetailPageContent {
+    overview?: string
+    highlights?: string[]
+    achievements?: string[]
+    subjects?: string[]
+    metrics?: { label: string; value: string }[]
+    links?: { label: string; url: string }[]
+  }
+  const [selectedDetailType, setSelectedDetailType] = useState<string>("experience")
+  const [selectedDetailSlug, setSelectedDetailSlug] = useState<string>("")
+  const [detailContent, setDetailContent] = useState<DetailPageContent>({})
+  const [isSavingDetail, setIsSavingDetail] = useState(false)
+  const [detailSaveSuccess, setDetailSaveSuccess] = useState(false)
+
+  // Available cards for each type (must match slugs in /app/design/page.tsx)
+  const DETAIL_CARDS: Record<string, { slug: string; title: string }[]> = {
+    experience: [
+      { slug: "senior-pm-tech-company", title: "Senior Product Manager - Tech Company" },
+      { slug: "pm-startup-inc", title: "Product Manager - Startup Inc" },
+      { slug: "software-engineer-enterprise", title: "Software Engineer - Enterprise Corp" },
+    ],
+    education: [
+      { slug: "mba-business-school", title: "MBA - Business School" },
+      { slug: "btech-computer-science", title: "B.Tech Computer Science - University" },
+    ],
+    project: [
+      { slug: "ai-analytics-platform", title: "AI-Powered Analytics Platform" },
+      { slug: "ecommerce-personalization", title: "E-commerce Personalization Engine" },
+      { slug: "developer-platform", title: "Developer Platform" },
+    ],
+    "case-study": [
+      { slug: "scaling-b2b-saas", title: "Scaling a B2B SaaS Product" },
+      { slug: "reducing-customer-churn", title: "Reducing Customer Churn" },
+    ],
+    certification: [
+      { slug: "aws-solutions-architect", title: "AWS Solutions Architect" },
+      { slug: "product-management-certificate", title: "Product Management Certificate" },
+      { slug: "google-analytics", title: "Google Analytics Certified" },
+      { slug: "scrum-master", title: "Scrum Master Certified" },
+    ],
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -561,7 +614,7 @@ export function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline">Upload</span>
@@ -569,6 +622,10 @@ export function AdminDashboard() {
             <TabsTrigger value="media" className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4" />
               <span className="hidden sm:inline">Media</span>
+            </TabsTrigger>
+            <TabsTrigger value="detail-pages" className="flex items-center gap-2">
+              <Layers className="h-4 w-4" />
+              <span className="hidden sm:inline">Detail Pages</span>
             </TabsTrigger>
             <TabsTrigger value="chunks" className="flex items-center gap-2">
               <Database className="h-4 w-4" />
@@ -864,6 +921,217 @@ export function AdminDashboard() {
                   ))}
                 </div>
               )}
+            </Card>
+          </TabsContent>
+
+          {/* Detail Pages Tab */}
+          <TabsContent value="detail-pages" className="space-y-6">
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Detail Pages Content</h2>
+                  <p className="text-muted-foreground">
+                    Add detailed content for each card on your portfolio. Only filled sections will be displayed.
+                  </p>
+                </div>
+
+                {/* Card Selection */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Category</Label>
+                    <select
+                      value={selectedDetailType}
+                      onChange={(e) => {
+                        setSelectedDetailType(e.target.value)
+                        setSelectedDetailSlug("")
+                        setDetailContent({})
+                        setDetailSaveSuccess(false)
+                      }}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    >
+                      <option value="experience">Experience</option>
+                      <option value="education">Education</option>
+                      <option value="project">Projects</option>
+                      <option value="case-study">Case Studies</option>
+                      <option value="certification">Certifications</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Select Card</Label>
+                    <select
+                      value={selectedDetailSlug}
+                      onChange={async (e) => {
+                        const slug = e.target.value
+                        setSelectedDetailSlug(slug)
+                        setDetailSaveSuccess(false)
+                        if (slug) {
+                          // Fetch existing content
+                          try {
+                            const res = await fetch(`/api/detail/${selectedDetailType}/${slug}`)
+                            if (res.ok) {
+                              const data = await res.json()
+                              setDetailContent(data.content || {})
+                            } else {
+                              setDetailContent({})
+                            }
+                          } catch {
+                            setDetailContent({})
+                          }
+                        }
+                      }}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    >
+                      <option value="">Select a card...</option>
+                      {DETAIL_CARDS[selectedDetailType]?.map((card) => (
+                        <option key={card.slug} value={card.slug}>
+                          {card.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {selectedDetailSlug && (
+                  <div className="space-y-6 pt-4 border-t">
+                    {/* Overview */}
+                    <div className="space-y-2">
+                      <Label>Overview</Label>
+                      <Textarea
+                        placeholder="Detailed description of this experience, project, or education..."
+                        value={detailContent.overview || ""}
+                        onChange={(e) => setDetailContent({ ...detailContent, overview: e.target.value })}
+                        rows={4}
+                      />
+                    </div>
+
+                    {/* Highlights */}
+                    <div className="space-y-2">
+                      <Label>Key Highlights (one per line)</Label>
+                      <Textarea
+                        placeholder="Led team of 8 engineers&#10;Increased revenue by 40%&#10;Launched 3 products"
+                        value={detailContent.highlights?.join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          highlights: e.target.value.split("\n").filter(h => h.trim()) 
+                        })}
+                        rows={4}
+                      />
+                    </div>
+
+                    {/* Achievements */}
+                    <div className="space-y-2">
+                      <Label>Achievements (one per line)</Label>
+                      <Textarea
+                        placeholder="Best Product Award 2023&#10;Dean's List&#10;Patent holder"
+                        value={detailContent.achievements?.join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          achievements: e.target.value.split("\n").filter(a => a.trim()) 
+                        })}
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Subjects (for Education) */}
+                    {selectedDetailType === "education" && (
+                      <div className="space-y-2">
+                        <Label>Subjects/Coursework (comma-separated)</Label>
+                        <Input
+                          placeholder="Machine Learning, Product Strategy, Finance..."
+                          value={detailContent.subjects?.join(", ") || ""}
+                          onChange={(e) => setDetailContent({ 
+                            ...detailContent, 
+                            subjects: e.target.value.split(",").map(s => s.trim()).filter(s => s) 
+                          })}
+                        />
+                      </div>
+                    )}
+
+                    {/* Metrics */}
+                    <div className="space-y-2">
+                      <Label>Metrics (format: Label|Value, one per line)</Label>
+                      <Textarea
+                        placeholder="Revenue Growth|40%&#10;Team Size|8 engineers&#10;Users|2M+"
+                        value={detailContent.metrics?.map(m => `${m.label}|${m.value}`).join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          metrics: e.target.value.split("\n")
+                            .filter(line => line.includes("|"))
+                            .map(line => {
+                              const [label, value] = line.split("|")
+                              return { label: label?.trim() || "", value: value?.trim() || "" }
+                            })
+                        })}
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Links */}
+                    <div className="space-y-2">
+                      <Label>Links (format: Label|URL, one per line)</Label>
+                      <Textarea
+                        placeholder="GitHub|https://github.com/...&#10;Live Demo|https://..."
+                        value={detailContent.links?.map(l => `${l.label}|${l.url}`).join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          links: e.target.value.split("\n")
+                            .filter(line => line.includes("|"))
+                            .map(line => {
+                              const [label, url] = line.split("|")
+                              return { label: label?.trim() || "", url: url?.trim() || "" }
+                            })
+                        })}
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Save Button */}
+                    <div className="flex items-center gap-4">
+                      <Button
+                        onClick={async () => {
+                          setIsSavingDetail(true)
+                          setDetailSaveSuccess(false)
+                          try {
+                            const res = await fetch(`/api/detail/${selectedDetailType}/${selectedDetailSlug}`, {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify(detailContent)
+                            })
+                            if (res.ok) {
+                              setDetailSaveSuccess(true)
+                            }
+                          } catch (error) {
+                            console.error("Error saving detail:", error)
+                          } finally {
+                            setIsSavingDetail(false)
+                          }
+                        }}
+                        disabled={isSavingDetail}
+                      >
+                        {isSavingDetail ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Save className="h-4 w-4 mr-2" />
+                        )}
+                        Save Content
+                      </Button>
+                      
+                      {detailSaveSuccess && (
+                        <span className="text-sm text-green-600">Content saved successfully!</span>
+                      )}
+                      
+                      <Link
+                        href={`/detail/${selectedDetailType}/${selectedDetailSlug}`}
+                        target="_blank"
+                        className="text-sm text-muted-foreground hover:text-foreground underline"
+                      >
+                        Preview Page
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </Card>
           </TabsContent>
 
