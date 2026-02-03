@@ -454,7 +454,7 @@ export default function PortfolioDesign() {
               <Link 
                 key={index}
                 href={`/detail/experience/${exp.slug}`}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
                   <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10">
@@ -496,7 +496,7 @@ export default function PortfolioDesign() {
               <Link 
                 key={index}
                 href={`/detail/education/${edu.slug}`}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
                   <div className="p-2 lg:p-2.5 rounded-lg bg-violet-500/10">
@@ -528,7 +528,7 @@ export default function PortfolioDesign() {
               <Link 
                 key={index}
                 href={`/detail/project/${project.slug}`}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
                 {/* Project Image Placeholder */}
                 <div className="aspect-video rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-3 lg:mb-4 flex items-center justify-center">
@@ -564,7 +564,7 @@ export default function PortfolioDesign() {
               <Link 
                 key={index}
                 href={`/detail/case-study/${study.slug}`}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all cursor-pointer"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer hover:scale-[1.03] hover:shadow-xl hover:shadow-violet-500/5"
               >
                 <h3 className="text-lg lg:text-xl font-medium text-white mb-4 lg:mb-6 group-hover:text-amber-400 transition-colors">{study.title}</h3>
                 <div className="space-y-3 lg:space-y-4 text-xs lg:text-sm">
@@ -608,7 +608,7 @@ export default function PortfolioDesign() {
               return (
                 <div 
                   key={category}
-                  className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all"
+                  className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-emerald-500/5"
                 >
                   <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
                     <div className={`p-2 lg:p-2.5 rounded-lg ${color.bg}`}>
@@ -648,7 +648,7 @@ export default function PortfolioDesign() {
               <Link 
                 key={index}
                 href={`/detail/certification/${cert.slug}`}
-                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all cursor-pointer"
+                className="group p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
                   <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10">
