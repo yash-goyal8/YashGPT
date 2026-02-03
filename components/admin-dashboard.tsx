@@ -52,6 +52,28 @@ interface StoredChunk {
   createdAt: string
 }
 
+interface MediaItem {
+  id: string
+  url: string
+  filename: string
+  type: "image" | "video"
+  mimeType: string
+  title: string
+  description: string
+  tags: string[]
+  size: number
+  uploadedAt: string
+}
+
+interface DetailPageContent {
+  overview?: string
+  highlights?: string[]
+  achievements?: string[]
+  subjects?: string[]
+  metrics?: { label: string; value: string }[]
+  links?: { label: string; url: string }[]
+}
+
 export function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState("")
@@ -87,18 +109,6 @@ export function AdminDashboard() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   // Media state
-  interface MediaItem {
-    id: string
-    url: string
-    filename: string
-    type: "image" | "video"
-    mimeType: string
-    title: string
-    description: string
-    tags: string[]
-    size: number
-    uploadedAt: string
-  }
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [isLoadingMedia, setIsLoadingMedia] = useState(false)
   const [isUploadingMedia, setIsUploadingMedia] = useState(false)
@@ -107,14 +117,6 @@ export function AdminDashboard() {
   const [mediaTags, setMediaTags] = useState("")
 
   // Detail Pages state
-  interface DetailPageContent {
-    overview?: string
-    highlights?: string[]
-    achievements?: string[]
-    subjects?: string[]
-    metrics?: { label: string; value: string }[]
-    links?: { label: string; url: string }[]
-  }
   const [selectedDetailType, setSelectedDetailType] = useState<string>("experience")
   const [selectedDetailSlug, setSelectedDetailSlug] = useState<string>("")
   const [detailContent, setDetailContent] = useState<DetailPageContent>({})
