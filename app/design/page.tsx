@@ -649,6 +649,28 @@ export default function PortfolioDesign() {
                   Send Email
                 </a>
               </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-white/20 bg-transparent hover:bg-white/5 text-white h-10 lg:h-11 text-sm"
+                asChild
+              >
+                <a href="tel:+1234567890">
+                  <Phone className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
+                  Call Me
+                </a>
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-white/20 bg-transparent hover:bg-white/5 text-white h-10 lg:h-11 text-sm"
+                asChild
+              >
+                <a href="#resume" target="_blank" rel="noopener noreferrer">
+                  <FileText className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
+                  View Resume
+                </a>
+              </Button>
             </div>
           </div>
         </div>
