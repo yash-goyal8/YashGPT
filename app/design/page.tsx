@@ -21,6 +21,7 @@ import {
   Award
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { MatrixBackground } from "@/components/matrix-background"
 
 // Types for card data
 interface ExperienceCard {
@@ -229,22 +230,12 @@ const CERTIFICATIONS = [
 
 export default function PortfolioDesign() {
   const [cards, setCards] = useState<CardsData | null>(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   
   useEffect(() => {
     fetch("/api/cards")
       .then(res => res.json())
       .then(data => setCards(data))
       .catch(() => setCards(null))
-  }, [])
-  
-  // Track mouse position for background effect
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
   
   // Use fetched data or fallback to defaults
@@ -257,41 +248,14 @@ export default function PortfolioDesign() {
   
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5] relative overflow-hidden">
-      {/* Animated Background Gradient that follows cursor */}
-      <div 
-        className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300"
-        style={{
-          background: `
-            radial-gradient(800px circle at ${mousePosition.x}px ${mousePosition.y}px, 
-              rgba(6, 182, 212, 0.07), 
-              transparent 40%
-            ),
-            radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, 
-              rgba(139, 92, 246, 0.05), 
-              transparent 40%
-            )
-          `,
-        }}
-      />
+      {/* Interactive Matrix Background */}
+      <MatrixBackground />
       
-      {/* Static ambient glow spots */}
+      {/* Subtle ambient glow */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-[128px] animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-violet-500/10 rounded-full blur-[128px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
-        <div className="absolute top-3/4 left-1/3 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '12s', animationDelay: '4s' }} />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-[150px]" />
       </div>
-      
-      {/* Grid pattern overlay */}
-      <div 
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '64px 64px',
-        }}
-      />
       
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-40">
