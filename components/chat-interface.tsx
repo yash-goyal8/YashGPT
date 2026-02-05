@@ -260,7 +260,7 @@ const assistantMessage: Message = {
         <header className="relative z-10 px-4 py-4">
           <div className="max-w-6xl mx-auto">
             <div className="px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-              <Link href="/design" className="flex items-center gap-2 lg:gap-3 group">
+              <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
                 <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
                 <div>
                   <h1 className="font-semibold flex items-center gap-2 text-sm lg:text-base text-white">
@@ -392,7 +392,7 @@ const assistantMessage: Message = {
       <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4 flex-shrink-0">
         <div className="max-w-5xl xl:max-w-6xl mx-auto">
           <div className="px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-            <Link href="/design" className="flex items-center gap-2 lg:gap-3 group">
+            <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
               <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
               <div>
                 <h1 className="font-semibold flex items-center gap-2 text-sm lg:text-base text-white">

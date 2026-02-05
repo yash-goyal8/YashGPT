@@ -131,7 +131,7 @@ export default function DetailPage() {
         <div className="text-center">
           <p className="text-[#a3a3a3] mb-4">Content not available yet</p>
           <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/5">
-            <Link href="/design">
+            <Link href="/">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Portfolio
             </Link>
@@ -151,7 +151,7 @@ export default function DetailPage() {
       <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4">
         <div className="mx-3 lg:mx-4">
           <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-            <Link href="/design" className="flex items-center gap-2 lg:gap-3 group">
+            <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
               <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
               <span className="text-sm lg:text-base text-[#a3a3a3] group-hover:text-white transition-colors">Back to Portfolio</span>
             </Link>
