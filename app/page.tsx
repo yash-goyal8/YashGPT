@@ -270,6 +270,7 @@ export default function PortfolioDesign() {
               <a href="#education" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Education</a>
               <a href="#projects" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
               <a href="#case-studies" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all whitespace-nowrap">Case Studies</a>
+              <a href="#skills" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Skills</a>
               <a href="#contact" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
             </div>
             <Button 
@@ -589,7 +590,7 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Skills Section */}
-      <section className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
+      <section id="skills" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
@@ -751,6 +752,17 @@ export default function PortfolioDesign() {
                   Resume
                 </a>
               </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
+                asChild
+              >
+                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
+                  LinkedIn
+                </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -759,13 +771,8 @@ export default function PortfolioDesign() {
       {/* Footer */}
       <footer className="py-4 sm:py-6 lg:py-8 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
-          <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">
-          <span>2025 Yash Goyal</span>
-            <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
-              <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-              <a href="#" className="hover:text-white transition-colors">GitHub</a>
-              <a href="#" className="hover:text-white transition-colors">Twitter</a>
-            </div>
+          <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8 flex justify-center items-center text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">
+            <span>2025 Yash Goyal</span>
           </div>
         </div>
       </footer>
