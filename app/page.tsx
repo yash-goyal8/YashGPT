@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { 
   FileText, 
   Mail, 
@@ -228,8 +228,76 @@ const CERTIFICATIONS = [
   },
 ]
 
+// Section reveal animation component
+function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsVisible(true), delay)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [delay])
+  
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${
+        isVisible 
+          ? "opacity-100 translate-y-0" 
+          : "opacity-0 translate-y-8"
+      } ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Hook for tracking active section and scroll progress
+function useScrollSpy(sectionIds: string[]) {
+  const [activeSection, setActiveSection] = useState(sectionIds[0])
+  const [scrollProgress, setScrollProgress] = useState(0)
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      // Scroll progress
+      const scrollTop = window.scrollY
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0)
+      
+      // Active section detection
+      const scrollPosition = scrollTop + 120
+      
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sectionIds[i])
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(sectionIds[i])
+          break
+        }
+      }
+    }
+    
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [sectionIds])
+  
+  return { activeSection, scrollProgress }
+}
+
+const NAV_SECTIONS = ["about", "experience", "education", "projects", "case-studies", "skills", "contact"]
+
 export default function PortfolioDesign() {
   const [cards, setCards] = useState<CardsData | null>(null)
+  const { activeSection, scrollProgress } = useScrollSpy(NAV_SECTIONS)
   
   useEffect(() => {
     fetch("/api/cards")
@@ -257,6 +325,14 @@ export default function PortfolioDesign() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-violet-500/5 rounded-full blur-[150px]" />
       </div>
       
+      {/* Scroll Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-[2px] bg-transparent">
+        <div 
+          className="h-full bg-gradient-to-r from-cyan-400 via-violet-400 to-cyan-400 transition-all duration-150 ease-out shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+      
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-40">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8 mt-2 sm:mt-3 lg:mt-4">
@@ -264,18 +340,42 @@ export default function PortfolioDesign() {
             <a href="#about" className="font-semibold text-base lg:text-lg text-white hover:text-cyan-400 transition-colors">
               YG
             </a>
-            <div className="hidden md:flex items-center gap-0.5 lg:gap-1 text-xs lg:text-sm">
-              <a href="#about" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">About</a>
-              <a href="#experience" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Experience</a>
-              <a href="#education" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Education</a>
-              <a href="#projects" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
-              <a href="#case-studies" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all whitespace-nowrap">Case Studies</a>
-              <a href="#skills" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Skills</a>
-              <a href="#contact" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
+            <div className="hidden md:flex items-center gap-0.5 lg:gap-1 text-xs lg:text-sm relative">
+              {[
+                { id: "about", label: "About" },
+                { id: "experience", label: "Experience" },
+                { id: "education", label: "Education" },
+                { id: "projects", label: "Projects" },
+                { id: "case-studies", label: "Case Studies" },
+                { id: "skills", label: "Skills" },
+                { id: "contact", label: "Contact" },
+              ].map((item) => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  className={`relative px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg whitespace-nowrap transition-all duration-300 group
+                    ${activeSection === item.id
+                      ? "text-white"
+                      : "text-[#a3a3a3] hover:text-white"
+                    }`}
+                >
+                  {/* Active indicator pill */}
+                  {activeSection === item.id && (
+                    <span className="absolute inset-0 rounded-lg bg-white/10 animate-nav-pill" />
+                  )}
+                  {/* Hover glow effect */}
+                  <span className="absolute inset-0 rounded-lg bg-white/0 group-hover:bg-white/5 transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.08)] group-hover:scale-105" />
+                  <span className="relative z-10">{item.label}</span>
+                  {/* Active dot indicator */}
+                  {activeSection === item.id && (
+                    <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(6,182,212,0.8)] animate-pulse" />
+                  )}
+                </a>
+              ))}
             </div>
             <Button 
               asChild
-              className="bg-white text-black hover:bg-white/90 font-medium rounded-lg lg:rounded-xl h-8 sm:h-9 lg:h-10 text-xs sm:text-sm px-3 sm:px-4"
+              className="bg-white text-black hover:bg-white/90 font-medium rounded-lg lg:rounded-xl h-8 sm:h-9 lg:h-10 text-xs sm:text-sm px-3 sm:px-4 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all duration-300 hover:scale-[1.02]"
             >
               <Link href="/chat">
                 <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5 lg:mr-2" />
@@ -445,15 +545,17 @@ export default function PortfolioDesign() {
       <section id="experience" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+          <RevealOnScroll>
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
             <Briefcase className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Experience</h2>
           </div>
+          </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {experienceData.map((exp, index) => (
+              <RevealOnScroll key={index} delay={index * 100}>
               <Link 
-                key={index}
                 href={`/detail/experience/${exp.slug}`}
                 className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
@@ -477,6 +579,7 @@ export default function PortfolioDesign() {
                   ))}
                 </div>
               </Link>
+              </RevealOnScroll>
             ))}
           </div>
           </div>
@@ -487,15 +590,17 @@ export default function PortfolioDesign() {
       <section id="education" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+          <RevealOnScroll>
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
             <GraduationCap className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Education</h2>
           </div>
+          </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {educationData.map((edu, index) => (
+              <RevealOnScroll key={index} delay={index * 100}>
               <Link 
-                key={index}
                 href={`/detail/education/${edu.slug}`}
                 className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
@@ -509,6 +614,7 @@ export default function PortfolioDesign() {
                 <p className="text-[10px] sm:text-xs lg:text-sm text-violet-400 mb-1.5 sm:mb-2 lg:mb-3">{edu.school}</p>
                 <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] leading-relaxed">{edu.focus}</p>
               </Link>
+              </RevealOnScroll>
             ))}
           </div>
           </div>
@@ -519,15 +625,17 @@ export default function PortfolioDesign() {
       <section id="projects" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+          <RevealOnScroll>
           <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
             <FolderKanban className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Projects</h2>
           </div>
+          </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {projectsData.map((project, index) => (
+              <RevealOnScroll key={index} delay={index * 100}>
               <Link 
-                key={index}
                 href={`/detail/project/${project.slug}`}
                 className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
@@ -545,6 +653,7 @@ export default function PortfolioDesign() {
                   ))}
                 </div>
               </Link>
+              </RevealOnScroll>
             ))}
           </div>
           </div>
@@ -555,15 +664,17 @@ export default function PortfolioDesign() {
       <section id="case-studies" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+            <RevealOnScroll>
             <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
               <Lightbulb className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
             <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Case Studies</h2>
           </div>
+          </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {caseStudiesData.map((study, index) => (
+              <RevealOnScroll key={index} delay={index * 100}>
               <Link 
-                key={index}
                 href={`/detail/case-study/${study.slug}`}
                 className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-xl hover:shadow-violet-500/5"
               >
@@ -583,6 +694,7 @@ export default function PortfolioDesign() {
                   </div>
                 </div>
               </Link>
+              </RevealOnScroll>
             ))}
           </div>
           </div>
@@ -593,10 +705,12 @@ export default function PortfolioDesign() {
       <section id="skills" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+            <RevealOnScroll>
             <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
               <Code2 className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
               <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
             </div>
+            </RevealOnScroll>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
               {Object.entries(skillsData).map(([category, skills], index) => {
@@ -607,8 +721,8 @@ export default function PortfolioDesign() {
               ]
               const color = colors[index % colors.length]
               return (
-                <div 
-                  key={category}
+                <RevealOnScroll key={category} delay={index * 80}>
+                <div
                   className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-xl hover:shadow-emerald-500/5"
                 >
                   <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
@@ -628,6 +742,7 @@ export default function PortfolioDesign() {
                     ))}
                   </div>
                 </div>
+                </RevealOnScroll>
               )
             })}
             </div>
@@ -639,15 +754,17 @@ export default function PortfolioDesign() {
       <section className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+            <RevealOnScroll>
             <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
               <Award className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
               <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
             </div>
+            </RevealOnScroll>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
             {certificationsData.map((cert, index) => (
+              <RevealOnScroll key={index} delay={index * 80}>
               <Link 
-                key={index}
                 href={`/detail/certification/${cert.slug}`}
                 className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-xl hover:shadow-cyan-500/5"
               >
@@ -661,6 +778,7 @@ export default function PortfolioDesign() {
                 <p className="text-[10px] sm:text-xs lg:text-sm text-cyan-400 mb-1 sm:mb-1.5 lg:mb-2 line-clamp-1">{cert.issuer}</p>
                 <p className="text-[8px] sm:text-[10px] lg:text-xs text-[#a3a3a3] truncate">ID: {cert.credentialId}</p>
               </Link>
+              </RevealOnScroll>
             ))}
             </div>
           </div>
@@ -671,30 +789,38 @@ export default function PortfolioDesign() {
       <section className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+            <RevealOnScroll>
             <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
               <Info className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
               <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Additional Information</h2>
             </div>
+            </RevealOnScroll>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8 text-[10px] sm:text-xs lg:text-sm">
+              <RevealOnScroll delay={0}>
               <div>
                 <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Interests</h3>
                 <p className="text-[#a3a3a3] leading-relaxed">
                   AI/ML, Startups, Product-Led Growth, Building in Public, Open Source
                 </p>
               </div>
+              </RevealOnScroll>
+              <RevealOnScroll delay={100}>
               <div>
                 <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Languages</h3>
                 <p className="text-[#a3a3a3] leading-relaxed">
                   English (Native), Hindi (Native), Spanish (Basic)
                 </p>
               </div>
+              </RevealOnScroll>
+              <RevealOnScroll delay={200}>
               <div>
                 <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Location</h3>
                 <p className="text-[#a3a3a3] leading-relaxed">
                   San Francisco Bay Area · Open to Remote
                 </p>
               </div>
+              </RevealOnScroll>
             </div>
           </div>
         </div>
@@ -704,10 +830,13 @@ export default function PortfolioDesign() {
       <section id="contact" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8 text-center">
+            <RevealOnScroll>
             <h2 className="text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl font-bold text-white mb-2 sm:mb-3 lg:mb-4">Let's Connect</h2>
             <p className="text-[#a3a3a3] text-xs sm:text-sm lg:text-base max-w-xl mx-auto mb-4 sm:mb-6 lg:mb-8">
               Whether you want to discuss opportunities, collaborate on a project, or just say hi - I'd love to hear from you.
             </p>
+            </RevealOnScroll>
+            <RevealOnScroll delay={200}>
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4">
               <Button 
                 size="lg"
@@ -764,6 +893,7 @@ export default function PortfolioDesign() {
                 </a>
               </Button>
             </div>
+            </RevealOnScroll>
           </div>
         </div>
       </section>
