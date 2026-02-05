@@ -22,7 +22,19 @@ import {
   ImageIcon,
   Video,
   Play,
+  Layers,
+  Plus,
+  Save,
+  Briefcase,
+  GraduationCap,
+  FolderKanban,
+  Lightbulb,
+  Award,
+  Edit3,
+  LayoutGrid,
 } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import Link from "next/link"
 
 interface UploadedDocument {
@@ -40,6 +52,28 @@ interface StoredChunk {
   chunkIndex: number
   tokenCount: number
   createdAt: string
+}
+
+interface MediaItem {
+  id: string
+  url: string
+  filename: string
+  type: "image" | "video"
+  mimeType: string
+  title: string
+  description: string
+  tags: string[]
+  size: number
+  uploadedAt: string
+}
+
+interface DetailPageContent {
+  overview?: string
+  highlights?: string[]
+  achievements?: string[]
+  subjects?: string[]
+  metrics?: { label: string; value: string }[]
+  links?: { label: string; url: string }[]
 }
 
 export function AdminDashboard() {
@@ -77,24 +111,98 @@ export function AdminDashboard() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   // Media state
-  interface MediaItem {
-    id: string
-    url: string
-    filename: string
-    type: "image" | "video"
-    mimeType: string
-    title: string
-    description: string
-    tags: string[]
-    size: number
-    uploadedAt: string
-  }
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [isLoadingMedia, setIsLoadingMedia] = useState(false)
   const [isUploadingMedia, setIsUploadingMedia] = useState(false)
   const [mediaTitle, setMediaTitle] = useState("")
   const [mediaDescription, setMediaDescription] = useState("")
   const [mediaTags, setMediaTags] = useState("")
+
+  // Detail Pages state
+  const [selectedDetailType, setSelectedDetailType] = useState<string>("experience")
+  const [selectedDetailSlug, setSelectedDetailSlug] = useState<string>("")
+  const [detailContent, setDetailContent] = useState<DetailPageContent>({})
+  const [isSavingDetail, setIsSavingDetail] = useState(false)
+  const [detailSaveSuccess, setDetailSaveSuccess] = useState(false)
+
+  // Card Manager state
+  const [allCards, setAllCards] = useState<Record<string, unknown[]>>({})
+  const [isLoadingCards, setIsLoadingCards] = useState(false)
+  const [cardManagerCategory, setCardManagerCategory] = useState<string>("experience")
+  const [editingCard, setEditingCard] = useState<Record<string, unknown> | null>(null)
+  const [isAddingCard, setIsAddingCard] = useState(false)
+  const [isSavingCard, setIsSavingCard] = useState(false)
+  const [cardSaveSuccess, setCardSaveSuccess] = useState(false)
+
+  // Fetch cards from API
+  const fetchCards = async () => {
+    setIsLoadingCards(true)
+    try {
+      const res = await fetch("/api/cards")
+      if (res.ok) {
+        const data = await res.json()
+        setAllCards(data)
+      }
+    } catch (error) {
+      console.error("Error fetching cards:", error)
+    } finally {
+      setIsLoadingCards(false)
+    }
+  }
+
+  // Load cards on mount
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCards()
+    }
+  }, [isAuthenticated])
+
+  // Available cards for each type (dynamically loaded from API)
+  const getDetailCards = (): Record<string, { slug: string; title: string }[]> => {
+    const cards: Record<string, { slug: string; title: string }[]> = {
+      experience: [],
+      education: [],
+      project: [],
+      "case-study": [],
+      certification: [],
+    }
+    
+    // Map allCards to detail cards format
+    if (allCards.experience) {
+      cards.experience = (allCards.experience as { slug: string; role?: string; company?: string }[]).map(c => ({
+        slug: c.slug,
+        title: `${c.role || "Role"} - ${c.company || "Company"}`
+      }))
+    }
+    if (allCards.education) {
+      cards.education = (allCards.education as { slug: string; degree?: string; school?: string }[]).map(c => ({
+        slug: c.slug,
+        title: `${c.degree || "Degree"} - ${c.school || "School"}`
+      }))
+    }
+    if (allCards.project) {
+      cards.project = (allCards.project as { slug: string; title?: string }[]).map(c => ({
+        slug: c.slug,
+        title: c.title || "Project"
+      }))
+    }
+    if (allCards["case-study"]) {
+      cards["case-study"] = (allCards["case-study"] as { slug: string; title?: string }[]).map(c => ({
+        slug: c.slug,
+        title: c.title || "Case Study"
+      }))
+    }
+    if (allCards.certification) {
+      cards.certification = (allCards.certification as { slug: string; title?: string }[]).map(c => ({
+        slug: c.slug,
+        title: c.title || "Certification"
+      }))
+    }
+    
+    return cards
+  }
+  
+  const DETAIL_CARDS = getDetailCards()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -561,7 +669,11 @@ export function AdminDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="cards" className="flex items-center gap-2">
+              <LayoutGrid className="h-4 w-4" />
+              <span className="hidden sm:inline">Cards</span>
+            </TabsTrigger>
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline">Upload</span>
@@ -569,6 +681,10 @@ export function AdminDashboard() {
             <TabsTrigger value="media" className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4" />
               <span className="hidden sm:inline">Media</span>
+            </TabsTrigger>
+            <TabsTrigger value="detail-pages" className="flex items-center gap-2">
+              <Layers className="h-4 w-4" />
+              <span className="hidden sm:inline">Details</span>
             </TabsTrigger>
             <TabsTrigger value="chunks" className="flex items-center gap-2">
               <Database className="h-4 w-4" />
@@ -583,6 +699,401 @@ export function AdminDashboard() {
               <span className="hidden sm:inline">Settings</span>
             </TabsTrigger>
           </TabsList>
+
+          {/* Card Manager Tab */}
+          <TabsContent value="cards" className="space-y-6">
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">Card Manager</h2>
+                    <p className="text-muted-foreground">
+                      Add, edit, or remove cards displayed on your portfolio. Changes are saved to the database.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setIsAddingCard(true)
+                      setEditingCard(null)
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Card
+                  </Button>
+                </div>
+
+                {/* Category Selection */}
+                <div className="space-y-2">
+                  <Label>Category</Label>
+                  <select
+                    value={cardManagerCategory}
+                    onChange={(e) => {
+                      setCardManagerCategory(e.target.value)
+                      setEditingCard(null)
+                      setIsAddingCard(false)
+                    }}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="experience">Experience</option>
+                    <option value="education">Education</option>
+                    <option value="project">Projects</option>
+                    <option value="case-study">Case Studies</option>
+                    <option value="certification">Certifications</option>
+                  </select>
+                </div>
+
+                {/* Existing Cards List */}
+                {isLoadingCards ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <Label>Existing Cards ({(allCards[cardManagerCategory] as unknown[])?.length || 0})</Label>
+                    <div className="grid gap-3">
+                      {(allCards[cardManagerCategory] as Record<string, unknown>[])?.map((card, index) => (
+                        <div
+                          key={card.slug as string || index}
+                          className="flex items-center justify-between p-4 rounded-lg border bg-muted/30"
+                        >
+                          <div className="flex-1">
+                            <p className="font-medium">
+                              {cardManagerCategory === "experience" && `${card.role} at ${card.company}`}
+                              {cardManagerCategory === "education" && `${card.degree} - ${card.school}`}
+                              {cardManagerCategory === "project" && (card.title as string)}
+                              {cardManagerCategory === "case-study" && (card.title as string)}
+                              {cardManagerCategory === "certification" && (card.title as string)}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {cardManagerCategory === "experience" && (card.period as string)}
+                              {cardManagerCategory === "education" && (card.period as string)}
+                              {cardManagerCategory === "project" && (card.description as string)?.slice(0, 60) + "..."}
+                              {cardManagerCategory === "case-study" && (card.problem as string)?.slice(0, 60) + "..."}
+                              {cardManagerCategory === "certification" && `${card.issuer} - ${card.date}`}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setEditingCard(card)
+                                setIsAddingCard(false)
+                              }}
+                            >
+                              <Edit3 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-destructive hover:text-destructive"
+                              onClick={async () => {
+                                if (confirm("Are you sure you want to delete this card?")) {
+                                  try {
+                                    await fetch(`/api/cards?category=${cardManagerCategory}&slug=${card.slug}`, {
+                                      method: "DELETE"
+                                    })
+                                    fetchCards()
+                                  } catch (error) {
+                                    console.error("Error deleting card:", error)
+                                  }
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Add/Edit Card Form */}
+                {(isAddingCard || editingCard) && (
+                  <div className="border-t pt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">{isAddingCard ? "Add New Card" : "Edit Card"}</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingCard(null)
+                          setIsAddingCard(false)
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    {/* Experience Fields */}
+                    {cardManagerCategory === "experience" && (
+                      <div className="grid gap-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Role/Title *</Label>
+                            <Input
+                              placeholder="Senior Product Manager"
+                              value={(editingCard?.role as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, role: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Company *</Label>
+                            <Input
+                              placeholder="Tech Company"
+                              value={(editingCard?.company as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, company: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Period</Label>
+                          <Input
+                            placeholder="2022 - Present"
+                            value={(editingCard?.period as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, period: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Description</Label>
+                          <Textarea
+                            placeholder="Brief description of your role..."
+                            value={(editingCard?.description as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, description: e.target.value })}
+                            rows={3}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Skills (comma-separated)</Label>
+                          <Input
+                            placeholder="Product Strategy, Data Analytics, Leadership"
+                            value={(editingCard?.skills as string[])?.join(", ") || ""}
+                            onChange={(e) => setEditingCard({ 
+                              ...editingCard, 
+                              skills: e.target.value.split(",").map(s => s.trim()).filter(s => s)
+                            })}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Education Fields */}
+                    {cardManagerCategory === "education" && (
+                      <div className="grid gap-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Degree *</Label>
+                            <Input
+                              placeholder="MBA"
+                              value={(editingCard?.degree as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, degree: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>School *</Label>
+                            <Input
+                              placeholder="Business School"
+                              value={(editingCard?.school as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, school: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Period</Label>
+                            <Input
+                              placeholder="2023 - 2025"
+                              value={(editingCard?.period as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, period: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Focus Area</Label>
+                            <Input
+                              placeholder="Technology & Strategy"
+                              value={(editingCard?.focus as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, focus: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Project Fields */}
+                    {cardManagerCategory === "project" && (
+                      <div className="grid gap-4">
+                        <div className="space-y-2">
+                          <Label>Project Title *</Label>
+                          <Input
+                            placeholder="AI-Powered Analytics Platform"
+                            value={(editingCard?.title as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, title: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Description</Label>
+                          <Textarea
+                            placeholder="Brief description of the project..."
+                            value={(editingCard?.description as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, description: e.target.value })}
+                            rows={3}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Technologies (comma-separated)</Label>
+                          <Input
+                            placeholder="Python, React, TensorFlow, AWS"
+                            value={(editingCard?.tech as string[])?.join(", ") || ""}
+                            onChange={(e) => setEditingCard({ 
+                              ...editingCard, 
+                              tech: e.target.value.split(",").map(s => s.trim()).filter(s => s)
+                            })}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Case Study Fields */}
+                    {cardManagerCategory === "case-study" && (
+                      <div className="grid gap-4">
+                        <div className="space-y-2">
+                          <Label>Title *</Label>
+                          <Input
+                            placeholder="Scaling a B2B SaaS Product"
+                            value={(editingCard?.title as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, title: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Problem</Label>
+                          <Textarea
+                            placeholder="Describe the problem..."
+                            value={(editingCard?.problem as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, problem: e.target.value })}
+                            rows={2}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Solution</Label>
+                          <Textarea
+                            placeholder="Describe the solution..."
+                            value={(editingCard?.solution as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, solution: e.target.value })}
+                            rows={2}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Impact</Label>
+                          <Input
+                            placeholder="3x enterprise deals in 6 months"
+                            value={(editingCard?.impact as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, impact: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Certification Fields */}
+                    {cardManagerCategory === "certification" && (
+                      <div className="grid gap-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Title *</Label>
+                            <Input
+                              placeholder="AWS Solutions Architect"
+                              value={(editingCard?.title as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, title: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Issuer *</Label>
+                            <Input
+                              placeholder="Amazon Web Services"
+                              value={(editingCard?.issuer as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, issuer: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Date</Label>
+                            <Input
+                              placeholder="2023"
+                              value={(editingCard?.date as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, date: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Credential ID</Label>
+                            <Input
+                              placeholder="AWS-SAA-123456"
+                              value={(editingCard?.credentialId as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, credentialId: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Save Button */}
+                    <div className="flex items-center gap-4 pt-4">
+                      <Button
+                        onClick={async () => {
+                          setIsSavingCard(true)
+                          setCardSaveSuccess(false)
+                          try {
+                            // Generate slug if new card
+                            const cardData = { ...editingCard }
+                            if (isAddingCard || !cardData.slug) {
+                              const titleField = cardManagerCategory === "experience" 
+                                ? `${cardData.role}-${cardData.company}` 
+                                : cardManagerCategory === "education" 
+                                ? `${cardData.degree}-${cardData.school}`
+                                : cardData.title
+                              cardData.slug = (titleField as string)?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+                            }
+                            
+                            await fetch("/api/cards", {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                category: cardManagerCategory,
+                                slug: cardData.slug,
+                                data: cardData
+                              })
+                            })
+                            
+                            await fetchCards()
+                            setCardSaveSuccess(true)
+                            setEditingCard(null)
+                            setIsAddingCard(false)
+                          } catch (error) {
+                            console.error("Error saving card:", error)
+                          } finally {
+                            setIsSavingCard(false)
+                          }
+                        }}
+                        disabled={isSavingCard}
+                      >
+                        {isSavingCard ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Save className="h-4 w-4 mr-2" />
+                        )}
+                        {isAddingCard ? "Add Card" : "Save Changes"}
+                      </Button>
+                      
+                      {cardSaveSuccess && (
+                        <span className="text-sm text-green-600">Card saved successfully!</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          </TabsContent>
 
           {/* Upload Tab */}
           <TabsContent value="upload" className="space-y-6">
@@ -864,6 +1375,217 @@ export function AdminDashboard() {
                   ))}
                 </div>
               )}
+            </Card>
+          </TabsContent>
+
+          {/* Detail Pages Tab */}
+          <TabsContent value="detail-pages" className="space-y-6">
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Detail Pages Content</h2>
+                  <p className="text-muted-foreground">
+                    Add detailed content for each card on your portfolio. Only filled sections will be displayed.
+                  </p>
+                </div>
+
+                {/* Card Selection */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Category</Label>
+                    <select
+                      value={selectedDetailType}
+                      onChange={(e) => {
+                        setSelectedDetailType(e.target.value)
+                        setSelectedDetailSlug("")
+                        setDetailContent({})
+                        setDetailSaveSuccess(false)
+                      }}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    >
+                      <option value="experience">Experience</option>
+                      <option value="education">Education</option>
+                      <option value="project">Projects</option>
+                      <option value="case-study">Case Studies</option>
+                      <option value="certification">Certifications</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Select Card</Label>
+                    <select
+                      value={selectedDetailSlug}
+                      onChange={async (e) => {
+                        const slug = e.target.value
+                        setSelectedDetailSlug(slug)
+                        setDetailSaveSuccess(false)
+                        if (slug) {
+                          // Fetch existing content
+                          try {
+                            const res = await fetch(`/api/detail/${selectedDetailType}/${slug}`)
+                            if (res.ok) {
+                              const data = await res.json()
+                              setDetailContent(data.content || {})
+                            } else {
+                              setDetailContent({})
+                            }
+                          } catch {
+                            setDetailContent({})
+                          }
+                        }
+                      }}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    >
+                      <option value="">Select a card...</option>
+                      {DETAIL_CARDS[selectedDetailType]?.map((card) => (
+                        <option key={card.slug} value={card.slug}>
+                          {card.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {selectedDetailSlug && (
+                  <div className="space-y-6 pt-4 border-t">
+                    {/* Overview */}
+                    <div className="space-y-2">
+                      <Label>Overview</Label>
+                      <Textarea
+                        placeholder="Detailed description of this experience, project, or education..."
+                        value={detailContent.overview || ""}
+                        onChange={(e) => setDetailContent({ ...detailContent, overview: e.target.value })}
+                        rows={4}
+                      />
+                    </div>
+
+                    {/* Highlights */}
+                    <div className="space-y-2">
+                      <Label>Key Highlights (one per line)</Label>
+                      <Textarea
+                        placeholder="Led team of 8 engineers&#10;Increased revenue by 40%&#10;Launched 3 products"
+                        value={detailContent.highlights?.join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          highlights: e.target.value.split("\n").filter(h => h.trim()) 
+                        })}
+                        rows={4}
+                      />
+                    </div>
+
+                    {/* Achievements */}
+                    <div className="space-y-2">
+                      <Label>Achievements (one per line)</Label>
+                      <Textarea
+                        placeholder="Best Product Award 2023&#10;Dean's List&#10;Patent holder"
+                        value={detailContent.achievements?.join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          achievements: e.target.value.split("\n").filter(a => a.trim()) 
+                        })}
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Subjects (for Education) */}
+                    {selectedDetailType === "education" && (
+                      <div className="space-y-2">
+                        <Label>Subjects/Coursework (comma-separated)</Label>
+                        <Input
+                          placeholder="Machine Learning, Product Strategy, Finance..."
+                          value={detailContent.subjects?.join(", ") || ""}
+                          onChange={(e) => setDetailContent({ 
+                            ...detailContent, 
+                            subjects: e.target.value.split(",").map(s => s.trim()).filter(s => s) 
+                          })}
+                        />
+                      </div>
+                    )}
+
+                    {/* Metrics */}
+                    <div className="space-y-2">
+                      <Label>Metrics (format: Label|Value, one per line)</Label>
+                      <Textarea
+                        placeholder="Revenue Growth|40%&#10;Team Size|8 engineers&#10;Users|2M+"
+                        value={detailContent.metrics?.map(m => `${m.label}|${m.value}`).join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          metrics: e.target.value.split("\n")
+                            .filter(line => line.includes("|"))
+                            .map(line => {
+                              const [label, value] = line.split("|")
+                              return { label: label?.trim() || "", value: value?.trim() || "" }
+                            })
+                        })}
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Links */}
+                    <div className="space-y-2">
+                      <Label>Links (format: Label|URL, one per line)</Label>
+                      <Textarea
+                        placeholder="GitHub|https://github.com/...&#10;Live Demo|https://..."
+                        value={detailContent.links?.map(l => `${l.label}|${l.url}`).join("\n") || ""}
+                        onChange={(e) => setDetailContent({ 
+                          ...detailContent, 
+                          links: e.target.value.split("\n")
+                            .filter(line => line.includes("|"))
+                            .map(line => {
+                              const [label, url] = line.split("|")
+                              return { label: label?.trim() || "", url: url?.trim() || "" }
+                            })
+                        })}
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Save Button */}
+                    <div className="flex items-center gap-4">
+                      <Button
+                        onClick={async () => {
+                          setIsSavingDetail(true)
+                          setDetailSaveSuccess(false)
+                          try {
+                            const res = await fetch(`/api/detail/${selectedDetailType}/${selectedDetailSlug}`, {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify(detailContent)
+                            })
+                            if (res.ok) {
+                              setDetailSaveSuccess(true)
+                            }
+                          } catch (error) {
+                            console.error("Error saving detail:", error)
+                          } finally {
+                            setIsSavingDetail(false)
+                          }
+                        }}
+                        disabled={isSavingDetail}
+                      >
+                        {isSavingDetail ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : (
+                          <Save className="h-4 w-4 mr-2" />
+                        )}
+                        Save Content
+                      </Button>
+                      
+                      {detailSaveSuccess && (
+                        <span className="text-sm text-green-600">Content saved successfully!</span>
+                      )}
+                      
+                      <Link
+                        href={`/detail/${selectedDetailType}/${selectedDetailSlug}`}
+                        target="_blank"
+                        className="text-sm text-muted-foreground hover:text-foreground underline"
+                      >
+                        Preview Page
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </Card>
           </TabsContent>
 

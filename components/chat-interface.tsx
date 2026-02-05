@@ -4,11 +4,111 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Sparkles, User, Building2, Play } from "lucide-react"
+import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Phone } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Link from "next/link"
+
+// Animated background component
+function AnimatedBackground() {
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute top-0 -left-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute top-40 -right-40 w-96 h-96 bg-violet-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute -bottom-20 left-1/3 w-72 h-72 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '0.5s' }} />
+      <div 
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
+        }}
+      />
+    </div>
+  )
+}
+
+// Question categories for the chat
+const QUESTION_CATEGORIES = [
+  {
+    id: "behavioral",
+    label: "Behavioral",
+    icon: Brain,
+    color: "text-rose-400",
+    bgColor: "bg-rose-500/10",
+    questions: [
+      "Tell me about a time you failed and what you learned",
+      "How do you handle pressure and tight deadlines?",
+      "Describe a situation where you went above and beyond",
+      "How do you stay updated with industry trends?",
+    ],
+  },
+  {
+    id: "product",
+    label: "Product Strategy",
+    icon: Target,
+    color: "text-cyan-400",
+    bgColor: "bg-cyan-500/10",
+    questions: [
+      "How do you prioritize features in a product roadmap?",
+      "Walk me through your product discovery process",
+      "How do you measure product success?",
+      "Describe a product you took from 0 to 1",
+    ],
+  },
+  {
+    id: "leadership",
+    label: "Leadership",
+    icon: Users,
+    color: "text-violet-400",
+    bgColor: "bg-violet-500/10",
+    questions: [
+      "Describe your leadership style",
+      "How do you handle conflicts in a team?",
+      "Tell me about a time you mentored someone",
+      "How do you prioritize competing deadlines?",
+    ],
+  },
+  {
+    id: "technical",
+    label: "Technical",
+    icon: Code2,
+    color: "text-emerald-400",
+    bgColor: "bg-emerald-500/10",
+    questions: [
+      "What technologies do you specialize in?",
+      "Describe a complex technical problem you solved",
+      "How do you approach system design?",
+      "Tell me about your experience with AI/ML",
+    ],
+  },
+  {
+    id: "career",
+    label: "Career Goals",
+    icon: Rocket,
+    color: "text-amber-400",
+    bgColor: "bg-amber-500/10",
+    questions: [
+      "What motivates you professionally?",
+      "Where do you see yourself in 5 years?",
+      "Why MBA after your technical background?",
+      "What kind of role are you looking for?",
+    ],
+  },
+  {
+    id: "adaptability",
+    label: "Adaptability",
+    icon: Shuffle,
+    color: "text-sky-400",
+    bgColor: "bg-sky-500/10",
+    questions: [
+      "How do you handle ambiguity in projects?",
+      "Tell me about a time you had to pivot quickly",
+      "How do you adapt to rapidly changing requirements?",
+      "Describe navigating uncertainty in a startup",
+    ],
+  },
+]
 
 interface MediaItem {
   id: string
@@ -30,75 +130,7 @@ interface VisitorInfo {
   company: string
 }
 
-// Question bank organized by category
-const QUESTION_BANK = {
-  initial: [
-    "Tell me about yourself",
-    "What are your key strengths?",
-    "Walk me through your most impactful project",
-    "Why are you looking for new opportunities?",
-  ],
-  technical: [
-    "What technologies do you specialize in?",
-    "Describe a complex technical problem you solved",
-    "How do you approach system design?",
-    "Tell me about your experience with AI/ML",
-  ],
-  leadership: [
-    "Describe your leadership style",
-    "How do you handle conflicts in a team?",
-    "Tell me about a time you mentored someone",
-    "How do you prioritize competing deadlines?",
-  ],
-  behavioral: [
-    "Tell me about a time you failed and what you learned",
-    "How do you handle pressure and tight deadlines?",
-    "Describe a situation where you went above and beyond",
-    "How do you stay updated with industry trends?",
-  ],
-  career: [
-    "What motivates you professionally?",
-    "Where do you see yourself in 5 years?",
-    "Why MBA after your technical background?",
-    "What kind of role are you looking for?",
-  ],
-}
 
-// Get suggested questions based on conversation context
-function getSuggestedQuestions(messages: Message[]): string[] {
-  const messageCount = messages.filter(m => m.role === "user").length
-  const lastUserMessage = [...messages].reverse().find(m => m.role === "user")?.content.toLowerCase() || ""
-  const lastAssistantMessage = [...messages].reverse().find(m => m.role === "assistant")?.content.toLowerCase() || ""
-  
-  // Initial state - show intro questions
-  if (messageCount === 0) {
-    return QUESTION_BANK.initial
-  }
-  
-  // Analyze context and suggest relevant follow-ups
-  const allText = lastUserMessage + " " + lastAssistantMessage
-  
-  if (allText.includes("technical") || allText.includes("code") || allText.includes("project") || allText.includes("technology")) {
-    return QUESTION_BANK.technical
-  }
-  
-  if (allText.includes("team") || allText.includes("lead") || allText.includes("manage") || allText.includes("mentor")) {
-    return QUESTION_BANK.leadership
-  }
-  
-  if (allText.includes("challenge") || allText.includes("difficult") || allText.includes("problem") || allText.includes("conflict")) {
-    return QUESTION_BANK.behavioral
-  }
-  
-  if (allText.includes("career") || allText.includes("goal") || allText.includes("future") || allText.includes("mba")) {
-    return QUESTION_BANK.career
-  }
-  
-  // Rotate through categories based on message count
-  const categories = Object.keys(QUESTION_BANK) as (keyof typeof QUESTION_BANK)[]
-  const categoryIndex = messageCount % categories.length
-  return QUESTION_BANK[categories[categoryIndex]]
-}
 
 // Generate persistent session ID
 function getSessionId(): string {
@@ -168,7 +200,8 @@ export function ChatInterface() {
     if (initialQuestion && visitorInfo && messages.length === 1) {
       handleSendMessage(initialQuestion)
     }
-  }, [initialQuestion, visitorInfo])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuestion, visitorInfo, messages.length])
 
   const handleSendMessage = async (question?: string) => {
     const messageText = question || input
@@ -220,189 +253,341 @@ const assistantMessage: Message = {
   // Visitor info form
   if (!visitorInfo) {
     return (
-      <div className="flex flex-col h-full bg-background">
-        <header className="border-b bg-card px-4 py-3">
-          <div className="container mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="/">
-                  <ArrowLeft className="h-5 w-5" />
-                </Link>
-              </Button>
-              <div>
-                <h1 className="font-semibold flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  Yash's Career Assistant
-                </h1>
-                <p className="text-xs text-muted-foreground">Ask me anything about Yash</p>
-              </div>
+      <div className="flex flex-col h-full bg-[#0a0a0b] text-white">
+        <AnimatedBackground />
+        
+        {/* Header */}
+        <header className="relative z-10 px-4 py-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
+                <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+                <div>
+                  <h1 className="font-semibold flex items-center gap-2 text-sm lg:text-base text-white">
+                    <Bot className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-cyan-400" />
+                    YashGPT
+                  </h1>
+                  <p className="text-[10px] lg:text-xs text-[#a3a3a3]">Your AI assistant</p>
+                </div>
+              </Link>
+              
+              {/* Quick Action Buttons */}
+              <TooltipProvider delayDuration={100}>
+                <div className="flex items-center gap-1 lg:gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="#resume" 
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                      >
+                        <FileText className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>View Resume</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="https://linkedin.com/in/yashgoyal" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>LinkedIn</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="mailto:yash@example.com" 
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                      >
+                        <Mail className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>Email</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a 
+                        href="tel:+1234567890" 
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                      >
+                        <Phone className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>Phone</TooltipContent>
+                  </Tooltip>
+                </div>
+              </TooltipProvider>
             </div>
           </div>
         </header>
 
-        <div className="flex-1 flex items-center justify-center p-4">
-          <Card className="w-full max-w-md p-6">
-            <div className="text-center mb-6">
-              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="h-8 w-8 text-primary" />
+        <div className="flex-1 flex items-center justify-center p-4 relative z-10 overflow-auto">
+          <div className="w-full max-w-md p-6 lg:p-8 rounded-xl lg:rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 my-4">
+            <div className="text-center mb-6 lg:mb-8">
+              <div className="h-12 w-12 lg:h-16 lg:w-16 rounded-xl lg:rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 flex items-center justify-center mx-auto mb-3 lg:mb-4 border border-white/10">
+                <Bot className="h-6 w-6 lg:h-8 lg:w-8 text-cyan-400" />
               </div>
-              <h2 className="text-2xl font-bold">Welcome!</h2>
-              <p className="text-muted-foreground mt-2">Before we start, I'd love to know who I'm speaking with.</p>
+              <h2 className="text-xl lg:text-2xl font-bold text-white">Welcome to YashGPT</h2>
+              <p className="text-sm lg:text-base text-[#a3a3a3] mt-2">Before we start, I'd love to know who I'm speaking with.</p>
             </div>
 
-            <form onSubmit={handleVisitorSubmit} className="space-y-4">
+            <form onSubmit={handleVisitorSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="name" className="flex items-center gap-2">
+                <Label htmlFor="name" className="flex items-center gap-2 text-[#a3a3a3]">
                   <User className="h-4 w-4" />
-                  Your Name <span className="text-destructive">*</span>
+                  Your Name <span className="text-rose-400">*</span>
                 </Label>
                 <Input
                   id="name"
                   placeholder="John Doe"
                   value={visitorForm.name}
                   onChange={(e) => setVisitorForm((prev) => ({ ...prev, name: e.target.value }))}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-[#a3a3a3]/50 focus:border-cyan-500/50 h-12 rounded-xl"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company" className="flex items-center gap-2">
+                <Label htmlFor="company" className="flex items-center gap-2 text-[#a3a3a3]">
                   <Building2 className="h-4 w-4" />
-                  Company <span className="text-destructive">*</span>
+                  Company <span className="text-rose-400">*</span>
                 </Label>
                 <Input
                   id="company"
                   placeholder="Acme Inc."
                   value={visitorForm.company}
                   onChange={(e) => setVisitorForm((prev) => ({ ...prev, company: e.target.value }))}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-[#a3a3a3]/50 focus:border-cyan-500/50 h-12 rounded-xl"
                 />
               </div>
 
-              {formError && <p className="text-sm text-destructive text-center">{formError}</p>}
+              {formError && <p className="text-sm text-rose-400 text-center">{formError}</p>}
 
-              <Button type="submit" className="w-full" size="lg">
+              <Button type="submit" className="w-full bg-white text-black hover:bg-white/90 font-medium h-12 rounded-xl" size="lg">
                 Start Conversation
               </Button>
 
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-xs text-[#a3a3a3] text-center">
                 Your information helps personalize your experience and is kept private.
               </p>
             </form>
-          </Card>
+          </div>
         </div>
       </div>
     )
   }
 
+  const showQuestionBank = messages.length <= 1
+
   // Chat interface
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-card px-4 py-3">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-            </Button>
-            <div>
-              <h1 className="font-semibold flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                Yash's Career Assistant
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                Chatting with {visitorInfo.name}
-                {visitorInfo.company && ` from ${visitorInfo.company}`}
-              </p>
-            </div>
+    <div className="flex flex-col h-full bg-[#0a0a0b] text-white">
+      <AnimatedBackground />
+      
+      {/* Header */}
+      <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4 flex-shrink-0">
+        <div className="max-w-5xl xl:max-w-6xl mx-auto">
+          <div className="px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
+              <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+              <div>
+                <h1 className="font-semibold flex items-center gap-2 text-sm lg:text-base text-white">
+                  <Bot className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-cyan-400" />
+                  YashGPT
+                </h1>
+                <p className="text-[10px] lg:text-xs text-[#a3a3a3]">
+                  Chatting with {visitorInfo.name}
+                  {visitorInfo.company && ` from ${visitorInfo.company}`}
+                </p>
+              </div>
+            </Link>
+            
+            {/* Quick Action Buttons */}
+            <TooltipProvider delayDuration={100}>
+              <div className="flex items-center gap-1 lg:gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="#resume" 
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                    >
+                      <FileText className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>View Resume</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="https://linkedin.com/in/yashgoyal" 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                    >
+                      <Linkedin className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>LinkedIn</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="mailto:yash@example.com" 
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                    >
+                      <Mail className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>Email</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a 
+                      href="tel:+1234567890" 
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                    >
+                      <Phone className="h-4 w-4" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>Phone</TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
           </div>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto">
-        <div className="container mx-auto max-w-3xl px-4 py-6 space-y-6">
-          {messages.map((message, index) => (
-            <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-              <Card
-                className={`max-w-[80%] p-4 ${
-                  message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
-                }`}
-              >
-<p className="text-sm whitespace-pre-wrap">{message.content}</p>
-  {message.media && message.media.length > 0 && (
-    <div className="mt-3 space-y-2">
-      {message.media.map((item) => (
-        <div key={item.id} className="rounded-lg overflow-hidden border">
-          {item.type === "image" ? (
-            <a href={item.url} target="_blank" rel="noopener noreferrer">
-              <img
-                src={item.url || "/placeholder.svg"}
-                alt={item.title}
-                className="w-full max-h-64 object-cover hover:opacity-90 transition-opacity"
-              />
-            </a>
-          ) : (
-            <div className="relative">
-              <video
-                src={item.url}
-                controls
-                className="w-full max-h-64"
-                poster={item.url}
-              />
-            </div>
-          )}
-          <div className="p-2 bg-background/80">
-            <p className="text-xs font-medium">{item.title}</p>
-            {item.description && (
-              <p className="text-xs text-muted-foreground">{item.description}</p>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-  <span className="text-xs opacity-70 mt-2 block">{message.timestamp.toLocaleTimeString()}</span>
-  </Card>
-            </div>
-          ))}
-
-          {isLoading && (
-            <div className="flex justify-start">
-              <Card className="max-w-[80%] p-4 bg-muted">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce" />
+      <div className="flex-1 overflow-y-auto relative z-10">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          {/* Messages */}
+          {messages.length > 0 && (
+            <div className="space-y-6 mb-8">
+              {messages.map((message, index) => (
+                <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
-                    className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
-                    style={{ animationDelay: "0.1s" }}
-                  />
-                  <div
-                    className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"
-                    style={{ animationDelay: "0.2s" }}
-                  />
+                    className={`max-w-[80%] p-4 rounded-2xl ${
+                      message.role === "user" 
+                        ? "bg-white text-black" 
+                        : "bg-white/[0.03] border border-white/10 text-white"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    {message.media && message.media.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {message.media.map((item) => (
+                          <div key={item.id} className="rounded-xl overflow-hidden border border-white/10">
+                            {item.type === "image" ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer">
+                                <img
+                                  src={item.url || "/placeholder.svg"}
+                                  alt={item.title}
+                                  className="w-full max-h-64 object-cover hover:opacity-90 transition-opacity"
+                                />
+                              </a>
+                            ) : (
+                              <video src={item.url} controls className="w-full max-h-64" poster={item.url} />
+                            )}
+                            <div className="p-2 bg-white/5">
+                              <p className="text-xs font-medium">{item.title}</p>
+                              {item.description && <p className="text-xs text-[#a3a3a3]">{item.description}</p>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <span className={`text-xs mt-2 block ${message.role === "user" ? "opacity-50" : "text-[#a3a3a3]"}`}>
+                      {message.timestamp.toLocaleTimeString()}
+                    </span>
+                  </div>
                 </div>
-              </Card>
+              ))}
+
+              {/* Loading indicator */}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10">
+                    <div className="flex gap-2">
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" />
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "0.1s" }} />
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "0.2s" }} />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
+
+          {/* Question Bank - All categories visible with questions */}
+          {showQuestionBank && !isLoading && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-white mb-2">What would you like to know?</h2>
+                <p className="text-[#a3a3a3]">Click any question below or type your own</p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {QUESTION_CATEGORIES.map((category) => (
+                  <div 
+                    key={category.id}
+                    className="rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden"
+                  >
+                    {/* Category Header */}
+                    <div className="flex items-center gap-3 p-4 border-b border-white/5">
+                      <div className={`p-2.5 rounded-lg ${category.bgColor}`}>
+                        <category.icon className={`h-5 w-5 ${category.color}`} />
+                      </div>
+                      <span className="font-medium text-white">{category.label}</span>
+                    </div>
+                    
+                    {/* Questions */}
+                    <div className="p-2">
+                      {category.questions.slice(0, 3).map((question, qIndex) => (
+                        <button
+                          key={qIndex}
+                          onClick={() => handleSendMessage(question)}
+                          className="w-full text-left p-3 rounded-xl text-sm text-[#a3a3a3] hover:text-white hover:bg-white/[0.04] transition-all group flex items-start gap-2"
+                        >
+                          <ChevronRight className={`h-4 w-4 mt-0.5 flex-shrink-0 ${category.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                          <span className="line-clamp-2">{question}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
       </div>
 
-      <div className="border-t bg-card">
-        <div className="container mx-auto max-w-3xl px-4 py-4">
+      {/* Input area - Fixed at bottom */}
+      <div className="relative z-10 border-t border-white/5 bg-[#0a0a0b]/80 backdrop-blur-xl flex-shrink-0">
+        <div className="max-w-6xl mx-auto px-4 py-4">
           <form
             onSubmit={(e) => {
               e.preventDefault()
               handleSendMessage()
             }}
-            className="flex gap-2"
+            className="flex gap-3"
           >
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about Yash's experience, skills, achievements..."
-              className="flex-1"
+              className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-[#a3a3a3]/50 focus:border-cyan-500/50 h-12 rounded-xl"
               disabled={isLoading}
             />
-            <Button type="submit" disabled={isLoading || !input.trim()}>
+            <Button 
+              type="submit" 
+              disabled={isLoading || !input.trim()}
+              className="bg-white text-black hover:bg-white/90 h-12 px-6 rounded-xl"
+            >
               <Send className="h-4 w-4" />
             </Button>
           </form>
