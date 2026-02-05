@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Add scroll offset for fixed navbar */
+html {
+  scroll-padding-top: 5rem;
+}
+
 /* Updated color scheme for professional career chatbot - blue primary for trust, clean neutrals */
 :root {
   --background: oklch(1 0 0);
