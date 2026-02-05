@@ -250,7 +250,7 @@ function RevealOnScroll({ children, className = "", delay = 0 }: { children: Rea
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
+      className={`transition-all duration-700 ease-out h-full ${
         isVisible 
           ? "opacity-100 translate-y-0" 
           : "opacity-0 translate-y-8"
@@ -557,7 +557,7 @@ export default function PortfolioDesign() {
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
                 href={`/detail/experience/${exp.slug}`}
-                className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                   <div className="p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg bg-cyan-500/10">
@@ -602,7 +602,7 @@ export default function PortfolioDesign() {
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
                 href={`/detail/education/${edu.slug}`}
-                className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
               >
                 <div className="flex items-center gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                   <div className="p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg bg-violet-500/10">
@@ -637,7 +637,7 @@ export default function PortfolioDesign() {
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
                 href={`/detail/project/${project.slug}`}
-                className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
               >
                 {/* Project Image Placeholder */}
                 <div className="aspect-video rounded-md sm:rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-2 sm:mb-3 lg:mb-4 flex items-center justify-center">
@@ -676,7 +676,7 @@ export default function PortfolioDesign() {
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
                 href={`/detail/case-study/${study.slug}`}
-                className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer hover:scale-[1.03]"
               >
                 <h3 className="text-base sm:text-lg lg:text-xl font-medium text-white mb-3 sm:mb-4 lg:mb-6 group-hover:text-amber-400 transition-colors line-clamp-2">{study.title}</h3>
                 <div className="space-y-2 sm:space-y-3 lg:space-y-4 text-[10px] sm:text-xs lg:text-sm">
@@ -723,7 +723,7 @@ export default function PortfolioDesign() {
               return (
                 <RevealOnScroll key={category} delay={index * 80}>
                 <div
-                  className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:scale-[1.03]"
+                  className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:scale-[1.03] h-full"
                 >
                   <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                     <div className={`p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg ${color.bg}`}>
@@ -766,7 +766,7 @@ export default function PortfolioDesign() {
               <RevealOnScroll key={index} delay={index * 80}>
               <Link 
                 href={`/detail/certification/${cert.slug}`}
-                className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
               >
                 <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                   <div className="p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg bg-cyan-500/10">
