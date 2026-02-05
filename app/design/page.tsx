@@ -278,8 +278,7 @@ export default function PortfolioDesign() {
             >
               <Link href="/chat">
                 <Bot className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5 lg:mr-2" />
-                <span className="hidden xs:inline">YashGPT</span>
-                <span className="xs:hidden">Chat</span>
+                YashGPT
               </Link>
             </Button>
           </div>
