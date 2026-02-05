@@ -264,13 +264,13 @@ export default function PortfolioDesign() {
             <a href="#about" className="font-semibold text-base lg:text-lg text-white hover:text-cyan-400 transition-colors">
               YG
             </a>
-            <div className="hidden lg:flex items-center gap-0.5 xl:gap-1 text-sm">
-              <a href="#about" className="px-2 xl:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">About</a>
-              <a href="#experience" className="px-2 xl:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Experience</a>
-              <a href="#education" className="px-2 xl:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Education</a>
-              <a href="#projects" className="px-2 xl:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
-              <a href="#case-studies" className="px-2 xl:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Case Studies</a>
-              <a href="#contact" className="px-2 xl:px-4 py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
+            <div className="hidden md:flex items-center gap-0.5 lg:gap-1 text-xs lg:text-sm">
+              <a href="#about" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">About</a>
+              <a href="#experience" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Experience</a>
+              <a href="#education" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Education</a>
+              <a href="#projects" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Projects</a>
+              <a href="#case-studies" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all whitespace-nowrap">Case Studies</a>
+              <a href="#contact" className="px-2 lg:px-3 xl:px-4 py-1.5 lg:py-2 rounded-lg text-[#a3a3a3] hover:text-white hover:bg-white/5 transition-all">Contact</a>
             </div>
             <Button 
               asChild
