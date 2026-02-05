@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* Add scroll offset for fixed navbar */
+html {
+  scroll-padding-top: 5rem;
+}
+
 /* Updated color scheme for professional career chatbot - blue primary for trust, clean neutrals */
 :root {
   --background: oklch(1 0 0);
@@ -181,4 +190,13 @@
 .animate-border-flow {
   background-size: 300% 300%;
   animation: border-flow 6s ease infinite;
+}
+
+@keyframes nav-pill {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-nav-pill {
+  animation: nav-pill 0.3s ease-out forwards;
 }
