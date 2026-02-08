@@ -569,7 +569,7 @@ export default function PortfolioDesign() {
                 <p className="text-[10px] sm:text-xs lg:text-sm text-cyan-400 mb-1.5 sm:mb-2 lg:mb-3">{exp.company}</p>
                 <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] mb-2 sm:mb-3 lg:mb-4 leading-relaxed line-clamp-3">{exp.description}</p>
                 <div className="flex flex-wrap gap-1 sm:gap-1.5 lg:gap-2">
-                  {exp.skills.slice(0, 4).map((skill) => (
+                  {(exp.skills || []).slice(0, 4).map((skill) => (
                     <span 
                       key={skill}
                       className="px-1.5 sm:px-2 py-0.5 lg:py-1 text-[9px] sm:text-[10px] lg:text-xs rounded bg-white/5 text-[#a3a3a3]"
