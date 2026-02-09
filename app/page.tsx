@@ -791,12 +791,15 @@ export default function PortfolioDesign() {
                   <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
-                <div className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-sm">
-                  <div className="p-2 lg:p-2.5 rounded-lg bg-emerald-500/10">
+                <a 
+                  href={`mailto:${pEmail}`}
+                  className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
+                >
+                  <div className="p-2 lg:p-2.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
                     <Mail className="h-4 w-4 lg:h-5 lg:w-5 text-emerald-400" />
                   </div>
                   <span className="text-xs lg:text-sm font-medium text-white">{pEmail}</span>
-                </div>
+                </a>
 
                 {/* Bottom row - 3 icon buttons */}
                 <div className="flex gap-2 lg:gap-3">
@@ -1159,10 +1162,10 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <button onClick={() => { navigator.clipboard.writeText(pEmail); window.open(`mailto:${pEmail}`, "_self") }}>
+                <a href={`mailto:${pEmail}`}>
                   <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   <span className="hidden xs:inline">Send </span>Email
-                </button>
+                </a>
               </Button>
               <Button 
                 size="lg"
