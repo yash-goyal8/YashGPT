@@ -799,6 +799,7 @@ export default function PortfolioDesign() {
                     <Mail className="h-4 w-4 lg:h-5 lg:w-5 text-emerald-400" />
                   </div>
                   <span className="text-xs lg:text-sm font-medium text-white">{pEmail}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
                 {/* Bottom row - 3 icon buttons */}
