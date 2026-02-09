@@ -128,7 +128,7 @@ export function AdminDashboard() {
   // Card Manager state
   const [allCards, setAllCards] = useState<Record<string, unknown[]>>({})
   const [isLoadingCards, setIsLoadingCards] = useState(false)
-  const [cardManagerCategory, setCardManagerCategory] = useState<string>("experience")
+  const [cardManagerCategory, setCardManagerCategory] = useState<string>("impact")
   const [editingCard, setEditingCard] = useState<Record<string, unknown> | null>(null)
   const [isAddingCard, setIsAddingCard] = useState(false)
   const [isSavingCard, setIsSavingCard] = useState(false)
@@ -160,11 +160,19 @@ export function AdminDashboard() {
   // Available cards for each type (dynamically loaded from API)
   const getDetailCards = (): Record<string, { slug: string; title: string }[]> => {
     const cards: Record<string, { slug: string; title: string }[]> = {
+      impact: [],
       experience: [],
       education: [],
       project: [],
       "case-study": [],
       certification: [],
+    }
+    
+    if (allCards.impact) {
+      cards.impact = (allCards.impact as { slug: string; value?: string; prefix?: string; suffix?: string; label?: string }[]).map(c => ({
+        slug: c.slug,
+        title: `${c.prefix || ""}${c.value || ""} ${c.suffix || ""} - ${c.label || "Impact"}`
+      }))
     }
     
     // Map allCards to detail cards format
@@ -735,6 +743,7 @@ export function AdminDashboard() {
                     }}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   >
+                    <option value="impact">Impact Stats</option>
                     <option value="experience">Experience</option>
                     <option value="education">Education</option>
                     <option value="project">Projects</option>
@@ -759,6 +768,7 @@ export function AdminDashboard() {
                         >
                           <div className="flex-1">
                             <p className="font-medium">
+                              {cardManagerCategory === "impact" && `${card.prefix || ""}${card.value}${card.suffix || ""}`}
                               {cardManagerCategory === "experience" && `${card.role} at ${card.company}`}
                               {cardManagerCategory === "education" && `${card.degree} - ${card.school}`}
                               {cardManagerCategory === "project" && (card.title as string)}
@@ -766,6 +776,7 @@ export function AdminDashboard() {
                               {cardManagerCategory === "certification" && (card.title as string)}
                             </p>
                             <p className="text-sm text-muted-foreground">
+                              {cardManagerCategory === "impact" && (card.label as string)}
                               {cardManagerCategory === "experience" && (card.period as string)}
                               {cardManagerCategory === "education" && (card.period as string)}
                               {cardManagerCategory === "project" && (card.description as string)?.slice(0, 60) + "..."}
@@ -826,6 +837,68 @@ export function AdminDashboard() {
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
+
+                    {/* Impact Fields */}
+                    {cardManagerCategory === "impact" && (
+                      <div className="grid gap-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Display Value *</Label>
+                            <Input
+                              placeholder="1.4 or Founder"
+                              value={(editingCard?.value as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, value: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Type</Label>
+                            <select
+                              value={(editingCard?.type as string) || "counter"}
+                              onChange={(e) => setEditingCard({ ...editingCard, type: e.target.value })}
+                              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            >
+                              <option value="counter">Counter (animated number)</option>
+                              <option value="text">Text (static display)</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label>Prefix</Label>
+                            <Input
+                              placeholder="$ or empty"
+                              value={(editingCard?.prefix as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, prefix: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Suffix</Label>
+                            <Input
+                              placeholder="B+, %, + or empty"
+                              value={(editingCard?.suffix as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, suffix: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Decimal Places</Label>
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              value={(editingCard?.decimals as string) || "0"}
+                              onChange={(e) => setEditingCard({ ...editingCard, decimals: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Label / Description *</Label>
+                          <Input
+                            placeholder="Cloud Infra Deals Handled"
+                            value={(editingCard?.label as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, label: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* Experience Fields */}
                     {cardManagerCategory === "experience" && (
@@ -1047,7 +1120,9 @@ export function AdminDashboard() {
                             // Generate slug if new card
                             const cardData = { ...editingCard }
                             if (isAddingCard || !cardData.slug) {
-                              const titleField = cardManagerCategory === "experience" 
+                              const titleField = cardManagerCategory === "impact"
+                                ? `${cardData.value}-${cardData.label}`
+                                : cardManagerCategory === "experience" 
                                 ? `${cardData.role}-${cardData.company}` 
                                 : cardManagerCategory === "education" 
                                 ? `${cardData.degree}-${cardData.school}`

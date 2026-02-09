@@ -66,6 +66,16 @@ interface CertificationCard {
   credentialId: string
 }
 
+interface ImpactCard {
+  slug: string
+  value: string
+  prefix: string
+  suffix: string
+  decimals: string
+  label: string
+  type: "counter" | "text"
+}
+
 interface CardsData {
   experience: ExperienceCard[]
   education: EducationCard[]
@@ -73,6 +83,7 @@ interface CardsData {
   "case-study": CaseStudyCard[]
   certification: CertificationCard[]
   skills: Record<string, string[]>
+  impact: ImpactCard[]
 }
 
 // Animated background grid component
@@ -107,6 +118,14 @@ function AnimatedBackground() {
 }
 
 // Placeholder data - to be replaced with real content
+const IMPACT: ImpactCard[] = [
+  { slug: "cloud-infra-deals", value: "1.4", prefix: "$", suffix: "B+", decimals: "1", label: "Cloud Infra Deals Handled", type: "counter" },
+  { slug: "growth-achieved", value: "133", prefix: "", suffix: "%", decimals: "0", label: "Growth Achieved", type: "counter" },
+  { slug: "founder", value: "Founder", prefix: "", suffix: "", decimals: "0", label: "Entrepreneur \u00b7 Built & Sold Startup", type: "text" },
+  { slug: "serial-negotiator", value: "Serial", prefix: "", suffix: "", decimals: "0", label: "Negotiator \u00b7 Enterprise Deals", type: "text" },
+  { slug: "products-launched", value: "5", prefix: "", suffix: "+", decimals: "0", label: "Products Launched to Market", type: "counter" },
+]
+
 const EXPERIENCE = [
   {
     slug: "senior-pm-tech-company",
@@ -362,6 +381,7 @@ export default function PortfolioDesign() {
   }, [])
   
   // Use fetched data or fallback to defaults
+  const impactData = cards?.impact || IMPACT
   const experienceData = cards?.experience || EXPERIENCE
   const educationData = cards?.education || EDUCATION
   const projectsData = cards?.project || PROJECTS
@@ -607,54 +627,25 @@ export default function PortfolioDesign() {
             </div>
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
-              {/* Stat 1 */}
-              <RevealOnScroll delay={0}>
-              <div className="group">
-                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
-                  <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                    $<AnimatedCounter target={1.4} suffix="B+" duration={2500} decimals={1} />
-                  </span>
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10">
+              {impactData.map((stat, index) => (
+                <RevealOnScroll key={stat.slug} delay={index * 120}>
+                <div className="group">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+                    {stat.type === "counter" ? (
+                      <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                        {stat.prefix}<AnimatedCounter target={parseFloat(stat.value)} suffix={stat.suffix} duration={2200 + index * 200} decimals={parseInt(stat.decimals) || 0} />
+                      </span>
+                    ) : (
+                      <span className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
+                        {stat.prefix}{stat.value}{stat.suffix}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">{stat.label}</p>
                 </div>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Cloud Infra Deals Handled</p>
-              </div>
-              </RevealOnScroll>
-
-              {/* Stat 2 */}
-              <RevealOnScroll delay={150}>
-              <div className="group">
-                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
-                  <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                    <AnimatedCounter target={133} suffix="%" duration={2200} />
-                  </span>
-                </div>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Growth Achieved</p>
-              </div>
-              </RevealOnScroll>
-
-              {/* Stat 3 */}
-              <RevealOnScroll delay={300}>
-              <div className="group">
-                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
-                  <span className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
-                    Founder
-                  </span>
-                </div>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Entrepreneur &middot; Built & Sold Startup</p>
-              </div>
-              </RevealOnScroll>
-
-              {/* Stat 4 */}
-              <RevealOnScroll delay={450}>
-              <div className="group">
-                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
-                  <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                    Serial
-                  </span>
-                </div>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Negotiator &middot; Enterprise Deals</p>
-              </div>
-              </RevealOnScroll>
+                </RevealOnScroll>
+              ))}
             </div>
           </div>
         </div>
