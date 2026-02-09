@@ -32,6 +32,7 @@ import {
   Award,
   Edit3,
   LayoutGrid,
+  Camera,
 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -130,6 +131,7 @@ export function AdminDashboard() {
   const [isLoadingProfile, setIsLoadingProfile] = useState(false)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [profileSaveSuccess, setProfileSaveSuccess] = useState(false)
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false)
 
   // Card Manager state
   const [allCards, setAllCards] = useState<Record<string, unknown[]>>({})
@@ -175,6 +177,34 @@ export function AdminDashboard() {
       console.error("Error saving profile:", error)
     } finally {
       setIsSavingProfile(false)
+    }
+  }
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file (JPG, PNG, etc.)")
+      return
+    }
+    
+    setIsUploadingPhoto(true)
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
+      const res = await fetch("/api/upload", { method: "POST", body: formData })
+      if (res.ok) {
+        const data = await res.json()
+        setProfile(prev => ({ ...prev, profilePhotoUrl: data.url }))
+      } else {
+        alert("Upload failed. Please try again.")
+      }
+    } catch (error) {
+      console.error("Photo upload error:", error)
+      alert("Upload failed. Please try again.")
+    } finally {
+      setIsUploadingPhoto(false)
     }
   }
 
@@ -884,12 +914,47 @@ export function AdminDashboard() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Profile Photo URL</Label>
-                        <Input
-                          placeholder="https://example.com/photo.jpg"
-                          value={profile.profilePhotoUrl || ""}
-                          onChange={(e) => setProfile({ ...profile, profilePhotoUrl: e.target.value })}
-                        />
+                        <Label>Profile Photo</Label>
+                        <div className="flex items-start gap-4">
+                          {/* Preview */}
+                          <div className="relative shrink-0 w-20 h-20 rounded-xl bg-muted border-2 border-dashed border-border overflow-hidden flex items-center justify-center">
+                            {profile.profilePhotoUrl ? (
+                              <img src={profile.profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              <Camera className="h-6 w-6 text-muted-foreground" />
+                            )}
+                            {isUploadingPhoto && (
+                              <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                              </div>
+                            )}
+                          </div>
+                          {/* Upload controls */}
+                          <div className="flex-1 space-y-2">
+                            <label className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/50 cursor-pointer transition-colors">
+                              <Upload className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm text-muted-foreground">{isUploadingPhoto ? "Uploading..." : "Upload photo"}</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handlePhotoUpload}
+                                disabled={isUploadingPhoto}
+                              />
+                            </label>
+                            <p className="text-xs text-muted-foreground">JPG, PNG or WebP. Will be displayed in the hero section.</p>
+                            {profile.profilePhotoUrl && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-xs text-destructive hover:text-destructive"
+                                onClick={() => setProfile({ ...profile, profilePhotoUrl: "" })}
+                              >
+                                <X className="h-3 w-3 mr-1" /> Remove photo
+                              </Button>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
