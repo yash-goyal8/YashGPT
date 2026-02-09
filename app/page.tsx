@@ -266,86 +266,100 @@ function TypingDots() {
 
 // Chat preview teaser - placed in hero section
 function ChatPreviewTeaser() {
-  const [currentLine, setCurrentLine] = useState(0)
-  const [isTyping, setIsTyping] = useState(true)
+  const [phase, setPhase] = useState(0) // 0=typing-q, 1=show-q, 2=typing-a, 3=show-a, then repeat
+  const [pairIndex, setPairIndex] = useState(0)
   
-  const chatLines = [
-    { type: "user", text: "What makes Yash stand out?" },
-    { type: "ai", text: "Yash closed $1.4B+ in cloud deals, founded and sold a startup, and drove 133% growth. Want specifics?" },
-    { type: "user", text: "Tell me about his technical skills" },
-    { type: "ai", text: "Full-stack with Python, React, AWS, and system design at scale. He built products used by..." },
+  const pairs = [
+    { q: "What makes Yash stand out?", a: "Yash closed $1.4B+ in cloud deals, founded & sold a startup, and drove 133% growth." },
+    { q: "Tell me about his PM skills", a: "Led cross-functional teams, defined product strategy for enterprise SaaS, drove 3x user adoption." },
+    { q: "Why should we hire Yash?", a: "Rare blend of technical depth + business acumen. He builds products AND closes deals." },
   ]
   
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIsTyping(true)
-      setTimeout(() => {
-        setCurrentLine(prev => (prev + 1) % chatLines.length)
-        setIsTyping(false)
-      }, 1200)
-    }, 3500)
-    
-    const initialTimeout = setTimeout(() => {
-      setIsTyping(false)
-    }, 1200)
-    
-    return () => {
-      clearInterval(interval)
-      clearTimeout(initialTimeout)
-    }
-  }, [])
+    const timings = [1500, 1800, 1200, 3000] // typing-q, show-q, typing-a, show-a (reading time)
+    const timeout = setTimeout(() => {
+      setPhase(prev => {
+        if (prev === 3) {
+          setPairIndex(p => (p + 1) % pairs.length)
+          return 0
+        }
+        return prev + 1
+      })
+    }, timings[phase])
+    return () => clearTimeout(timeout)
+  }, [phase, pairs.length])
+  
+  const currentPair = pairs[pairIndex]
   
   return (
     <Link href="/chat" className="block group">
-      <div className="relative mt-6 sm:mt-8 max-w-md">
-        {/* Label */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-            <Sparkles className="h-3 w-3 text-cyan-400" />
-            <span className="text-[10px] sm:text-xs text-cyan-400 font-medium">Live Preview</span>
-          </div>
-          <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Try asking YashGPT anything</span>
-        </div>
+      <div className="relative mt-8 sm:mt-10 max-w-lg">
+        {/* Outer glow */}
+        <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-cyan-500/20 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
         
         {/* Chat Window */}
-        <div className="rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-sm overflow-hidden group-hover:border-cyan-500/30 transition-all duration-300">
+        <div className="relative rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm overflow-hidden group-hover:border-cyan-500/20 transition-all duration-500">
           {/* Chat header */}
-          <div className="px-3 py-2 border-b border-white/5 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] sm:text-xs text-[#a3a3a3] font-medium">YashGPT</span>
-            <span className="text-[9px] text-cyan-400/60 ml-auto">online</span>
+          <div className="px-4 py-2.5 border-b border-white/5 flex items-center gap-2.5 bg-white/[0.02]">
+            <div className="relative">
+              <Bot className="h-4 w-4 text-cyan-400" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 ring-2 ring-[#0a0a0b]" />
+            </div>
+            <div className="flex-1">
+              <span className="text-xs text-white font-medium">YashGPT</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3 text-cyan-400/60" />
+              <span className="text-[9px] text-cyan-400/80 font-medium uppercase tracking-wider">AI</span>
+            </div>
           </div>
           
           {/* Chat messages */}
-          <div className="p-3 space-y-2.5 h-[88px] overflow-hidden">
-            {/* Current user message */}
-            <div className="flex justify-end">
-              <div className="px-3 py-1.5 rounded-lg bg-white/10 max-w-[80%]">
-                <p className="text-[10px] sm:text-xs text-white">{chatLines[currentLine].text}</p>
+          <div className="p-4 space-y-3 min-h-[110px]">
+            {/* User message */}
+            <div className={`flex justify-end transition-all duration-500 ${phase >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
+              <div className="px-3 py-2 rounded-2xl rounded-br-md bg-white/10 max-w-[75%]">
+                {phase === 0 ? (
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-white/60">typing</span>
+                    <TypingDots />
+                  </div>
+                ) : (
+                  <p className="text-xs text-white leading-relaxed">{currentPair.q}</p>
+                )}
               </div>
             </div>
             
             {/* AI response */}
-            <div className="flex justify-start">
-              <div className="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/10 max-w-[85%]">
-                {isTyping ? (
-                  <div className="flex items-center gap-1">
-                    <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Thinking</span>
-                    <TypingDots />
-                  </div>
-                ) : (
-                  <p className="text-[10px] sm:text-xs text-[#e5e5e5]">
-                    {chatLines[(currentLine + 1) % chatLines.length].text}
-                  </p>
-                )}
+            <div className={`flex justify-start transition-all duration-500 ${phase >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
+              <div className="flex gap-2 max-w-[85%]">
+                <div className="mt-1 shrink-0 w-5 h-5 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                  <Bot className="h-3 w-3 text-cyan-400" />
+                </div>
+                <div className="px-3 py-2 rounded-2xl rounded-bl-md bg-cyan-500/5 border border-cyan-500/10">
+                  {phase === 2 ? (
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#a3a3a3]">Thinking</span>
+                      <TypingDots />
+                    </div>
+                  ) : phase >= 3 ? (
+                    <p className="text-xs text-[#e5e5e5] leading-relaxed">{currentPair.a}</p>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
           
           {/* CTA bar */}
-          <div className="px-3 py-2 border-t border-white/5 bg-white/[0.02] flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Ask me anything about Yash...</span>
-            <ArrowRight className="h-3.5 w-3.5 text-cyan-400 group-hover:translate-x-1 transition-transform" />
+          <div className="px-4 py-2.5 border-t border-white/5 bg-gradient-to-r from-cyan-500/[0.03] to-transparent flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-3.5 w-3.5 text-[#a3a3a3]" />
+              <span className="text-xs text-[#a3a3a3] group-hover:text-white transition-colors">Ask me anything about Yash...</span>
+            </div>
+            <div className="flex items-center gap-1 text-cyan-400">
+              <span className="text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity">Try it</span>
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
           </div>
         </div>
       </div>
