@@ -13,6 +13,7 @@ import {
   Code2,
   FolderKanban,
   Lightbulb,
+  Zap,
   Info,
   Bot,
   ArrowUpRight,
@@ -227,6 +228,60 @@ const CERTIFICATIONS = [
     credentialId: "CSM-901234"
   },
 ]
+
+// Animated counter component
+function AnimatedCounter({ 
+  target, 
+  prefix = "", 
+  suffix = "", 
+  duration = 2000, 
+  decimals = 0 
+}: { 
+  target: number; 
+  prefix?: string; 
+  suffix?: string; 
+  duration?: number; 
+  decimals?: number;
+}) {
+  const [count, setCount] = useState(0)
+  const [hasStarted, setHasStarted] = useState(false)
+  const ref = useRef<HTMLSpanElement>(null)
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStarted) {
+          setHasStarted(true)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.3 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [hasStarted])
+  
+  useEffect(() => {
+    if (!hasStarted) return
+    
+    const startTime = performance.now()
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      // Ease out cubic for a satisfying deceleration
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(eased * target)
+      if (progress < 1) requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+  }, [hasStarted, target, duration])
+  
+  return (
+    <span ref={ref}>
+      {prefix}{decimals > 0 ? count.toFixed(decimals) : Math.floor(count)}{suffix}
+    </span>
+  )
+}
 
 // Section reveal animation component
 function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -537,6 +592,70 @@ export default function PortfolioDesign() {
               <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" />
             </div>
           </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Stats Section */}
+      <section className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5 overflow-hidden">
+        <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
+          <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+            <RevealOnScroll>
+            <div className="flex items-center gap-2 sm:gap-3 mb-8 sm:mb-10 lg:mb-14">
+              <Zap className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
+              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Impact</h2>
+            </div>
+            </RevealOnScroll>
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
+              {/* Stat 1 */}
+              <RevealOnScroll delay={0}>
+              <div className="group">
+                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+                  <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                    $<AnimatedCounter target={1.4} suffix="B+" duration={2500} decimals={1} />
+                  </span>
+                </div>
+                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Cloud Infra Deals Handled</p>
+              </div>
+              </RevealOnScroll>
+
+              {/* Stat 2 */}
+              <RevealOnScroll delay={150}>
+              <div className="group">
+                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+                  <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                    <AnimatedCounter target={133} suffix="%" duration={2200} />
+                  </span>
+                </div>
+                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Growth Achieved</p>
+              </div>
+              </RevealOnScroll>
+
+              {/* Stat 3 */}
+              <RevealOnScroll delay={300}>
+              <div className="group">
+                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+                  <span className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
+                    Founder
+                  </span>
+                </div>
+                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Entrepreneur &middot; Built & Sold Startup</p>
+              </div>
+              </RevealOnScroll>
+
+              {/* Stat 4 */}
+              <RevealOnScroll delay={450}>
+              <div className="group">
+                <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+                  <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                    Serial
+                  </span>
+                </div>
+                <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">Negotiator &middot; Enterprise Deals</p>
+              </div>
+              </RevealOnScroll>
+            </div>
           </div>
         </div>
       </section>
