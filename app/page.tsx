@@ -866,7 +866,7 @@ export default function PortfolioDesign() {
             <SectionHeading icon={Briefcase} title="Experience" accentColor="cyan" />
           </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {experienceData.map((exp, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -908,7 +908,7 @@ export default function PortfolioDesign() {
             <SectionHeading icon={GraduationCap} title="Education" accentColor="violet" />
           </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {educationData.map((edu, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -940,7 +940,7 @@ export default function PortfolioDesign() {
             <SectionHeading icon={FolderKanban} title="Projects" accentColor="emerald" />
           </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {projectsData.map((project, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -976,7 +976,7 @@ export default function PortfolioDesign() {
               <SectionHeading icon={Lightbulb} title="Case Studies" accentColor="rose" />
             </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {caseStudiesData.map((study, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -1014,8 +1014,8 @@ export default function PortfolioDesign() {
               <SectionHeading icon={Code2} title="Skills" accentColor="cyan" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
-              {Object.entries(skillsData).map(([category, skills], index) => {
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
+            {Object.entries(skillsData).map(([category, skills], index) => {
               const colors = [
                 { bg: "bg-emerald-500/10", text: "text-emerald-400" },
                 { bg: "bg-amber-500/10", text: "text-amber-400" },
@@ -1060,7 +1060,7 @@ export default function PortfolioDesign() {
               <SectionHeading icon={Award} title="Certifications" accentColor="amber" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5 auto-rows-fr">
             {certificationsData.map((cert, index) => (
               <RevealOnScroll key={index} delay={index * 80}>
               <Link 
