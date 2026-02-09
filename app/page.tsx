@@ -578,6 +578,7 @@ const NAV_SECTIONS = ["about", "experience", "education", "projects", "case-stud
 
 export default function PortfolioDesign() {
   const [cards, setCards] = useState<CardsData | null>(null)
+  const [profile, setProfile] = useState<Record<string, string>>({})
   const { activeSection, scrollProgress } = useScrollSpy(NAV_SECTIONS)
   
   useEffect(() => {
@@ -585,6 +586,10 @@ export default function PortfolioDesign() {
       .then(res => res.json())
       .then(data => setCards(data))
       .catch(() => setCards(null))
+    fetch("/api/profile")
+      .then(res => res.json())
+      .then(data => setProfile(data))
+      .catch(() => setProfile({}))
   }, [])
   
   // Use fetched data or fallback to defaults
@@ -595,6 +600,19 @@ export default function PortfolioDesign() {
   const caseStudiesData = cards?.["case-study"] || CASE_STUDIES
   const certificationsData = cards?.certification || CERTIFICATIONS
   const skillsData = cards?.skills || SKILLS
+
+  // Profile data
+  const pName = profile.name || "Yash Goyal"
+  const pTitle = profile.title || "Product & Technology Leader"
+  const pTagline = profile.tagline || "Available for opportunities"
+  const pBio = profile.bio || "Building products that matter. I combine deep technical expertise with strategic product thinking to create impactful solutions at scale."
+  const pEmail = profile.email || "yash@example.com"
+  const pPhone = profile.phone || "+1234567890"
+  const pLinkedin = profile.linkedinUrl || "https://linkedin.com/in/yashgoyal"
+  const pGithub = profile.githubUrl || "https://github.com/yashgoyal"
+  const pResume = profile.resumeUrl || "#resume"
+  const pPhoto = profile.profilePhotoUrl || ""
+  const pFooter = profile.footerText || "2025 Yash Goyal"
   
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5] relative overflow-hidden">
@@ -681,24 +699,23 @@ export default function PortfolioDesign() {
               <div className="space-y-2 sm:space-y-3 lg:space-y-4">
                 <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">Available for opportunities</span>
+                  <span className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">{pTagline}</span>
                 </div>
                 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white leading-[1.1] tracking-tight">
                   <span className="block">Hi, I'm</span>
                   <span className="block bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent animate-gradient">
-                    Yash Goyal
+                    {pName}
                   </span>
                 </h1>
                 
                 <p className="text-base sm:text-lg lg:text-xl 2xl:text-2xl text-[#a3a3a3] font-light">
-                  Product & Technology Leader
+                  {pTitle}
                 </p>
               </div>
 
               <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-[#a3a3a3] max-w-xl 2xl:max-w-2xl">
-                Building products that matter. I combine deep technical expertise with strategic 
-                product thinking to create impactful solutions at scale.
+                {pBio}
               </p>
 
               {/* Primary CTA */}
@@ -744,14 +761,18 @@ export default function PortfolioDesign() {
                     <div className="w-full h-full rounded-xl lg:rounded-2xl bg-[#0a0a0b]" />
                   </div>
                   
-                  {/* Photo placeholder */}
-                  <div className="absolute inset-[1px] rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 lg:mb-3 rounded-full bg-white/5 flex items-center justify-center">
-                        <span className="text-2xl lg:text-3xl text-white/30 font-bold">YG</span>
+                  {/* Photo or placeholder */}
+                  <div className="absolute inset-[1px] rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center overflow-hidden">
+                    {pPhoto ? (
+                      <img src={pPhoto} alt={pName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 lg:mb-3 rounded-full bg-white/5 flex items-center justify-center">
+                          <span className="text-2xl lg:text-3xl text-white/30 font-bold">{pName.split(" ").map(n => n[0]).join("")}</span>
+                        </div>
+                        <span className="text-[#a3a3a3] text-xs lg:text-sm">Profile Photo</span>
                       </div>
-                      <span className="text-[#a3a3a3] text-xs lg:text-sm">Profile Photo</span>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -760,7 +781,9 @@ export default function PortfolioDesign() {
               <div className="w-full max-w-xs lg:max-w-sm space-y-2 lg:space-y-3 mx-auto lg:mx-0">
                 {/* Top row - 2 full width buttons */}
                 <a 
-                  href="#resume" 
+                  href={pResume}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                 >
                   <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-colors">
@@ -771,20 +794,20 @@ export default function PortfolioDesign() {
                 </a>
 
                 <a 
-                  href="mailto:yash@example.com" 
+                  href={`mailto:${pEmail}`}
                   className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                 >
                   <div className="p-2 lg:p-2.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
                     <Mail className="h-4 w-4 lg:h-5 lg:w-5 text-emerald-400" />
                   </div>
-                  <span className="text-xs lg:text-sm font-medium text-white">yash@example.com</span>
+                  <span className="text-xs lg:text-sm font-medium text-white">{pEmail}</span>
                   <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
                 {/* Bottom row - 3 icon buttons */}
                 <div className="flex gap-2 lg:gap-3">
                   <a 
-                    href="https://linkedin.com/in/yashgoyal" 
+                    href={pLinkedin} 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-[#0077B5]/20 hover:border-[#0077B5]/50 transition-all group backdrop-blur-sm"
@@ -794,7 +817,7 @@ export default function PortfolioDesign() {
                   </a>
                   
                   <a 
-                    href="https://github.com/yashgoyal" 
+                    href={pGithub} 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
@@ -804,7 +827,7 @@ export default function PortfolioDesign() {
                   </a>
                   
                   <a 
-                    href="tel:+1234567890" 
+                    href={`tel:${pPhone}`} 
                     className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all group backdrop-blur-sm"
                   >
                     <Phone className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-emerald-400 transition-colors" />
@@ -1150,7 +1173,7 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <a href="mailto:yash@example.com">
+                <a href={`mailto:${pEmail}`}>
                   <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   <span className="hidden xs:inline">Send </span>Email
                 </a>
@@ -1161,7 +1184,7 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <a href="tel:+1234567890">
+                <a href={`tel:${pPhone}`}>
                   <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   <span className="hidden xs:inline">Call </span>Me
                 </a>
@@ -1172,7 +1195,7 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <a href="#resume" target="_blank" rel="noopener noreferrer">
+                <a href={pResume} target="_blank" rel="noopener noreferrer">
                   <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   Resume
                 </a>
@@ -1183,7 +1206,7 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
+                <a href={pLinkedin} target="_blank" rel="noopener noreferrer">
                   <Linkedin className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   LinkedIn
                 </a>
@@ -1198,7 +1221,7 @@ export default function PortfolioDesign() {
       <footer className="py-4 sm:py-6 lg:py-8 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8 flex justify-center items-center text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">
-            <span>2025 Yash Goyal</span>
+            <span>{pFooter}</span>
           </div>
         </div>
       </footer>

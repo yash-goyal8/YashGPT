@@ -125,6 +125,12 @@ export function AdminDashboard() {
   const [isSavingDetail, setIsSavingDetail] = useState(false)
   const [detailSaveSuccess, setDetailSaveSuccess] = useState(false)
 
+  // Profile state
+  const [profile, setProfile] = useState<Record<string, string>>({})
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
+  const [profileSaveSuccess, setProfileSaveSuccess] = useState(false)
+
   // Card Manager state
   const [allCards, setAllCards] = useState<Record<string, unknown[]>>({})
   const [isLoadingCards, setIsLoadingCards] = useState(false)
@@ -135,6 +141,43 @@ export function AdminDashboard() {
   const [cardSaveSuccess, setCardSaveSuccess] = useState(false)
 
   // Fetch cards from API
+  const fetchProfile = async () => {
+    setIsLoadingProfile(true)
+    try {
+      const res = await fetch("/api/profile")
+      if (res.ok) {
+        const data = await res.json()
+        setProfile(data)
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error)
+    } finally {
+      setIsLoadingProfile(false)
+    }
+  }
+
+  const saveProfile = async () => {
+    setIsSavingProfile(true)
+    setProfileSaveSuccess(false)
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setProfile(data)
+        setProfileSaveSuccess(true)
+        setTimeout(() => setProfileSaveSuccess(false), 3000)
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error)
+    } finally {
+      setIsSavingProfile(false)
+    }
+  }
+
   const fetchCards = async () => {
     setIsLoadingCards(true)
     try {
@@ -150,10 +193,11 @@ export function AdminDashboard() {
     }
   }
 
-  // Load cards on mount
+  // Load cards and profile on mount
   useEffect(() => {
     if (isAuthenticated) {
       fetchCards()
+      fetchProfile()
     }
   }, [isAuthenticated])
 
@@ -678,10 +722,14 @@ export function AdminDashboard() {
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="upload" className="space-y-6">
           <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="cards" className="flex items-center gap-2">
-              <LayoutGrid className="h-4 w-4" />
-              <span className="hidden sm:inline">Cards</span>
-            </TabsTrigger>
+                <TabsTrigger value="profile" className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  Profile
+                </TabsTrigger>
+                <TabsTrigger value="cards" className="flex items-center gap-2">
+                  <LayoutGrid className="h-4 w-4" />
+                  Cards
+                </TabsTrigger>
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline">Upload</span>
@@ -709,6 +757,160 @@ export function AdminDashboard() {
           </TabsList>
 
           {/* Card Manager Tab */}
+          {/* Profile Tab */}
+          <TabsContent value="profile" className="space-y-6">
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold">Profile & Contact Info</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Update your name, title, bio, contact links, and profile photo URL. These appear in the hero section and footer.</p>
+                </div>
+                <Button onClick={saveProfile} disabled={isSavingProfile}>
+                  {isSavingProfile ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Save Profile
+                </Button>
+              </div>
+
+              {profileSaveSuccess && (
+                <div className="p-3 mb-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-lg">
+                  <p className="text-sm text-green-600 dark:text-green-400">Profile saved successfully!</p>
+                </div>
+              )}
+
+              {isLoadingProfile ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : (
+                <div className="grid gap-6">
+                  {/* Identity */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Identity</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Full Name</Label>
+                        <Input
+                          placeholder="Yash Goyal"
+                          value={profile.name || ""}
+                          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Title / Role</Label>
+                        <Input
+                          placeholder="Product & Technology Leader"
+                          value={profile.title || ""}
+                          onChange={(e) => setProfile({ ...profile, title: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tagline & Bio */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Tagline & Bio</h3>
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <Label>Tagline (badge text)</Label>
+                        <Input
+                          placeholder="Available for opportunities"
+                          value={profile.tagline || ""}
+                          onChange={(e) => setProfile({ ...profile, tagline: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Bio</Label>
+                        <Textarea
+                          placeholder="Building products that matter..."
+                          value={profile.bio || ""}
+                          onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Contact</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Email</Label>
+                        <Input
+                          type="email"
+                          placeholder="yash@example.com"
+                          value={profile.email || ""}
+                          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Phone</Label>
+                        <Input
+                          type="tel"
+                          placeholder="+1234567890"
+                          value={profile.phone || ""}
+                          onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Links */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Links</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>LinkedIn URL</Label>
+                        <Input
+                          placeholder="https://linkedin.com/in/yashgoyal"
+                          value={profile.linkedinUrl || ""}
+                          onChange={(e) => setProfile({ ...profile, linkedinUrl: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>GitHub URL</Label>
+                        <Input
+                          placeholder="https://github.com/yashgoyal"
+                          value={profile.githubUrl || ""}
+                          onChange={(e) => setProfile({ ...profile, githubUrl: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Resume URL</Label>
+                        <Input
+                          placeholder="https://drive.google.com/..."
+                          value={profile.resumeUrl || ""}
+                          onChange={(e) => setProfile({ ...profile, resumeUrl: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Profile Photo URL</Label>
+                        <Input
+                          placeholder="https://example.com/photo.jpg"
+                          value={profile.profilePhotoUrl || ""}
+                          onChange={(e) => setProfile({ ...profile, profilePhotoUrl: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Footer</h3>
+                    <div className="space-y-2">
+                      <Label>Footer Text</Label>
+                      <Input
+                        placeholder="2025 Yash Goyal"
+                        value={profile.footerText || ""}
+                        onChange={(e) => setProfile({ ...profile, footerText: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </TabsContent>
+
           <TabsContent value="cards" className="space-y-6">
             <Card className="p-6">
               <div className="space-y-4">
