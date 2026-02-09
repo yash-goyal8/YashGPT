@@ -248,6 +248,29 @@ const CERTIFICATIONS = [
   },
 ]
 
+// Section heading component
+function SectionHeading({ icon: Icon, title, accentColor = "cyan" }: { icon: React.ElementType; title: string; accentColor?: "cyan" | "amber" | "emerald" | "violet" | "rose" }) {
+  const colorMap = {
+    cyan: { bg: "bg-cyan-500/10", border: "border-cyan-500/20", icon: "text-cyan-400", line: "from-cyan-500/40" },
+    amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-400", line: "from-amber-500/40" },
+    emerald: { bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: "text-emerald-400", line: "from-emerald-500/40" },
+    violet: { bg: "bg-violet-500/10", border: "border-violet-500/20", icon: "text-violet-400", line: "from-violet-500/40" },
+    rose: { bg: "bg-rose-500/10", border: "border-rose-500/20", icon: "text-rose-400", line: "from-rose-500/40" },
+  }
+  const c = colorMap[accentColor]
+  return (
+    <div className="mb-8 sm:mb-10 lg:mb-12">
+      <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
+        <div className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl ${c.bg} border ${c.border}`}>
+          <Icon className={`h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 ${c.icon}`} />
+        </div>
+        <h2 className="text-lg sm:text-xl lg:text-2xl 2xl:text-3xl font-bold text-white tracking-tight">{title}</h2>
+      </div>
+      <div className={`ml-[52px] sm:ml-[60px] h-px bg-gradient-to-r ${c.line} via-white/10 to-transparent`} />
+    </div>
+  )
+}
+
 // Animated counter component
 function AnimatedCounter({ 
   target, 
@@ -621,10 +644,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-8 sm:mb-10 lg:mb-14">
-              <Zap className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Impact</h2>
-            </div>
+              <SectionHeading icon={Zap} title="Impact" accentColor="amber" />
             </RevealOnScroll>
 
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10">
@@ -656,10 +676,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
           <RevealOnScroll>
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-            <Briefcase className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Experience</h2>
-          </div>
+            <SectionHeading icon={Briefcase} title="Experience" accentColor="cyan" />
           </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
@@ -701,10 +718,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
           <RevealOnScroll>
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-            <GraduationCap className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Education</h2>
-          </div>
+            <SectionHeading icon={GraduationCap} title="Education" accentColor="violet" />
           </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
@@ -736,10 +750,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
           <RevealOnScroll>
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-            <FolderKanban className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Projects</h2>
-          </div>
+            <SectionHeading icon={FolderKanban} title="Projects" accentColor="emerald" />
           </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
@@ -775,11 +786,8 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Lightbulb className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Case Studies</h2>
-          </div>
-          </RevealOnScroll>
+              <SectionHeading icon={Lightbulb} title="Case Studies" accentColor="rose" />
+            </RevealOnScroll>
 
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {caseStudiesData.map((study, index) => (
@@ -816,10 +824,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Code2 className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
-            </div>
+              <SectionHeading icon={Code2} title="Skills" accentColor="cyan" />
             </RevealOnScroll>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
@@ -865,10 +870,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Award className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
-            </div>
+              <SectionHeading icon={Award} title="Certifications" accentColor="amber" />
             </RevealOnScroll>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
@@ -900,10 +902,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Info className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Additional Information</h2>
-            </div>
+              <SectionHeading icon={Info} title="Additional Information" accentColor="emerald" />
             </RevealOnScroll>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8 text-[10px] sm:text-xs lg:text-sm">
