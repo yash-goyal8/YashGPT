@@ -19,7 +19,12 @@ import {
   ArrowUpRight,
   Phone,
   ChevronRight,
-  Award
+  Award,
+  Sparkles,
+  MessageSquare,
+  Lock,
+  X,
+  ArrowRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { MatrixBackground } from "@/components/matrix-background"
@@ -247,6 +252,171 @@ const CERTIFICATIONS = [
     credentialId: "CSM-901234"
   },
 ]
+
+// Typing animation for chat preview
+function TypingDots() {
+  return (
+    <span className="inline-flex gap-0.5 ml-1">
+      <span className="w-1 h-1 rounded-full bg-cyan-400 animate-[bounce_1.4s_infinite_0ms]" />
+      <span className="w-1 h-1 rounded-full bg-cyan-400 animate-[bounce_1.4s_infinite_200ms]" />
+      <span className="w-1 h-1 rounded-full bg-cyan-400 animate-[bounce_1.4s_infinite_400ms]" />
+    </span>
+  )
+}
+
+// Chat preview teaser - placed in hero section
+function ChatPreviewTeaser() {
+  const [currentLine, setCurrentLine] = useState(0)
+  const [isTyping, setIsTyping] = useState(true)
+  
+  const chatLines = [
+    { type: "user", text: "What makes Yash stand out?" },
+    { type: "ai", text: "Yash closed $1.4B+ in cloud deals, founded and sold a startup, and drove 133% growth. Want specifics?" },
+    { type: "user", text: "Tell me about his technical skills" },
+    { type: "ai", text: "Full-stack with Python, React, AWS, and system design at scale. He built products used by..." },
+  ]
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTyping(true)
+      setTimeout(() => {
+        setCurrentLine(prev => (prev + 1) % chatLines.length)
+        setIsTyping(false)
+      }, 1200)
+    }, 3500)
+    
+    const initialTimeout = setTimeout(() => {
+      setIsTyping(false)
+    }, 1200)
+    
+    return () => {
+      clearInterval(interval)
+      clearTimeout(initialTimeout)
+    }
+  }, [])
+  
+  return (
+    <Link href="/chat" className="block group">
+      <div className="relative mt-6 sm:mt-8 max-w-md">
+        {/* Label */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+            <Sparkles className="h-3 w-3 text-cyan-400" />
+            <span className="text-[10px] sm:text-xs text-cyan-400 font-medium">Live Preview</span>
+          </div>
+          <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Try asking YashGPT anything</span>
+        </div>
+        
+        {/* Chat Window */}
+        <div className="rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-sm overflow-hidden group-hover:border-cyan-500/30 transition-all duration-300">
+          {/* Chat header */}
+          <div className="px-3 py-2 border-b border-white/5 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-[10px] sm:text-xs text-[#a3a3a3] font-medium">YashGPT</span>
+            <span className="text-[9px] text-cyan-400/60 ml-auto">online</span>
+          </div>
+          
+          {/* Chat messages */}
+          <div className="p-3 space-y-2.5 h-[88px] overflow-hidden">
+            {/* Current user message */}
+            <div className="flex justify-end">
+              <div className="px-3 py-1.5 rounded-lg bg-white/10 max-w-[80%]">
+                <p className="text-[10px] sm:text-xs text-white">{chatLines[currentLine].text}</p>
+              </div>
+            </div>
+            
+            {/* AI response */}
+            <div className="flex justify-start">
+              <div className="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/10 max-w-[85%]">
+                {isTyping ? (
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Thinking</span>
+                    <TypingDots />
+                  </div>
+                ) : (
+                  <p className="text-[10px] sm:text-xs text-[#e5e5e5]">
+                    {chatLines[(currentLine + 1) % chatLines.length].text}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* CTA bar */}
+          <div className="px-3 py-2 border-t border-white/5 bg-white/[0.02] flex items-center justify-between">
+            <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Ask me anything about Yash...</span>
+            <ArrowRight className="h-3.5 w-3.5 text-cyan-400 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// Scroll-triggered curiosity prompt
+function CuriosityPrompt() {
+  const [isVisible, setIsVisible] = useState(false)
+  const [isDismissed, setIsDismissed] = useState(false)
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isDismissed) return
+      const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+      setIsVisible(scrollPercent > 55)
+    }
+    
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [isDismissed])
+  
+  if (isDismissed) return null
+  
+  return (
+    <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ${
+      isVisible 
+        ? "translate-y-0 opacity-100" 
+        : "translate-y-8 opacity-0 pointer-events-none"
+    }`}>
+      <div className="relative max-w-xs">
+        {/* Dismiss button */}
+        <button 
+          onClick={() => setIsDismissed(true)}
+          className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
+          aria-label="Dismiss"
+        >
+          <X className="h-3 w-3 text-[#a3a3a3]" />
+        </button>
+        
+        <Link href="/chat" className="block group">
+          <div className="p-4 rounded-2xl bg-[#0a0a0b]/90 backdrop-blur-xl border border-white/10 hover:border-cyan-500/30 shadow-2xl shadow-black/50 transition-all duration-300">
+            {/* Top secret badge */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 animate-pulse">
+                <Lock className="h-2.5 w-2.5 text-amber-400" />
+                <span className="text-[9px] text-amber-400 font-bold uppercase tracking-widest">Classified</span>
+              </div>
+            </div>
+            
+            {/* Message */}
+            <p className="text-sm font-medium text-white mb-1 leading-snug">
+              Psst... YashGPT has intel
+            </p>
+            <p className="text-xs text-[#a3a3a3] mb-3 leading-relaxed">
+              Things not on this page. The real stories behind the numbers. Care to ask?
+            </p>
+            
+            {/* CTA */}
+            <div className="flex items-center gap-2 text-cyan-400">
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span className="text-xs font-semibold group-hover:underline">Unlock the conversation</span>
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </Link>
+      </div>
+    </div>
+  )
+}
 
 // Section heading component
 function SectionHeading({ icon: Icon, title, accentColor = "cyan" }: { icon: React.ElementType; title: string; accentColor?: "cyan" | "amber" | "emerald" | "violet" | "rose" }) {
@@ -541,6 +711,9 @@ export default function PortfolioDesign() {
                   </a>
                 </Button>
               </div>
+
+              {/* Chat Preview Teaser */}
+              <ChatPreviewTeaser />
             </div>
 
             {/* Right Column - Photo & Contact Cards */}
@@ -1019,10 +1192,15 @@ export default function PortfolioDesign() {
       {/* Floating Chat Button (Mobile) */}
       <Link
         href="/chat"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:hidden p-3 sm:p-4 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:hidden p-3 sm:p-4 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform z-40"
       >
         <Bot className="h-5 w-5 sm:h-6 sm:w-6" />
       </Link>
+
+      {/* Scroll-triggered Curiosity Prompt (Desktop) */}
+      <div className="hidden md:block">
+        <CuriosityPrompt />
+      </div>
     </div>
   )
 }
