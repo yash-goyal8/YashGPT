@@ -17,7 +17,6 @@ import {
   Info,
   Bot,
   ArrowUpRight,
-  Phone,
   ChevronRight,
   Award,
   Sparkles,
@@ -607,7 +606,6 @@ export default function PortfolioDesign() {
   const pTagline = profile.tagline || "Available for opportunities"
   const pBio = profile.bio || "Building products that matter. I combine deep technical expertise with strategic product thinking to create impactful solutions at scale."
   const pEmail = profile.email || "yash@example.com"
-  const pPhone = profile.phone || "+1234567890"
   const pLinkedin = profile.linkedinUrl || "https://linkedin.com/in/yashgoyal"
   const pGithub = profile.githubUrl || "https://github.com/yashgoyal"
   const pResume = profile.resumeUrl || "#resume"
@@ -820,14 +818,6 @@ export default function PortfolioDesign() {
                   >
                     <Github className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
                     <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">GitHub</span>
-                  </a>
-                  
-                  <a 
-                    href={`tel:${pPhone}`} 
-                    className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all group backdrop-blur-sm"
-                  >
-                    <Phone className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-emerald-400 transition-colors" />
-                    <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Phone</span>
                   </a>
                 </div>
               </div>
@@ -1173,17 +1163,6 @@ export default function PortfolioDesign() {
                   <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   <span className="hidden xs:inline">Send </span>Email
                 </button>
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
-                asChild
-              >
-                <a href={`tel:${pPhone}`}>
-                  <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
-                  <span className="hidden xs:inline">Call </span>Me
-                </a>
               </Button>
               <Button 
                 size="lg"
