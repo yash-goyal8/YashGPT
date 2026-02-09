@@ -270,9 +270,9 @@ function ChatPreviewTeaser() {
   const [pairIndex, setPairIndex] = useState(0)
   
   const pairs = [
-    { q: "What makes Yash stand out?", a: "Yash closed $1.4B+ in cloud deals, founded & sold a startup, and drove 133% growth." },
+    { q: "What makes Yash stand out?", a: "Managed a $1.4B+ cloud portfolio, founded & sold a startup, and drove 133% growth." },
     { q: "Tell me about his PM skills", a: "Led cross-functional teams, defined product strategy for enterprise SaaS, drove 3x user adoption." },
-    { q: "Why should we hire Yash?", a: "Rare blend of technical depth + business acumen. He builds products AND closes deals." },
+    { q: "Why should we hire Yash?", a: "Rare blend of technical depth + business acumen. He builds products AND scales them." },
   ]
   
   useEffect(() => {
