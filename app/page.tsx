@@ -340,7 +340,7 @@ function ChatPreviewTeaser() {
           </div>
           
           {/* Chat messages */}
-          <div className="p-4 space-y-3 min-h-[110px]">
+          <div className="p-4 space-y-3 h-[140px] overflow-hidden">
             {/* User message */}
             <div className={`flex justify-end transition-all duration-500 ${phase >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
               <div className="px-3 py-2 rounded-2xl rounded-br-md bg-white/10 max-w-[75%]">
