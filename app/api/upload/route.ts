@@ -10,10 +10,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 })
     }
 
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.error("[v0] BLOB_READ_WRITE_TOKEN is not set")
+      return NextResponse.json({ error: "Storage not configured" }, { status: 500 })
+    }
+
+    // Read the file into a buffer for reliable upload
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
     // Upload to Vercel Blob with random suffix to avoid duplicates
-    const blob = await put(file.name, file, {
+    const blob = await put(file.name, buffer, {
       access: "public",
       addRandomSuffix: true,
+      contentType: file.type,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     })
 
     return NextResponse.json({
@@ -25,6 +36,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error("[v0] Upload error:", error)
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 })
+    const message = error instanceof Error ? error.message : "Upload failed"
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

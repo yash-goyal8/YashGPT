@@ -194,15 +194,16 @@ export function AdminDashboard() {
       const formData = new FormData()
       formData.append("file", file)
       const res = await fetch("/api/upload", { method: "POST", body: formData })
+      const data = await res.json()
       if (res.ok) {
-        const data = await res.json()
         setProfile(prev => ({ ...prev, profilePhotoUrl: data.url }))
       } else {
-        alert("Upload failed. Please try again.")
+        console.error("[v0] Upload failed:", data)
+        alert(`Upload failed: ${data.error || "Unknown error"}`)
       }
     } catch (error) {
-      console.error("Photo upload error:", error)
-      alert("Upload failed. Please try again.")
+      console.error("[v0] Photo upload error:", error)
+      alert("Upload failed. Network error, please try again.")
     } finally {
       setIsUploadingPhoto(false)
     }
