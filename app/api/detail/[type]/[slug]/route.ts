@@ -111,13 +111,32 @@ export async function GET(
   const { type, slug } = await params
 
   try {
+    console.log("[v0] Fetching detail:", { type, slug })
+    
     // Try to get extended content from Redis
     const extendedContent = await redis.get(`detail:${type}:${slug}`)
     
-    // Get base data
-    const baseData = BASE_DATA[type]?.[slug]
+    // Fetch base card data from the cards API
+    let baseData = null
+    try {
+      const cardsData = await redis.get("cards")
+      if (cardsData && typeof cardsData === "object") {
+        const cards = (cardsData as Record<string, unknown[]>)[type]
+        if (Array.isArray(cards)) {
+          baseData = cards.find((card: Record<string, unknown>) => card.slug === slug)
+        }
+      }
+    } catch (err) {
+      console.error("[v0] Error fetching base card data:", err)
+    }
+    
+    // Fall back to hardcoded BASE_DATA only if no real card exists
+    if (!baseData) {
+      baseData = BASE_DATA[type]?.[slug]
+    }
     
     if (!baseData && !extendedContent) {
+      console.log("[v0] No data found for:", { type, slug })
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
 
@@ -126,6 +145,8 @@ export async function GET(
       ...(baseData || {}),
       ...(extendedContent as object || {}),
     }
+    
+    console.log("[v0] Returning detail content:", { type, slug, hasBase: !!baseData, hasExtended: !!extendedContent })
 
     return NextResponse.json({
       type,
@@ -133,7 +154,7 @@ export async function GET(
       content,
     })
   } catch (error) {
-    console.error("Error fetching detail:", error)
+    console.error("[v0] Error fetching detail:", error)
     return NextResponse.json({ error: "Failed to fetch" }, { status: 500 })
   }
 }
