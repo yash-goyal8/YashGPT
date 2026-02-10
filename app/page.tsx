@@ -252,6 +252,32 @@ const CERTIFICATIONS = [
   },
 ]
 
+// Animated bio - highlights text between single quotes with shimmer
+function AnimatedBio({ text }: { text: string }) {
+  // Split on single-quoted phrases: 'messy garage build' and 'checkered flag'
+  const parts = text.split(/(&#x27;[^&#x27;]+&#x27;|'[^']+')/)
+
+  return (
+    <>
+      {parts.map((part, i) => {
+        const isQuoted = (part.startsWith("'") && part.endsWith("'")) || (part.startsWith("\u0027") && part.endsWith("\u0027"))
+        if (isQuoted) {
+          const inner = part.slice(1, -1)
+          return (
+            <span key={i} className="relative inline-block">
+              <span className="relative z-10 bg-gradient-to-r from-cyan-300 via-white to-cyan-300 bg-clip-text text-transparent font-semibold bg-[length:200%_auto] animate-gradient">
+                {`'${inner}'`}
+              </span>
+              <span className="absolute inset-0 bg-cyan-400/10 rounded-md -mx-1 -my-0.5 px-1 py-0.5 blur-sm" />
+            </span>
+          )
+        }
+        return <span key={i}>{part}</span>
+      })}
+    </>
+  )
+}
+
 // Typing animation for chat preview
 function TypingDots() {
   return (
@@ -713,7 +739,7 @@ export default function PortfolioDesign() {
               </div>
 
               <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-[#a3a3a3] max-w-xl 2xl:max-w-2xl">
-                {pBio}
+                <AnimatedBio text={pBio} />
               </p>
 
               {/* Primary CTA */}
