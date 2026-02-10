@@ -33,6 +33,8 @@ import {
   Edit3,
   LayoutGrid,
   Camera,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -222,6 +224,38 @@ export function AdminDashboard() {
       alert("Upload failed. Network error, please try again.")
     } finally {
       setIsUploadingPhoto(false)
+    }
+  }
+
+  const reorderCard = async (category: string, index: number, direction: "up" | "down") => {
+    const cards = [...(allCards[category] as Record<string, unknown>[])]
+    const newIndex = direction === "up" ? index - 1 : index + 1
+    
+    // Bounds check
+    if (newIndex < 0 || newIndex >= cards.length) return
+    
+    // Swap cards
+    const temp = cards[index]
+    cards[index] = cards[newIndex]
+    cards[newIndex] = temp
+    
+    // Optimistically update UI
+    setAllCards({ ...allCards, [category]: cards })
+    
+    // Save to backend
+    try {
+      const res = await fetch("/api/cards", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [category]: cards }),
+      })
+      if (!res.ok) {
+        // Revert on error
+        fetchCards()
+      }
+    } catch (error) {
+      console.error("[v0] Reorder error:", error)
+      fetchCards()
     }
   }
 
@@ -1070,6 +1104,24 @@ export function AdminDashboard() {
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={index === 0}
+                              onClick={() => reorderCard(cardManagerCategory, index, "up")}
+                              title="Move up"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={index === (allCards[cardManagerCategory] as unknown[]).length - 1}
+                              onClick={() => reorderCard(cardManagerCategory, index, "down")}
+                              title="Move down"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="outline"
                               size="sm"
