@@ -788,7 +788,7 @@ export default function PortfolioDesign() {
                   {/* Photo or placeholder */}
                   <div className="absolute inset-[1px] rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center overflow-hidden">
                     {pPhoto ? (
-                      <img src={pPhoto} alt={pName} className="w-full h-full object-cover" />
+                      <img src={pPhoto} alt={pName} className="w-full h-full object-cover object-[center_20%]" />
                     ) : (
                       <div className="text-center">
                         <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 lg:mb-3 rounded-full bg-white/5 flex items-center justify-center">
