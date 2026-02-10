@@ -1223,14 +1223,18 @@ export function AdminDashboard() {
                         </div>
                         <div className="space-y-2">
                           <Label>Skills (comma-separated)</Label>
-                          <Input
-                            placeholder="Product Strategy, Data Analytics, Leadership"
+                          <Textarea
+                            placeholder="Product Strategy, Data Analytics, Cross-functional Leadership, Go-to-Market"
                             value={(editingCard?.skills as string[])?.join(", ") || ""}
                             onChange={(e) => setEditingCard({ 
                               ...editingCard, 
                               skills: e.target.value.split(",").map(s => s.trim()).filter(s => s)
                             })}
+                            rows={2}
                           />
+                          <p className="text-xs text-muted-foreground">
+                            {((editingCard?.skills as string[])?.length || 0)} skill(s) • No limit, separate with commas
+                          </p>
                         </div>
                       </div>
                     )}
