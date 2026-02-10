@@ -194,8 +194,16 @@ export function AdminDashboard() {
       const formData = new FormData()
       formData.append("file", file)
       const res = await fetch("/api/upload", { method: "POST", body: formData })
-      const data = await res.json()
-      if (res.ok) {
+      const text = await res.text()
+      let data
+      try {
+        data = JSON.parse(text)
+      } catch {
+        console.error("[v0] Upload response not JSON:", text)
+        alert(`Upload failed: ${text.slice(0, 100)}`)
+        return
+      }
+      if (res.ok && data.url) {
         setProfile(prev => ({ ...prev, profilePhotoUrl: data.url }))
       } else {
         console.error("[v0] Upload failed:", data)
