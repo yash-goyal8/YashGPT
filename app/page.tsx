@@ -13,12 +13,17 @@ import {
   Code2,
   FolderKanban,
   Lightbulb,
+  Zap,
   Info,
   Bot,
   ArrowUpRight,
-  Phone,
   ChevronRight,
-  Award
+  Award,
+  Sparkles,
+  MessageSquare,
+  Lock,
+  X,
+  ArrowRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { MatrixBackground } from "@/components/matrix-background"
@@ -65,6 +70,16 @@ interface CertificationCard {
   credentialId: string
 }
 
+interface ImpactCard {
+  slug: string
+  value: string
+  prefix: string
+  suffix: string
+  decimals: string
+  label: string
+  type: "counter" | "text"
+}
+
 interface CardsData {
   experience: ExperienceCard[]
   education: EducationCard[]
@@ -72,6 +87,7 @@ interface CardsData {
   "case-study": CaseStudyCard[]
   certification: CertificationCard[]
   skills: Record<string, string[]>
+  impact: ImpactCard[]
 }
 
 // Animated background grid component
@@ -106,6 +122,14 @@ function AnimatedBackground() {
 }
 
 // Placeholder data - to be replaced with real content
+const IMPACT: ImpactCard[] = [
+  { slug: "cloud-infra-deals", value: "1.4", prefix: "$", suffix: "B+", decimals: "1", label: "Cloud Infra Deals Handled", type: "counter" },
+  { slug: "growth-achieved", value: "133", prefix: "", suffix: "%", decimals: "0", label: "Growth Achieved", type: "counter" },
+  { slug: "founder", value: "Founder", prefix: "", suffix: "", decimals: "0", label: "Entrepreneur \u00b7 Built & Sold Startup", type: "text" },
+  { slug: "serial-negotiator", value: "Serial", prefix: "", suffix: "", decimals: "0", label: "Negotiator \u00b7 Enterprise Deals", type: "text" },
+  { slug: "products-launched", value: "5", prefix: "", suffix: "+", decimals: "0", label: "Products Launched to Market", type: "counter" },
+]
+
 const EXPERIENCE = [
   {
     slug: "senior-pm-tech-company",
@@ -228,6 +252,288 @@ const CERTIFICATIONS = [
   },
 ]
 
+// Animated bio - highlights text between single quotes with shimmer
+function AnimatedBio({ text }: { text: string }) {
+  // Split on single-quoted phrases: 'messy garage build' and 'checkered flag'
+  const parts = text.split(/(&#x27;[^&#x27;]+&#x27;|'[^']+')/)
+
+  return (
+    <>
+      {parts.map((part, i) => {
+        const isQuoted = (part.startsWith("'") && part.endsWith("'")) || (part.startsWith("\u0027") && part.endsWith("\u0027"))
+        if (isQuoted) {
+          const inner = part.slice(1, -1)
+          return (
+            <span key={i} className="relative inline-block">
+              <span className="relative z-10 bg-gradient-to-r from-cyan-300 via-white to-cyan-300 bg-clip-text text-transparent font-semibold bg-[length:200%_auto] animate-gradient">
+                {`'${inner}'`}
+              </span>
+              <span className="absolute inset-0 bg-cyan-400/10 rounded-md -mx-1 -my-0.5 px-1 py-0.5 blur-sm" />
+            </span>
+          )
+        }
+        return <span key={i}>{part}</span>
+      })}
+    </>
+  )
+}
+
+// Typing animation for chat preview
+function TypingDots() {
+  return (
+    <span className="inline-flex gap-0.5 ml-1">
+      <span className="w-1 h-1 rounded-full bg-cyan-400 animate-[bounce_1.4s_infinite_0ms]" />
+      <span className="w-1 h-1 rounded-full bg-cyan-400 animate-[bounce_1.4s_infinite_200ms]" />
+      <span className="w-1 h-1 rounded-full bg-cyan-400 animate-[bounce_1.4s_infinite_400ms]" />
+    </span>
+  )
+}
+
+// Chat preview teaser - placed in hero section
+function ChatPreviewTeaser() {
+  const [phase, setPhase] = useState(0) // 0=typing-q, 1=show-q, 2=typing-a, 3=show-a, then repeat
+  const [pairIndex, setPairIndex] = useState(0)
+  
+  const pairs = [
+    { q: "What makes Yash stand out?", a: "Managed a $1.4B+ cloud portfolio, founded & sold a startup, and drove 133% growth." },
+    { q: "Tell me about his PM skills", a: "Led cross-functional teams, defined product strategy for enterprise SaaS, drove 3x user adoption." },
+    { q: "Why should we hire Yash?", a: "Rare blend of technical depth + business acumen. He builds products AND scales them." },
+  ]
+  
+  useEffect(() => {
+    const timings = [1500, 1800, 1200, 3000] // typing-q, show-q, typing-a, show-a (reading time)
+    const timeout = setTimeout(() => {
+      setPhase(prev => {
+        if (prev === 3) {
+          setPairIndex(p => (p + 1) % pairs.length)
+          return 0
+        }
+        return prev + 1
+      })
+    }, timings[phase])
+    return () => clearTimeout(timeout)
+  }, [phase, pairs.length])
+  
+  const currentPair = pairs[pairIndex]
+  
+  return (
+    <Link href="/chat" className="block group">
+      <div className="relative mt-8 sm:mt-10 max-w-lg">
+        {/* Outer glow */}
+        <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-cyan-500/20 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+        
+        {/* Chat Window */}
+        <div className="relative rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm overflow-hidden group-hover:border-cyan-500/20 transition-all duration-500">
+          {/* Chat header */}
+          <div className="px-4 py-2.5 border-b border-white/5 flex items-center gap-2.5 bg-white/[0.02]">
+            <div className="relative">
+              <Bot className="h-4 w-4 text-cyan-400" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 ring-2 ring-[#0a0a0b]" />
+            </div>
+            <div className="flex-1">
+              <span className="text-xs text-white font-medium">YashGPT</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3 text-cyan-400/60" />
+              <span className="text-[9px] text-cyan-400/80 font-medium uppercase tracking-wider">AI</span>
+            </div>
+          </div>
+          
+          {/* Chat messages */}
+          <div className="p-4 space-y-3 h-[140px] overflow-hidden">
+            {/* User message */}
+            <div className={`flex justify-end transition-all duration-500 ${phase >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
+              <div className="px-3 py-2 rounded-2xl rounded-br-md bg-white/10 max-w-[75%]">
+                {phase === 0 ? (
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-white/60">typing</span>
+                    <TypingDots />
+                  </div>
+                ) : (
+                  <p className="text-xs text-white leading-relaxed">{currentPair.q}</p>
+                )}
+              </div>
+            </div>
+            
+            {/* AI response */}
+            <div className={`flex justify-start transition-all duration-500 ${phase >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
+              <div className="flex gap-2 max-w-[85%]">
+                <div className="mt-1 shrink-0 w-5 h-5 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                  <Bot className="h-3 w-3 text-cyan-400" />
+                </div>
+                <div className="px-3 py-2 rounded-2xl rounded-bl-md bg-cyan-500/5 border border-cyan-500/10">
+                  {phase === 2 ? (
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#a3a3a3]">Thinking</span>
+                      <TypingDots />
+                    </div>
+                  ) : phase >= 3 ? (
+                    <p className="text-xs text-[#e5e5e5] leading-relaxed">{currentPair.a}</p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* CTA bar */}
+          <div className="px-4 py-2.5 border-t border-white/5 bg-gradient-to-r from-cyan-500/[0.03] to-transparent flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-3.5 w-3.5 text-[#a3a3a3]" />
+              <span className="text-xs text-[#a3a3a3] group-hover:text-white transition-colors">Ask me anything about Yash...</span>
+            </div>
+            <div className="flex items-center gap-1 text-cyan-400">
+              <span className="text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity">Try it</span>
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// Scroll-triggered curiosity prompt
+function CuriosityPrompt() {
+  const [isVisible, setIsVisible] = useState(false)
+  const [isDismissed, setIsDismissed] = useState(false)
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isDismissed) return
+      const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+      setIsVisible(scrollPercent > 55)
+    }
+    
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [isDismissed])
+  
+  if (isDismissed) return null
+  
+  return (
+    <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ${
+      isVisible 
+        ? "translate-y-0 opacity-100" 
+        : "translate-y-8 opacity-0 pointer-events-none"
+    }`}>
+      <div className="relative max-w-xs">
+        {/* Dismiss button */}
+        <button 
+          onClick={() => setIsDismissed(true)}
+          className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
+          aria-label="Dismiss"
+        >
+          <X className="h-3 w-3 text-[#a3a3a3]" />
+        </button>
+        
+        <Link href="/chat" className="block group">
+          <div className="p-4 rounded-2xl bg-[#0a0a0b]/90 backdrop-blur-xl border border-white/10 hover:border-cyan-500/30 shadow-2xl shadow-black/50 transition-all duration-300">
+            {/* Top secret badge */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 animate-pulse">
+                <Lock className="h-2.5 w-2.5 text-amber-400" />
+                <span className="text-[9px] text-amber-400 font-bold uppercase tracking-widest">Classified</span>
+              </div>
+            </div>
+            
+            {/* Message */}
+            <p className="text-sm font-medium text-white mb-1 leading-snug">
+              Psst... YashGPT has intel
+            </p>
+            <p className="text-xs text-[#a3a3a3] mb-3 leading-relaxed">
+              Things not on this page. The real stories behind the numbers. Care to ask?
+            </p>
+            
+            {/* CTA */}
+            <div className="flex items-center gap-2 text-cyan-400">
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span className="text-xs font-semibold group-hover:underline">Unlock the conversation</span>
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+// Section heading component
+function SectionHeading({ icon: Icon, title, accentColor = "cyan" }: { icon: React.ElementType; title: string; accentColor?: "cyan" | "amber" | "emerald" | "violet" | "rose" }) {
+  const colorMap = {
+    cyan: { bg: "bg-cyan-500/10", border: "border-cyan-500/20", icon: "text-cyan-400", line: "from-cyan-500/40" },
+    amber: { bg: "bg-amber-500/10", border: "border-amber-500/20", icon: "text-amber-400", line: "from-amber-500/40" },
+    emerald: { bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: "text-emerald-400", line: "from-emerald-500/40" },
+    violet: { bg: "bg-violet-500/10", border: "border-violet-500/20", icon: "text-violet-400", line: "from-violet-500/40" },
+    rose: { bg: "bg-rose-500/10", border: "border-rose-500/20", icon: "text-rose-400", line: "from-rose-500/40" },
+  }
+  const c = colorMap[accentColor]
+  return (
+    <div className="mb-8 sm:mb-10 lg:mb-12">
+      <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
+        <div className={`p-2 sm:p-2.5 rounded-lg sm:rounded-xl ${c.bg} border ${c.border}`}>
+          <Icon className={`h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 ${c.icon}`} />
+        </div>
+        <h2 className="text-lg sm:text-xl lg:text-2xl 2xl:text-3xl font-bold text-white tracking-tight">{title}</h2>
+      </div>
+      <div className={`ml-[52px] sm:ml-[60px] h-px bg-gradient-to-r ${c.line} via-white/10 to-transparent`} />
+    </div>
+  )
+}
+
+// Animated counter component
+function AnimatedCounter({ 
+  target, 
+  prefix = "", 
+  suffix = "", 
+  duration = 2000, 
+  decimals = 0 
+}: { 
+  target: number; 
+  prefix?: string; 
+  suffix?: string; 
+  duration?: number; 
+  decimals?: number;
+}) {
+  const [count, setCount] = useState(0)
+  const [hasStarted, setHasStarted] = useState(false)
+  const ref = useRef<HTMLSpanElement>(null)
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStarted) {
+          setHasStarted(true)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.3 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [hasStarted])
+  
+  useEffect(() => {
+    if (!hasStarted) return
+    
+    const startTime = performance.now()
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      // Ease out cubic for a satisfying deceleration
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(eased * target)
+      if (progress < 1) requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+  }, [hasStarted, target, duration])
+  
+  return (
+    <span ref={ref}>
+      {prefix}{decimals > 0 ? count.toFixed(decimals) : Math.floor(count)}{suffix}
+    </span>
+  )
+}
+
 // Section reveal animation component
 function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -297,6 +603,7 @@ const NAV_SECTIONS = ["about", "experience", "education", "projects", "case-stud
 
 export default function PortfolioDesign() {
   const [cards, setCards] = useState<CardsData | null>(null)
+  const [profile, setProfile] = useState<Record<string, string>>({})
   const { activeSection, scrollProgress } = useScrollSpy(NAV_SECTIONS)
   
   useEffect(() => {
@@ -304,15 +611,32 @@ export default function PortfolioDesign() {
       .then(res => res.json())
       .then(data => setCards(data))
       .catch(() => setCards(null))
+    fetch("/api/profile")
+      .then(res => res.json())
+      .then(data => setProfile(data))
+      .catch(() => setProfile({}))
   }, [])
   
   // Use fetched data or fallback to defaults
+  const impactData = cards?.impact || IMPACT
   const experienceData = cards?.experience || EXPERIENCE
   const educationData = cards?.education || EDUCATION
   const projectsData = cards?.project || PROJECTS
   const caseStudiesData = cards?.["case-study"] || CASE_STUDIES
   const certificationsData = cards?.certification || CERTIFICATIONS
   const skillsData = cards?.skills || SKILLS
+
+  // Profile data
+  const pName = profile.name || "Yash Goyal"
+  const pTitle = profile.title || "Product & Technology Leader"
+  const pTagline = profile.tagline || "Available for opportunities"
+  const pBio = profile.bio || "Building products that matter. I combine deep technical expertise with strategic product thinking to create impactful solutions at scale."
+  const pEmail = profile.email || "yash@example.com"
+  const pLinkedin = profile.linkedinUrl || "https://linkedin.com/in/yashgoyal"
+  const pGithub = profile.githubUrl || "https://github.com/yashgoyal"
+  const pResume = profile.resumeUrl || "#resume"
+  const pPhoto = profile.profilePhotoUrl || ""
+  const pFooter = profile.footerText || "2025 Yash Goyal"
   
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5] relative overflow-hidden">
@@ -399,24 +723,23 @@ export default function PortfolioDesign() {
               <div className="space-y-2 sm:space-y-3 lg:space-y-4">
                 <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">Available for opportunities</span>
+                  <span className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">{pTagline}</span>
                 </div>
                 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white leading-[1.1] tracking-tight">
                   <span className="block">Hi, I'm</span>
                   <span className="block bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent animate-gradient">
-                    Yash Goyal
+                    {pName}
                   </span>
                 </h1>
                 
                 <p className="text-base sm:text-lg lg:text-xl 2xl:text-2xl text-[#a3a3a3] font-light">
-                  Product & Technology Leader
+                  {pTitle}
                 </p>
               </div>
 
               <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-[#a3a3a3] max-w-xl 2xl:max-w-2xl">
-                Building products that matter. I combine deep technical expertise with strategic 
-                product thinking to create impactful solutions at scale.
+                <AnimatedBio text={pBio} />
               </p>
 
               {/* Primary CTA */}
@@ -443,6 +766,9 @@ export default function PortfolioDesign() {
                   </a>
                 </Button>
               </div>
+
+              {/* Chat Preview Teaser */}
+              <ChatPreviewTeaser />
             </div>
 
             {/* Right Column - Photo & Contact Cards */}
@@ -459,14 +785,18 @@ export default function PortfolioDesign() {
                     <div className="w-full h-full rounded-xl lg:rounded-2xl bg-[#0a0a0b]" />
                   </div>
                   
-                  {/* Photo placeholder */}
-                  <div className="absolute inset-[1px] rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 lg:mb-3 rounded-full bg-white/5 flex items-center justify-center">
-                        <span className="text-2xl lg:text-3xl text-white/30 font-bold">YG</span>
+                  {/* Photo or placeholder */}
+                  <div className="absolute inset-[1px] rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#1a1a1b] to-[#0a0a0b] flex items-center justify-center overflow-hidden">
+                    {pPhoto ? (
+                      <img src={pPhoto} alt={pName} className="w-full h-full object-cover object-[center_20%]" />
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 lg:mb-3 rounded-full bg-white/5 flex items-center justify-center">
+                          <span className="text-2xl lg:text-3xl text-white/30 font-bold">{pName.split(" ").map(n => n[0]).join("")}</span>
+                        </div>
+                        <span className="text-[#a3a3a3] text-xs lg:text-sm">Profile Photo</span>
                       </div>
-                      <span className="text-[#a3a3a3] text-xs lg:text-sm">Profile Photo</span>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -475,7 +805,9 @@ export default function PortfolioDesign() {
               <div className="w-full max-w-xs lg:max-w-sm space-y-2 lg:space-y-3 mx-auto lg:mx-0">
                 {/* Top row - 2 full width buttons */}
                 <a 
-                  href="#resume" 
+                  href={pResume}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                 >
                   <div className="p-2 lg:p-2.5 rounded-lg bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-colors">
@@ -486,20 +818,20 @@ export default function PortfolioDesign() {
                 </a>
 
                 <a 
-                  href="mailto:yash@example.com" 
+                  href={`mailto:${pEmail}`}
                   className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                 >
                   <div className="p-2 lg:p-2.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500/20 transition-colors">
                     <Mail className="h-4 w-4 lg:h-5 lg:w-5 text-emerald-400" />
                   </div>
-                  <span className="text-xs lg:text-sm font-medium text-white">yash@example.com</span>
+                  <span className="text-xs lg:text-sm font-medium text-white">{pEmail}</span>
                   <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 ml-auto text-[#a3a3a3] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </a>
 
                 {/* Bottom row - 3 icon buttons */}
                 <div className="flex gap-2 lg:gap-3">
                   <a 
-                    href="https://linkedin.com/in/yashgoyal" 
+                    href={pLinkedin} 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-[#0077B5]/20 hover:border-[#0077B5]/50 transition-all group backdrop-blur-sm"
@@ -509,21 +841,13 @@ export default function PortfolioDesign() {
                   </a>
                   
                   <a 
-                    href="https://github.com/yashgoyal" 
+                    href={pGithub} 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all group backdrop-blur-sm"
                   >
                     <Github className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
                     <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">GitHub</span>
-                  </a>
-                  
-                  <a 
-                    href="tel:+1234567890" 
-                    className="flex-1 flex items-center justify-center gap-1.5 lg:gap-2 p-3 lg:p-4 rounded-lg lg:rounded-xl bg-white/[0.03] border border-white/10 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all group backdrop-blur-sm"
-                  >
-                    <Phone className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-emerald-400 transition-colors" />
-                    <span className="text-[10px] lg:text-xs font-medium text-[#a3a3a3] group-hover:text-white transition-colors">Phone</span>
                   </a>
                 </div>
               </div>
@@ -541,18 +865,47 @@ export default function PortfolioDesign() {
         </div>
       </section>
 
+      {/* Impact Stats Section */}
+      <section className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5 overflow-hidden">
+        <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
+          <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
+            <RevealOnScroll>
+              <SectionHeading icon={Zap} title="Impact" accentColor="amber" />
+            </RevealOnScroll>
+
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10">
+              {impactData.map((stat, index) => (
+                <RevealOnScroll key={stat.slug} delay={index * 120}>
+                <div className="group">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+                    {stat.type === "counter" ? (
+                      <span className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                        {stat.prefix}<AnimatedCounter target={parseFloat(stat.value)} suffix={stat.suffix} duration={2200 + index * 200} decimals={parseInt(stat.decimals) || 0} />
+                      </span>
+                    ) : (
+                      <span className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-transparent">
+                        {stat.prefix}{stat.value}{stat.suffix}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] uppercase tracking-wider leading-relaxed">{stat.label}</p>
+                </div>
+                </RevealOnScroll>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Experience Section */}
       <section id="experience" className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
           <RevealOnScroll>
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-            <Briefcase className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Experience</h2>
-          </div>
+            <SectionHeading icon={Briefcase} title="Experience" accentColor="cyan" />
           </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {experienceData.map((exp, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -569,7 +922,7 @@ export default function PortfolioDesign() {
                 <p className="text-[10px] sm:text-xs lg:text-sm text-cyan-400 mb-1.5 sm:mb-2 lg:mb-3">{exp.company}</p>
                 <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] mb-2 sm:mb-3 lg:mb-4 leading-relaxed line-clamp-3">{exp.description}</p>
                 <div className="flex flex-wrap gap-1 sm:gap-1.5 lg:gap-2">
-                  {exp.skills.slice(0, 4).map((skill) => (
+                  {(exp.skills || []).slice(0, 4).map((skill) => (
                     <span 
                       key={skill}
                       className="px-1.5 sm:px-2 py-0.5 lg:py-1 text-[9px] sm:text-[10px] lg:text-xs rounded bg-white/5 text-[#a3a3a3]"
@@ -591,13 +944,10 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
           <RevealOnScroll>
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-            <GraduationCap className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Education</h2>
-          </div>
+            <SectionHeading icon={GraduationCap} title="Education" accentColor="violet" />
           </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {educationData.map((edu, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -626,13 +976,10 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
           <RevealOnScroll>
-          <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-            <FolderKanban className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Projects</h2>
-          </div>
+            <SectionHeading icon={FolderKanban} title="Projects" accentColor="emerald" />
           </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {projectsData.map((project, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -665,13 +1012,10 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Lightbulb className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-            <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Case Studies</h2>
-          </div>
-          </RevealOnScroll>
+              <SectionHeading icon={Lightbulb} title="Case Studies" accentColor="rose" />
+            </RevealOnScroll>
 
-          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
             {caseStudiesData.map((study, index) => (
               <RevealOnScroll key={index} delay={index * 100}>
               <Link 
@@ -706,14 +1050,11 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Code2 className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Skills</h2>
-            </div>
+              <SectionHeading icon={Code2} title="Skills" accentColor="cyan" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
-              {Object.entries(skillsData).map(([category, skills], index) => {
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
+            {Object.entries(skillsData).map(([category, skills], index) => {
               const colors = [
                 { bg: "bg-emerald-500/10", text: "text-emerald-400" },
                 { bg: "bg-amber-500/10", text: "text-amber-400" },
@@ -755,13 +1096,10 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Award className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Certifications</h2>
-            </div>
+              <SectionHeading icon={Award} title="Certifications" accentColor="amber" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5 auto-rows-fr">
             {certificationsData.map((cert, index) => (
               <RevealOnScroll key={index} delay={index * 80}>
               <Link 
@@ -790,10 +1128,7 @@ export default function PortfolioDesign() {
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
-            <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 lg:mb-10">
-              <Info className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3]" />
-              <h2 className="text-xs lg:text-sm font-medium text-[#a3a3a3] uppercase tracking-wider">Additional Information</h2>
-            </div>
+              <SectionHeading icon={Info} title="Additional Information" accentColor="emerald" />
             </RevealOnScroll>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8 text-[10px] sm:text-xs lg:text-sm">
@@ -854,7 +1189,7 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <a href="mailto:yash@example.com">
+                <a href={`mailto:${pEmail}`}>
                   <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   <span className="hidden xs:inline">Send </span>Email
                 </a>
@@ -865,18 +1200,7 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <a href="tel:+1234567890">
-                  <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
-                  <span className="hidden xs:inline">Call </span>Me
-                </a>
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
-                asChild
-              >
-                <a href="#resume" target="_blank" rel="noopener noreferrer">
+                <a href={pResume} target="_blank" rel="noopener noreferrer">
                   <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   Resume
                 </a>
@@ -887,7 +1211,7 @@ export default function PortfolioDesign() {
                 className="border-white/20 bg-transparent hover:bg-white/5 text-white h-8 sm:h-9 lg:h-10 xl:h-11 text-xs sm:text-sm px-3 sm:px-4"
                 asChild
               >
-                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
+                <a href={pLinkedin} target="_blank" rel="noopener noreferrer">
                   <Linkedin className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 mr-1.5 sm:mr-2" />
                   LinkedIn
                 </a>
@@ -902,7 +1226,7 @@ export default function PortfolioDesign() {
       <footer className="py-4 sm:py-6 lg:py-8 border-t border-white/5">
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8 flex justify-center items-center text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">
-            <span>2025 Yash Goyal</span>
+            <span>{pFooter}</span>
           </div>
         </div>
       </footer>
@@ -910,10 +1234,15 @@ export default function PortfolioDesign() {
       {/* Floating Chat Button (Mobile) */}
       <Link
         href="/chat"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:hidden p-3 sm:p-4 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:hidden p-3 sm:p-4 rounded-full bg-white text-black shadow-lg hover:scale-105 transition-transform z-40"
       >
         <Bot className="h-5 w-5 sm:h-6 sm:w-6" />
       </Link>
+
+      {/* Scroll-triggered Curiosity Prompt (Desktop) */}
+      <div className="hidden md:block">
+        <CuriosityPrompt />
+      </div>
     </div>
   )
 }

@@ -32,6 +32,7 @@ import {
   Award,
   Edit3,
   LayoutGrid,
+  Camera,
 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -125,16 +126,104 @@ export function AdminDashboard() {
   const [isSavingDetail, setIsSavingDetail] = useState(false)
   const [detailSaveSuccess, setDetailSaveSuccess] = useState(false)
 
+  // Profile state
+  const [profile, setProfile] = useState<Record<string, string>>({})
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
+  const [profileSaveSuccess, setProfileSaveSuccess] = useState(false)
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false)
+
   // Card Manager state
   const [allCards, setAllCards] = useState<Record<string, unknown[]>>({})
   const [isLoadingCards, setIsLoadingCards] = useState(false)
-  const [cardManagerCategory, setCardManagerCategory] = useState<string>("experience")
+  const [cardManagerCategory, setCardManagerCategory] = useState<string>("impact")
   const [editingCard, setEditingCard] = useState<Record<string, unknown> | null>(null)
   const [isAddingCard, setIsAddingCard] = useState(false)
   const [isSavingCard, setIsSavingCard] = useState(false)
   const [cardSaveSuccess, setCardSaveSuccess] = useState(false)
 
   // Fetch cards from API
+  const fetchProfile = async () => {
+    setIsLoadingProfile(true)
+    try {
+      const res = await fetch("/api/profile")
+      if (res.ok) {
+        const data = await res.json()
+        setProfile(data)
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error)
+    } finally {
+      setIsLoadingProfile(false)
+    }
+  }
+
+  const saveProfile = async () => {
+    setIsSavingProfile(true)
+    setProfileSaveSuccess(false)
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setProfile(data)
+        setProfileSaveSuccess(true)
+        setTimeout(() => setProfileSaveSuccess(false), 3000)
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error)
+    } finally {
+      setIsSavingProfile(false)
+    }
+  }
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file (JPG, PNG, etc.)")
+      return
+    }
+
+    // Check file size (max 4MB)
+    const maxSize = 4 * 1024 * 1024 // 4MB
+    if (file.size > maxSize) {
+      alert(`Image too large. Maximum size is 4MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
+      return
+    }
+    
+    setIsUploadingPhoto(true)
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
+      const res = await fetch("/api/upload", { method: "POST", body: formData })
+      const text = await res.text()
+      let data
+      try {
+        data = JSON.parse(text)
+      } catch {
+        console.error("[v0] Upload response not JSON:", text)
+        alert(`Upload failed: ${text.slice(0, 100)}`)
+        return
+      }
+      if (res.ok && data.url) {
+        setProfile(prev => ({ ...prev, profilePhotoUrl: data.url }))
+      } else {
+        console.error("[v0] Upload failed:", data)
+        alert(`Upload failed: ${data.error || "Unknown error"}`)
+      }
+    } catch (error) {
+      console.error("[v0] Photo upload error:", error)
+      alert("Upload failed. Network error, please try again.")
+    } finally {
+      setIsUploadingPhoto(false)
+    }
+  }
+
   const fetchCards = async () => {
     setIsLoadingCards(true)
     try {
@@ -150,21 +239,30 @@ export function AdminDashboard() {
     }
   }
 
-  // Load cards on mount
+  // Load cards and profile on mount
   useEffect(() => {
     if (isAuthenticated) {
       fetchCards()
+      fetchProfile()
     }
   }, [isAuthenticated])
 
   // Available cards for each type (dynamically loaded from API)
   const getDetailCards = (): Record<string, { slug: string; title: string }[]> => {
     const cards: Record<string, { slug: string; title: string }[]> = {
+      impact: [],
       experience: [],
       education: [],
       project: [],
       "case-study": [],
       certification: [],
+    }
+    
+    if (allCards.impact) {
+      cards.impact = (allCards.impact as { slug: string; value?: string; prefix?: string; suffix?: string; label?: string }[]).map(c => ({
+        slug: c.slug,
+        title: `${c.prefix || ""}${c.value || ""} ${c.suffix || ""} - ${c.label || "Impact"}`
+      }))
     }
     
     // Map allCards to detail cards format
@@ -670,10 +768,14 @@ export function AdminDashboard() {
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="upload" className="space-y-6">
           <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="cards" className="flex items-center gap-2">
-              <LayoutGrid className="h-4 w-4" />
-              <span className="hidden sm:inline">Cards</span>
-            </TabsTrigger>
+                <TabsTrigger value="profile" className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  Profile
+                </TabsTrigger>
+                <TabsTrigger value="cards" className="flex items-center gap-2">
+                  <LayoutGrid className="h-4 w-4" />
+                  Cards
+                </TabsTrigger>
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline">Upload</span>
@@ -701,6 +803,195 @@ export function AdminDashboard() {
           </TabsList>
 
           {/* Card Manager Tab */}
+          {/* Profile Tab */}
+          <TabsContent value="profile" className="space-y-6">
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold">Profile & Contact Info</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Update your name, title, bio, contact links, and profile photo URL. These appear in the hero section and footer.</p>
+                </div>
+                <Button onClick={saveProfile} disabled={isSavingProfile}>
+                  {isSavingProfile ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Save Profile
+                </Button>
+              </div>
+
+              {profileSaveSuccess && (
+                <div className="p-3 mb-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-lg">
+                  <p className="text-sm text-green-600 dark:text-green-400">Profile saved successfully!</p>
+                </div>
+              )}
+
+              {isLoadingProfile ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : (
+                <div className="grid gap-6">
+                  {/* Identity */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Identity</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Full Name</Label>
+                        <Input
+                          placeholder="Yash Goyal"
+                          value={profile.name || ""}
+                          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Title / Role</Label>
+                        <Input
+                          placeholder="Product & Technology Leader"
+                          value={profile.title || ""}
+                          onChange={(e) => setProfile({ ...profile, title: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tagline & Bio */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Tagline & Bio</h3>
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <Label>Tagline (badge text)</Label>
+                        <Input
+                          placeholder="Available for opportunities"
+                          value={profile.tagline || ""}
+                          onChange={(e) => setProfile({ ...profile, tagline: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Bio</Label>
+                        <Textarea
+                          placeholder="Building products that matter..."
+                          value={profile.bio || ""}
+                          onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Contact</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Email</Label>
+                        <Input
+                          type="email"
+                          placeholder="yash@example.com"
+                          value={profile.email || ""}
+                          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Phone</Label>
+                        <Input
+                          type="tel"
+                          placeholder="+1234567890"
+                          value={profile.phone || ""}
+                          onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Links */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Links</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>LinkedIn URL</Label>
+                        <Input
+                          placeholder="https://linkedin.com/in/yashgoyal"
+                          value={profile.linkedinUrl || ""}
+                          onChange={(e) => setProfile({ ...profile, linkedinUrl: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>GitHub URL</Label>
+                        <Input
+                          placeholder="https://github.com/yashgoyal"
+                          value={profile.githubUrl || ""}
+                          onChange={(e) => setProfile({ ...profile, githubUrl: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Resume URL</Label>
+                        <Input
+                          placeholder="https://drive.google.com/..."
+                          value={profile.resumeUrl || ""}
+                          onChange={(e) => setProfile({ ...profile, resumeUrl: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Profile Photo</Label>
+                        <div className="flex items-start gap-4">
+                          {/* Preview */}
+                          <div className="relative shrink-0 w-20 h-20 rounded-xl bg-muted border-2 border-dashed border-border overflow-hidden flex items-center justify-center">
+                            {profile.profilePhotoUrl ? (
+                              <img src={profile.profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              <Camera className="h-6 w-6 text-muted-foreground" />
+                            )}
+                            {isUploadingPhoto && (
+                              <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                              </div>
+                            )}
+                          </div>
+                          {/* Upload controls */}
+                          <div className="flex-1 space-y-2">
+                            <label className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/50 cursor-pointer transition-colors">
+                              <Upload className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm text-muted-foreground">{isUploadingPhoto ? "Uploading..." : "Upload photo"}</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handlePhotoUpload}
+                                disabled={isUploadingPhoto}
+                              />
+                            </label>
+                            <p className="text-xs text-muted-foreground">JPG, PNG or WebP. Will be displayed in the hero section.</p>
+                            {profile.profilePhotoUrl && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-xs text-destructive hover:text-destructive"
+                                onClick={() => setProfile({ ...profile, profilePhotoUrl: "" })}
+                              >
+                                <X className="h-3 w-3 mr-1" /> Remove photo
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Footer</h3>
+                    <div className="space-y-2">
+                      <Label>Footer Text</Label>
+                      <Input
+                        placeholder="2025 Yash Goyal"
+                        value={profile.footerText || ""}
+                        onChange={(e) => setProfile({ ...profile, footerText: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
+          </TabsContent>
+
           <TabsContent value="cards" className="space-y-6">
             <Card className="p-6">
               <div className="space-y-4">
@@ -735,6 +1026,7 @@ export function AdminDashboard() {
                     }}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   >
+                    <option value="impact">Impact Stats</option>
                     <option value="experience">Experience</option>
                     <option value="education">Education</option>
                     <option value="project">Projects</option>
@@ -759,6 +1051,7 @@ export function AdminDashboard() {
                         >
                           <div className="flex-1">
                             <p className="font-medium">
+                              {cardManagerCategory === "impact" && `${card.prefix || ""}${card.value}${card.suffix || ""}`}
                               {cardManagerCategory === "experience" && `${card.role} at ${card.company}`}
                               {cardManagerCategory === "education" && `${card.degree} - ${card.school}`}
                               {cardManagerCategory === "project" && (card.title as string)}
@@ -766,6 +1059,7 @@ export function AdminDashboard() {
                               {cardManagerCategory === "certification" && (card.title as string)}
                             </p>
                             <p className="text-sm text-muted-foreground">
+                              {cardManagerCategory === "impact" && (card.label as string)}
                               {cardManagerCategory === "experience" && (card.period as string)}
                               {cardManagerCategory === "education" && (card.period as string)}
                               {cardManagerCategory === "project" && (card.description as string)?.slice(0, 60) + "..."}
@@ -826,6 +1120,68 @@ export function AdminDashboard() {
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
+
+                    {/* Impact Fields */}
+                    {cardManagerCategory === "impact" && (
+                      <div className="grid gap-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Display Value *</Label>
+                            <Input
+                              placeholder="1.4 or Founder"
+                              value={(editingCard?.value as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, value: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Type</Label>
+                            <select
+                              value={(editingCard?.type as string) || "counter"}
+                              onChange={(e) => setEditingCard({ ...editingCard, type: e.target.value })}
+                              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            >
+                              <option value="counter">Counter (animated number)</option>
+                              <option value="text">Text (static display)</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label>Prefix</Label>
+                            <Input
+                              placeholder="$ or empty"
+                              value={(editingCard?.prefix as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, prefix: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Suffix</Label>
+                            <Input
+                              placeholder="B+, %, + or empty"
+                              value={(editingCard?.suffix as string) || ""}
+                              onChange={(e) => setEditingCard({ ...editingCard, suffix: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Decimal Places</Label>
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              value={(editingCard?.decimals as string) || "0"}
+                              onChange={(e) => setEditingCard({ ...editingCard, decimals: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Label / Description *</Label>
+                          <Input
+                            placeholder="Cloud Infra Deals Handled"
+                            value={(editingCard?.label as string) || ""}
+                            onChange={(e) => setEditingCard({ ...editingCard, label: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* Experience Fields */}
                     {cardManagerCategory === "experience" && (
@@ -1047,7 +1403,9 @@ export function AdminDashboard() {
                             // Generate slug if new card
                             const cardData = { ...editingCard }
                             if (isAddingCard || !cardData.slug) {
-                              const titleField = cardManagerCategory === "experience" 
+                              const titleField = cardManagerCategory === "impact"
+                                ? `${cardData.value}-${cardData.label}`
+                                : cardManagerCategory === "experience" 
                                 ? `${cardData.role}-${cardData.company}` 
                                 : cardManagerCategory === "education" 
                                 ? `${cardData.degree}-${cardData.school}`
