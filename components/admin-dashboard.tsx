@@ -188,6 +188,13 @@ export function AdminDashboard() {
       alert("Please upload an image file (JPG, PNG, etc.)")
       return
     }
+
+    // Check file size (max 4MB)
+    const maxSize = 4 * 1024 * 1024 // 4MB
+    if (file.size > maxSize) {
+      alert(`Image too large. Maximum size is 4MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
+      return
+    }
     
     setIsUploadingPhoto(true)
     try {
