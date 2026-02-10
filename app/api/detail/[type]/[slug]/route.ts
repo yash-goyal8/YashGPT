@@ -113,21 +113,63 @@ export async function GET(
     // Try to get extended content from Redis
     const extendedContent = await redis.get(`detail:${type}:${slug}`)
     
-    // Fetch base card data from the cards API
+    // Fetch base card data from Redis (where admin saves cards)
     let baseData = null
     try {
       const cardsData = await redis.get("portfolio:cards")
       if (cardsData && typeof cardsData === "object") {
         const cards = (cardsData as Record<string, unknown[]>)[type]
         if (Array.isArray(cards)) {
-          baseData = cards.find((card: Record<string, unknown>) => card.slug === slug)
+          const rawCard = cards.find((card: Record<string, unknown>) => card.slug === slug) as Record<string, unknown> | undefined
+          if (rawCard) {
+            // Normalize field names per category to match detail page expectations
+            if (type === "experience") {
+              baseData = {
+                title: rawCard.role || rawCard.title,
+                subtitle: rawCard.company || rawCard.subtitle,
+                period: rawCard.period,
+                description: rawCard.description,
+                tags: rawCard.skills || rawCard.tags || [],
+              }
+            } else if (type === "education") {
+              baseData = {
+                title: rawCard.degree || rawCard.title,
+                subtitle: rawCard.school || rawCard.subtitle,
+                period: rawCard.period,
+                description: rawCard.focus ? `Focus on ${rawCard.focus}` : rawCard.description,
+                tags: rawCard.tags || [],
+              }
+            } else if (type === "certification") {
+              baseData = {
+                title: rawCard.title,
+                subtitle: rawCard.issuer || rawCard.subtitle,
+                period: rawCard.date || rawCard.period,
+                description: rawCard.description,
+                tags: rawCard.tags || [],
+              }
+            } else if (type === "project") {
+              baseData = {
+                title: rawCard.title,
+                description: rawCard.description,
+                tags: rawCard.tech || rawCard.tags || [],
+              }
+            } else if (type === "case-study") {
+              baseData = {
+                title: rawCard.title,
+                description: [rawCard.problem, rawCard.solution, rawCard.impact].filter(Boolean).join(". "),
+                tags: rawCard.tags || [],
+              }
+            } else {
+              baseData = rawCard
+            }
+          }
         }
       }
     } catch (err) {
       console.error("[v0] Error fetching base card data:", err)
     }
     
-    // Fall back to hardcoded BASE_DATA only if no real card exists
+    // Fall back to hardcoded BASE_DATA only if no real card exists in Redis
     if (!baseData) {
       baseData = BASE_DATA[type]?.[slug]
     }
