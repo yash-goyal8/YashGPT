@@ -255,12 +255,12 @@ const CERTIFICATIONS = [
 // Animated bio - highlights text between single quotes with shimmer
 function AnimatedBio({ text }: { text: string }) {
   // Split on single-quoted phrases: 'messy garage build' and 'checkered flag'
-  const parts = text.split(/(&#x27;[^&#x27;]+&#x27;|'[^']+')/)
+  const parts = text.split(/('([^']+)')/g)
 
   return (
     <>
       {parts.map((part, i) => {
-        const isQuoted = (part.startsWith("'") && part.endsWith("'")) || (part.startsWith("\u0027") && part.endsWith("\u0027"))
+        const isQuoted = part.startsWith("'") && part.endsWith("'")
         if (isQuoted) {
           const inner = part.slice(1, -1)
           return (
