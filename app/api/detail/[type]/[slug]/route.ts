@@ -147,12 +147,16 @@ export async function POST(
   try {
     const body = await request.json()
     
-    // Store extended content in Redis
-    await redis.set(`detail:${type}:${slug}`, JSON.stringify(body))
+    console.log("[v0] Saving detail content:", { type, slug, keys: Object.keys(body) })
     
-    return NextResponse.json({ success: true })
+    // Store extended content in Redis (Upstash handles JSON automatically)
+    await redis.set(`detail:${type}:${slug}`, body)
+    
+    console.log("[v0] Detail saved successfully")
+    
+    return NextResponse.json({ success: true, content: body })
   } catch (error) {
-    console.error("Error saving detail:", error)
+    console.error("[v0] Error saving detail:", error)
     return NextResponse.json({ error: "Failed to save" }, { status: 500 })
   }
 }

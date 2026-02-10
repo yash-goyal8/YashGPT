@@ -1970,16 +1970,25 @@ export function AdminDashboard() {
                           setIsSavingDetail(true)
                           setDetailSaveSuccess(false)
                           try {
+                            console.log("[v0] Saving detail content:", selectedDetailType, selectedDetailSlug)
                             const res = await fetch(`/api/detail/${selectedDetailType}/${selectedDetailSlug}`, {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
                               body: JSON.stringify(detailContent)
                             })
                             if (res.ok) {
+                              const data = await res.json()
+                              console.log("[v0] Detail saved successfully:", data)
                               setDetailSaveSuccess(true)
+                              setTimeout(() => setDetailSaveSuccess(false), 3000)
+                            } else {
+                              const error = await res.text()
+                              console.error("[v0] Save failed:", res.status, error)
+                              alert(`Save failed: ${error}`)
                             }
                           } catch (error) {
-                            console.error("Error saving detail:", error)
+                            console.error("[v0] Error saving detail:", error)
+                            alert(`Error saving content: ${error}`)
                           } finally {
                             setIsSavingDetail(false)
                           }
