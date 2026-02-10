@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Redis } from "@upstash/redis"
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-})
+const redis = Redis.fromEnv()
 
 // Helper to generate slug from title
 function generateSlug(title: string): string {
@@ -119,7 +116,7 @@ export async function GET(
     // Fetch base card data from the cards API
     let baseData = null
     try {
-      const cardsData = await redis.get("cards")
+      const cardsData = await redis.get("portfolio:cards")
       if (cardsData && typeof cardsData === "object") {
         const cards = (cardsData as Record<string, unknown[]>)[type]
         if (Array.isArray(cards)) {
@@ -171,7 +168,7 @@ export async function POST(
     console.log("[v0] Saving detail content:", { type, slug, keys: Object.keys(body) })
     
     // Check Redis connection
-    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+    if (!process.env.KV_REST_API_URL && !process.env.UPSTASH_REDIS_REST_URL) {
       console.error("[v0] Redis environment variables not configured")
       return NextResponse.json({ error: "Storage not configured" }, { status: 500 })
     }
