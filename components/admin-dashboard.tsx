@@ -33,6 +33,8 @@ import {
   Edit3,
   LayoutGrid,
   Camera,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -138,6 +140,7 @@ export function AdminDashboard() {
   const [isLoadingCards, setIsLoadingCards] = useState(false)
   const [cardManagerCategory, setCardManagerCategory] = useState<string>("impact")
   const [editingCard, setEditingCard] = useState<Record<string, unknown> | null>(null)
+  const [skillsText, setSkillsText] = useState("")
   const [isAddingCard, setIsAddingCard] = useState(false)
   const [isSavingCard, setIsSavingCard] = useState(false)
   const [cardSaveSuccess, setCardSaveSuccess] = useState(false)
@@ -221,6 +224,43 @@ export function AdminDashboard() {
       alert("Upload failed. Network error, please try again.")
     } finally {
       setIsUploadingPhoto(false)
+    }
+  }
+
+  const reorderCard = async (category: string, index: number, direction: "up" | "down") => {
+    const cards = [...(allCards[category] as Record<string, unknown>[])]
+    const newIndex = direction === "up" ? index - 1 : index + 1
+    
+    // Bounds check
+    if (newIndex < 0 || newIndex >= cards.length) return
+    
+    // Swap cards
+    const temp = cards[index]
+    cards[index] = cards[newIndex]
+    cards[newIndex] = temp
+    
+    // Optimistically update UI
+    setAllCards({ ...allCards, [category]: cards })
+    
+    // Save to backend using POST (which handles full category array updates)
+    try {
+      console.log("[v0] Reordering:", category, "from", index, "to", newIndex)
+      const res = await fetch("/api/cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category, cards }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        console.log("[v0] Reorder saved successfully")
+        setAllCards(data.cards)
+      } else {
+        console.error("[v0] Reorder failed:", res.status)
+        fetchCards()
+      }
+    } catch (error) {
+      console.error("[v0] Reorder error:", error)
+      fetchCards()
     }
   }
 
@@ -1003,10 +1043,11 @@ export function AdminDashboard() {
                     </p>
                   </div>
                   <Button
-                    onClick={() => {
-                      setIsAddingCard(true)
-                      setEditingCard(null)
-                    }}
+                  onClick={() => {
+                    setIsAddingCard(true)
+                    setEditingCard(null)
+                    setSkillsText("")
+                  }}
                     className="flex items-center gap-2"
                   >
                     <Plus className="h-4 w-4" />
@@ -1069,10 +1110,29 @@ export function AdminDashboard() {
                           </div>
                           <div className="flex items-center gap-2">
                             <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={index === 0}
+                              onClick={() => reorderCard(cardManagerCategory, index, "up")}
+                              title="Move up"
+                            >
+                              <ChevronUp className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={index === (allCards[cardManagerCategory] as unknown[]).length - 1}
+                              onClick={() => reorderCard(cardManagerCategory, index, "down")}
+                              title="Move down"
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                            <Button
                               variant="outline"
                               size="sm"
                               onClick={() => {
                                 setEditingCard(card)
+                                setSkillsText((card.skills as string[])?.join(", ") || "")
                                 setIsAddingCard(false)
                               }}
                             >
@@ -1223,14 +1283,19 @@ export function AdminDashboard() {
                         </div>
                         <div className="space-y-2">
                           <Label>Skills (comma-separated)</Label>
-                          <Input
-                            placeholder="Product Strategy, Data Analytics, Leadership"
-                            value={(editingCard?.skills as string[])?.join(", ") || ""}
-                            onChange={(e) => setEditingCard({ 
-                              ...editingCard, 
-                              skills: e.target.value.split(",").map(s => s.trim()).filter(s => s)
-                            })}
+                          <Textarea
+                            placeholder="Product Strategy, Data Analytics, Cross-functional Leadership, Go-to-Market"
+                            value={skillsText}
+                            onChange={(e) => setSkillsText(e.target.value)}
+                            onBlur={() => {
+                              const parsed = skillsText.split(",").map(s => s.trim()).filter(s => s)
+                              setEditingCard({ ...editingCard, skills: parsed })
+                            }}
+                            rows={2}
                           />
+                          <p className="text-xs text-muted-foreground">
+                            {skillsText.split(",").filter(s => s.trim()).length} skill(s) • No limit, separate with commas
+                          </p>
                         </div>
                       </div>
                     )}
@@ -1905,16 +1970,25 @@ export function AdminDashboard() {
                           setIsSavingDetail(true)
                           setDetailSaveSuccess(false)
                           try {
+                            console.log("[v0] Saving detail content:", selectedDetailType, selectedDetailSlug)
                             const res = await fetch(`/api/detail/${selectedDetailType}/${selectedDetailSlug}`, {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
                               body: JSON.stringify(detailContent)
                             })
                             if (res.ok) {
+                              const data = await res.json()
+                              console.log("[v0] Detail saved successfully:", data)
                               setDetailSaveSuccess(true)
+                              setTimeout(() => setDetailSaveSuccess(false), 3000)
+                            } else {
+                              const error = await res.text()
+                              console.error("[v0] Save failed:", res.status, error)
+                              alert(`Save failed: ${error}`)
                             }
                           } catch (error) {
-                            console.error("Error saving detail:", error)
+                            console.error("[v0] Error saving detail:", error)
+                            alert(`Error saving content: ${error}`)
                           } finally {
                             setIsSavingDetail(false)
                           }

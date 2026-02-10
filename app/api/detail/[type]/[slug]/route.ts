@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Redis } from "@upstash/redis"
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-})
+const redis = Redis.fromEnv()
 
 // Helper to generate slug from title
 function generateSlug(title: string): string {
@@ -111,13 +108,74 @@ export async function GET(
   const { type, slug } = await params
 
   try {
+    console.log("[v0] Fetching detail:", { type, slug })
+    
     // Try to get extended content from Redis
     const extendedContent = await redis.get(`detail:${type}:${slug}`)
     
-    // Get base data
-    const baseData = BASE_DATA[type]?.[slug]
+    // Fetch base card data from Redis (where admin saves cards)
+    let baseData = null
+    try {
+      const cardsData = await redis.get("portfolio:cards")
+      if (cardsData && typeof cardsData === "object") {
+        const cards = (cardsData as Record<string, unknown[]>)[type]
+        if (Array.isArray(cards)) {
+          const rawCard = cards.find((card: Record<string, unknown>) => card.slug === slug) as Record<string, unknown> | undefined
+          if (rawCard) {
+            // Normalize field names per category to match detail page expectations
+            if (type === "experience") {
+              baseData = {
+                title: rawCard.role || rawCard.title,
+                subtitle: rawCard.company || rawCard.subtitle,
+                period: rawCard.period,
+                description: rawCard.description,
+                tags: rawCard.skills || rawCard.tags || [],
+              }
+            } else if (type === "education") {
+              baseData = {
+                title: rawCard.degree || rawCard.title,
+                subtitle: rawCard.school || rawCard.subtitle,
+                period: rawCard.period,
+                description: rawCard.focus ? `Focus on ${rawCard.focus}` : rawCard.description,
+                tags: rawCard.tags || [],
+              }
+            } else if (type === "certification") {
+              baseData = {
+                title: rawCard.title,
+                subtitle: rawCard.issuer || rawCard.subtitle,
+                period: rawCard.date || rawCard.period,
+                description: rawCard.description,
+                tags: rawCard.tags || [],
+              }
+            } else if (type === "project") {
+              baseData = {
+                title: rawCard.title,
+                description: rawCard.description,
+                tags: rawCard.tech || rawCard.tags || [],
+              }
+            } else if (type === "case-study") {
+              baseData = {
+                title: rawCard.title,
+                description: [rawCard.problem, rawCard.solution, rawCard.impact].filter(Boolean).join(". "),
+                tags: rawCard.tags || [],
+              }
+            } else {
+              baseData = rawCard
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error("[v0] Error fetching base card data:", err)
+    }
+    
+    // Fall back to hardcoded BASE_DATA only if no real card exists in Redis
+    if (!baseData) {
+      baseData = BASE_DATA[type]?.[slug]
+    }
     
     if (!baseData && !extendedContent) {
+      console.log("[v0] No data found for:", { type, slug })
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
 
@@ -126,6 +184,8 @@ export async function GET(
       ...(baseData || {}),
       ...(extendedContent as object || {}),
     }
+    
+    console.log("[v0] Returning detail content:", { type, slug, hasBase: !!baseData, hasExtended: !!extendedContent })
 
     return NextResponse.json({
       type,
@@ -133,7 +193,7 @@ export async function GET(
       content,
     })
   } catch (error) {
-    console.error("Error fetching detail:", error)
+    console.error("[v0] Error fetching detail:", error)
     return NextResponse.json({ error: "Failed to fetch" }, { status: 500 })
   }
 }
@@ -147,13 +207,27 @@ export async function POST(
   try {
     const body = await request.json()
     
-    // Store extended content in Redis
-    await redis.set(`detail:${type}:${slug}`, JSON.stringify(body))
+    console.log("[v0] Saving detail content:", { type, slug, keys: Object.keys(body) })
     
-    return NextResponse.json({ success: true })
+    // Check Redis connection
+    if (!process.env.KV_REST_API_URL && !process.env.UPSTASH_REDIS_REST_URL) {
+      console.error("[v0] Redis environment variables not configured")
+      return NextResponse.json({ error: "Storage not configured" }, { status: 500 })
+    }
+    
+    // Store extended content in Redis (Upstash handles JSON automatically)
+    const result = await redis.set(`detail:${type}:${slug}`, body)
+    
+    console.log("[v0] Detail saved successfully:", result)
+    
+    return NextResponse.json({ success: true, content: body })
   } catch (error) {
-    console.error("Error saving detail:", error)
-    return NextResponse.json({ error: "Failed to save" }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error("[v0] Error saving detail:", errorMessage, error)
+    return NextResponse.json({ 
+      error: "Failed to save", 
+      details: errorMessage 
+    }, { status: 500 })
   }
 }
 
