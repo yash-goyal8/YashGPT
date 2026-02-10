@@ -200,3 +200,15 @@ html {
 .animate-nav-pill {
   animation: nav-pill 0.3s ease-out forwards;
 }
+
+/* F1 Checkered Flag Animations */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes flutter {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.95); }
+}

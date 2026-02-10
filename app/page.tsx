@@ -278,6 +278,55 @@ function AnimatedBio({ text }: { text: string }) {
   )
 }
 
+// Animated F1 checkered flag
+function CheckeredFlag() {
+  return (
+    <div className="inline-block ml-2 lg:ml-3 relative group cursor-default" title="Formula 1 Racing Fan">
+      <svg 
+        width="28" 
+        height="28" 
+        viewBox="0 0 24 24" 
+        className="drop-shadow-lg animate-[wave_2s_ease-in-out_infinite] origin-bottom-right"
+      >
+        {/* Flag pole */}
+        <line x1="4" y1="4" x2="4" y2="24" stroke="#525252" strokeWidth="1.5" strokeLinecap="round" />
+        
+        {/* Checkered flag pattern */}
+        <g className="animate-[flutter_1s_ease-in-out_infinite]">
+          {/* Row 1 */}
+          <rect x="4" y="4" width="4" height="3" fill="white" />
+          <rect x="8" y="4" width="4" height="3" fill="#0a0a0b" />
+          <rect x="12" y="4" width="4" height="3" fill="white" />
+          <rect x="16" y="4" width="4" height="3" fill="#0a0a0b" />
+          
+          {/* Row 2 */}
+          <rect x="4" y="7" width="4" height="3" fill="#0a0a0b" />
+          <rect x="8" y="7" width="4" height="3" fill="white" />
+          <rect x="12" y="7" width="4" height="3" fill="#0a0a0b" />
+          <rect x="16" y="7" width="4" height="3" fill="white" />
+          
+          {/* Row 3 */}
+          <rect x="4" y="10" width="4" height="3" fill="white" />
+          <rect x="8" y="10" width="4" height="3" fill="#0a0a0b" />
+          <rect x="12" y="10" width="4" height="3" fill="white" />
+          <rect x="16" y="10" width="4" height="3" fill="#0a0a0b" />
+          
+          {/* Row 4 */}
+          <rect x="4" y="13" width="4" height="3" fill="#0a0a0b" />
+          <rect x="8" y="13" width="4" height="3" fill="white" />
+          <rect x="12" y="13" width="4" height="3" fill="#0a0a0b" />
+          <rect x="16" y="13" width="4" height="3" fill="white" />
+        </g>
+      </svg>
+      
+      {/* Tooltip on hover */}
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/90 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        F1 Racing Fan 🏎️
+      </div>
+    </div>
+  )
+}
+
 // Typing animation for chat preview
 function TypingDots() {
   return (
@@ -730,6 +779,7 @@ export default function PortfolioDesign() {
                   <span className="block">Hi, I'm</span>
                   <span className="block bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent animate-gradient">
                     {pName}
+                    <CheckeredFlag />
                   </span>
                 </h1>
                 
