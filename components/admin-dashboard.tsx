@@ -138,6 +138,7 @@ export function AdminDashboard() {
   const [isLoadingCards, setIsLoadingCards] = useState(false)
   const [cardManagerCategory, setCardManagerCategory] = useState<string>("impact")
   const [editingCard, setEditingCard] = useState<Record<string, unknown> | null>(null)
+  const [skillsText, setSkillsText] = useState("")
   const [isAddingCard, setIsAddingCard] = useState(false)
   const [isSavingCard, setIsSavingCard] = useState(false)
   const [cardSaveSuccess, setCardSaveSuccess] = useState(false)
@@ -1003,10 +1004,11 @@ export function AdminDashboard() {
                     </p>
                   </div>
                   <Button
-                    onClick={() => {
-                      setIsAddingCard(true)
-                      setEditingCard(null)
-                    }}
+                  onClick={() => {
+                    setIsAddingCard(true)
+                    setEditingCard(null)
+                    setSkillsText("")
+                  }}
                     className="flex items-center gap-2"
                   >
                     <Plus className="h-4 w-4" />
@@ -1073,6 +1075,7 @@ export function AdminDashboard() {
                               size="sm"
                               onClick={() => {
                                 setEditingCard(card)
+                                setSkillsText((card.skills as string[])?.join(", ") || "")
                                 setIsAddingCard(false)
                               }}
                             >
@@ -1225,15 +1228,16 @@ export function AdminDashboard() {
                           <Label>Skills (comma-separated)</Label>
                           <Textarea
                             placeholder="Product Strategy, Data Analytics, Cross-functional Leadership, Go-to-Market"
-                            value={(editingCard?.skills as string[])?.join(", ") || ""}
-                            onChange={(e) => setEditingCard({ 
-                              ...editingCard, 
-                              skills: e.target.value.split(",").map(s => s.trim()).filter(s => s)
-                            })}
+                            value={skillsText}
+                            onChange={(e) => setSkillsText(e.target.value)}
+                            onBlur={() => {
+                              const parsed = skillsText.split(",").map(s => s.trim()).filter(s => s)
+                              setEditingCard({ ...editingCard, skills: parsed })
+                            }}
                             rows={2}
                           />
                           <p className="text-xs text-muted-foreground">
-                            {((editingCard?.skills as string[])?.length || 0)} skill(s) • No limit, separate with commas
+                            {skillsText.split(",").filter(s => s.trim()).length} skill(s) • No limit, separate with commas
                           </p>
                         </div>
                       </div>
