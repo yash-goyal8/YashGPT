@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { Redis } from "@upstash/redis"
 
 const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
 })
 
 // Helper to generate slug from title
@@ -149,15 +149,25 @@ export async function POST(
     
     console.log("[v0] Saving detail content:", { type, slug, keys: Object.keys(body) })
     
-    // Store extended content in Redis (Upstash handles JSON automatically)
-    await redis.set(`detail:${type}:${slug}`, body)
+    // Check Redis connection
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+      console.error("[v0] Redis environment variables not configured")
+      return NextResponse.json({ error: "Storage not configured" }, { status: 500 })
+    }
     
-    console.log("[v0] Detail saved successfully")
+    // Store extended content in Redis (Upstash handles JSON automatically)
+    const result = await redis.set(`detail:${type}:${slug}`, body)
+    
+    console.log("[v0] Detail saved successfully:", result)
     
     return NextResponse.json({ success: true, content: body })
   } catch (error) {
-    console.error("[v0] Error saving detail:", error)
-    return NextResponse.json({ error: "Failed to save" }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error("[v0] Error saving detail:", errorMessage, error)
+    return NextResponse.json({ 
+      error: "Failed to save", 
+      details: errorMessage 
+    }, { status: 500 })
   }
 }
 
