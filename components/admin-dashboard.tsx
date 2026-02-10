@@ -242,15 +242,20 @@ export function AdminDashboard() {
     // Optimistically update UI
     setAllCards({ ...allCards, [category]: cards })
     
-    // Save to backend
+    // Save to backend using POST (which handles full category array updates)
     try {
+      console.log("[v0] Reordering:", category, "from", index, "to", newIndex)
       const res = await fetch("/api/cards", {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [category]: cards }),
+        body: JSON.stringify({ category, cards }),
       })
-      if (!res.ok) {
-        // Revert on error
+      if (res.ok) {
+        const data = await res.json()
+        console.log("[v0] Reorder saved successfully")
+        setAllCards(data.cards)
+      } else {
+        console.error("[v0] Reorder failed:", res.status)
         fetchCards()
       }
     } catch (error) {
