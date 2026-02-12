@@ -141,6 +141,7 @@ export function AdminDashboard() {
   const [cardManagerCategory, setCardManagerCategory] = useState<string>("impact")
   const [editingCard, setEditingCard] = useState<Record<string, unknown> | null>(null)
   const [skillsText, setSkillsText] = useState("")
+  const [linksText, setLinksText] = useState("")
   const [isAddingCard, setIsAddingCard] = useState(false)
   const [isSavingCard, setIsSavingCard] = useState(false)
   const [cardSaveSuccess, setCardSaveSuccess] = useState(false)
@@ -1819,10 +1820,11 @@ export function AdminDashboard() {
                     <select
                       value={selectedDetailType}
                       onChange={(e) => {
-                        setSelectedDetailType(e.target.value)
-                        setSelectedDetailSlug("")
-                        setDetailContent({})
-                        setDetailSaveSuccess(false)
+  setSelectedDetailType(e.target.value)
+  setSelectedDetailSlug("")
+  setDetailContent({})
+  setLinksText("")
+  setDetailSaveSuccess(false)
                       }}
                       className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     >
@@ -1848,12 +1850,16 @@ export function AdminDashboard() {
                             const res = await fetch(`/api/detail/${selectedDetailType}/${slug}`)
                             if (res.ok) {
                               const data = await res.json()
-                              setDetailContent(data.content || {})
-                            } else {
-                              setDetailContent({})
-                            }
-                          } catch {
-                            setDetailContent({})
+  const c = data.content || {}
+  setDetailContent(c)
+  setLinksText(c.links?.map((l: {label: string, url: string}) => `${l.label}|${l.url}`).join("\n") || "")
+  } else {
+  setDetailContent({})
+  setLinksText("")
+  }
+  } catch {
+  setDetailContent({})
+  setLinksText("")
                           }
                         }
                       }}
@@ -1947,18 +1953,27 @@ export function AdminDashboard() {
                     {/* Links */}
                     <div className="space-y-2">
                       <Label>Links (format: Label|URL, one per line)</Label>
-                      <Textarea
-                        placeholder="GitHub|https://github.com/...&#10;Live Demo|https://..."
-                        value={detailContent.links?.map(l => `${l.label}|${l.url}`).join("\n") || ""}
-                        onChange={(e) => setDetailContent({ 
-                          ...detailContent, 
-                          links: e.target.value.split("\n")
-                            .filter(line => line.includes("|"))
+                      <textarea
+                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        placeholder={"GitHub|https://github.com/...\nLive Demo|https://..."}
+                        value={linksText || ""}
+                        onChange={(e) => {
+                          console.log("[v0] linksText onChange:", e.target.value)
+                          setLinksText(e.target.value)
+                        }}
+                        onBlur={() => {
+                          if (!linksText) return
+                          const parsed = linksText.split("\n")
+                            .filter(line => line.trim().length > 0)
                             .map(line => {
-                              const [label, url] = line.split("|")
-                              return { label: label?.trim() || "", url: url?.trim() || "" }
+                              if (line.includes("|")) {
+                                const [label, ...rest] = line.split("|")
+                                return { label: label?.trim() || "", url: rest.join("|")?.trim() || "" }
+                              }
+                              return { label: line.trim(), url: "" }
                             })
-                        })}
+                          setDetailContent({ ...detailContent, links: parsed })
+                        }}
                         rows={3}
                       />
                     </div>

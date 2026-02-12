@@ -179,10 +179,12 @@ export async function GET(
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
 
-    // Merge base data with extended content
+    // Merge: extended content provides extra fields (overview, highlights, etc.)
+    // but card data (title, subtitle, period, tags) always takes priority since
+    // the user may have edited the card after saving detail content
     const content = {
-      ...(baseData || {}),
       ...(extendedContent as object || {}),
+      ...(baseData || {}),
     }
     
     console.log("[v0] Returning detail content:", { type, slug, hasBase: !!baseData, hasExtended: !!extendedContent })
