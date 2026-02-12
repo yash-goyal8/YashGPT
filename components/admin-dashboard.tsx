@@ -1953,16 +1953,24 @@ export function AdminDashboard() {
                     {/* Links */}
                     <div className="space-y-2">
                       <Label>Links (format: Label|URL, one per line)</Label>
-                      <Textarea
+                      <textarea
+                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                         placeholder={"GitHub|https://github.com/...\nLive Demo|https://..."}
-                        value={linksText}
-                        onChange={(e) => setLinksText(e.target.value)}
+                        value={linksText || ""}
+                        onChange={(e) => {
+                          console.log("[v0] linksText onChange:", e.target.value)
+                          setLinksText(e.target.value)
+                        }}
                         onBlur={() => {
+                          if (!linksText) return
                           const parsed = linksText.split("\n")
-                            .filter(line => line.includes("|"))
+                            .filter(line => line.trim().length > 0)
                             .map(line => {
-                              const [label, ...rest] = line.split("|")
-                              return { label: label?.trim() || "", url: rest.join("|")?.trim() || "" }
+                              if (line.includes("|")) {
+                                const [label, ...rest] = line.split("|")
+                                return { label: label?.trim() || "", url: rest.join("|")?.trim() || "" }
+                              }
+                              return { label: line.trim(), url: "" }
                             })
                           setDetailContent({ ...detailContent, links: parsed })
                         }}
