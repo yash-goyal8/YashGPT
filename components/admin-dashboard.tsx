@@ -1355,6 +1355,62 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div className="space-y-2">
+                          <Label>Project Image</Label>
+                          <div className="flex items-center gap-4">
+                            {editingCard?.image && (
+                              <div className="relative w-32 h-20 rounded-md overflow-hidden border">
+                                <img 
+                                  src={editingCard.image as string} 
+                                  alt="Project preview" 
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-black/80"
+                                  onClick={() => setEditingCard({ ...editingCard, image: "" })}
+                                >
+                                  x
+                                </button>
+                              </div>
+                            )}
+                            <div>
+                              <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-md border border-input bg-background text-sm hover:bg-accent transition-colors">
+                                <Camera className="h-4 w-4" />
+                                {editingCard?.image ? "Change Image" : "Upload Image"}
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={async (e) => {
+                                    const file = e.target.files?.[0]
+                                    if (!file) return
+                                    if (file.size > 4 * 1024 * 1024) {
+                                      alert("Image too large. Maximum size is 4MB.")
+                                      return
+                                    }
+                                    const formData = new FormData()
+                                    formData.append("file", file)
+                                    try {
+                                      const res = await fetch("/api/upload", { method: "POST", body: formData })
+                                      const text = await res.text()
+                                      let data
+                                      try { data = JSON.parse(text) } catch { alert(`Upload failed: ${text.slice(0, 100)}`); return }
+                                      if (res.ok && data.url) {
+                                        setEditingCard({ ...editingCard, image: data.url })
+                                      } else {
+                                        alert(`Upload failed: ${data.error || "Unknown error"}`)
+                                      }
+                                    } catch (err) {
+                                      alert(`Upload error: ${err}`)
+                                    }
+                                  }}
+                                />
+                              </label>
+                              <p className="text-xs text-muted-foreground mt-1">Max 4MB, JPG/PNG recommended</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
                           <Label>Description</Label>
                           <Textarea
                             placeholder="Brief description of the project..."
