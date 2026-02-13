@@ -1036,9 +1036,13 @@ export default function PortfolioDesign() {
                 href={`/detail/project/${project.slug}`}
                 className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
               >
-                {/* Project Image Placeholder */}
-                <div className="aspect-video rounded-md sm:rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-2 sm:mb-3 lg:mb-4 flex items-center justify-center">
-                  <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Project Image</span>
+                {/* Project Image */}
+                <div className="aspect-video rounded-md sm:rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-2 sm:mb-3 lg:mb-4 overflow-hidden flex items-center justify-center">
+                  {project.image ? (
+                    <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  ) : (
+                    <span className="text-[10px] sm:text-xs text-[#a3a3a3]">Project Image</span>
+                  )}
                 </div>
                 <h3 className="text-sm sm:text-base lg:text-lg font-medium text-white mb-1 sm:mb-1.5 lg:mb-2 group-hover:text-emerald-400 transition-colors line-clamp-1">{project.title}</h3>
                 <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] mb-2 sm:mb-3 lg:mb-4 leading-relaxed line-clamp-2">{project.description}</p>
