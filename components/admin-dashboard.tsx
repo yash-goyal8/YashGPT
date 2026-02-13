@@ -193,10 +193,10 @@ export function AdminDashboard() {
       return
     }
 
-    // Check file size (max 4MB)
-    const maxSize = 4 * 1024 * 1024 // 4MB
+    // Check file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024 // 5MB
     if (file.size > maxSize) {
-      alert(`Image too large. Maximum size is 4MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
+      alert(`Image too large. Maximum size is 5MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
       return
     }
     
@@ -1379,8 +1379,8 @@ export function AdminDashboard() {
                             onChange={async (e) => {
                               const file = e.target.files?.[0]
                               if (!file) return
-                              if (file.size > 4 * 1024 * 1024) {
-                                alert("Image too large. Maximum size is 4MB.")
+                              if (file.size > 5 * 1024 * 1024) {
+                                alert("Image too large. Maximum size is 5MB.")
                                 return
                               }
                               const formData = new FormData()
@@ -1400,7 +1400,7 @@ export function AdminDashboard() {
                               }
                             }}
                           />
-                          <p className="text-xs text-muted-foreground">Max 4MB, JPG/PNG recommended</p>
+                          <p className="text-xs text-muted-foreground">Max 5MB, JPG/PNG recommended</p>
                         </div>
                         <div className="space-y-2">
                           <Label>Description</Label>
