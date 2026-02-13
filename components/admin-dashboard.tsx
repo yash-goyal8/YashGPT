@@ -1387,15 +1387,14 @@ export function AdminDashboard() {
                               formData.append("file", file)
                               try {
                                 const res = await fetch("/api/upload", { method: "POST", body: formData })
-                                if (res.ok) {
-                                  const data = await res.json()
-                                  if (data.url) {
-                                    setEditingCard({ ...editingCard, image: data.url })
-                                  }
+                                const data = await res.json()
+                                if (res.ok && data.url) {
+                                  setEditingCard({ ...editingCard, image: data.url })
                                 } else {
-                                  alert("Upload failed. Please try again.")
+                                  alert(`Upload failed: ${data.error || "Unknown error"}`)
                                 }
                               } catch (err) {
+                                console.error("[v0] Project image upload error:", err)
                                 alert(`Upload error: ${err}`)
                               }
                             }}
