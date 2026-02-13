@@ -1385,10 +1385,21 @@ export function AdminDashboard() {
                               }
                               const formData = new FormData()
                               formData.append("file", file)
+                              console.log("[v0] Uploading project image:", file.name, file.size, file.type)
                               try {
                                 const res = await fetch("/api/upload", { method: "POST", body: formData })
-                                const data = await res.json()
+                                console.log("[v0] Upload response status:", res.status)
+                                const text = await res.text()
+                                console.log("[v0] Upload response body:", text.substring(0, 200))
+                                let data
+                                try {
+                                  data = JSON.parse(text)
+                                } catch {
+                                  alert(`Upload failed: Server returned invalid response`)
+                                  return
+                                }
                                 if (res.ok && data.url) {
+                                  console.log("[v0] Project image uploaded:", data.url)
                                   setEditingCard({ ...editingCard, image: data.url })
                                 } else {
                                   alert(`Upload failed: ${data.error || "Unknown error"}`)
