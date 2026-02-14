@@ -583,36 +583,41 @@ function AnimatedCounter({
 }
 
 // Section reveal animation component
-function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+ function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
-
+  
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => setIsVisible(true), delay)
-          observer.unobserve(entry.target)
-        }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [delay])
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out h-full ${isVisible
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-8"
-        } ${className}`}
-    >
-      {children}
-    </div>
+  const observer = new IntersectionObserver(
+  ([entry]) => {
+  if (entry.isIntersecting) {
+  setTimeout(() => setIsVisible(true), delay)
+  observer.unobserve(entry.target)
+  }
+  },
+  { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
   )
-}
+  if (ref.current) observer.observe(ref.current)
+  return () => observer.disconnect()
+  }, [delay])
+  
+  return (
+  <div
+  ref={ref}
+  style={{
+    transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+    transitionDuration: "800ms",
+    transitionProperty: "opacity, transform",
+  }}
+  className={`h-full ${isVisible
+  ? "opacity-100 translate-y-0 blur-0"
+  : "opacity-0 translate-y-6 blur-[2px]"
+  } ${className}`}
+  >
+  {children}
+  </div>
+  )
+  }
 
 // Hook for tracking active section and scroll progress
 function useScrollSpy(sectionIds: string[]) {
@@ -651,17 +656,23 @@ const NAV_SECTIONS = ["about", "experience", "education", "projects", "case-stud
 export default function PortfolioDesign() {
   const [cards, setCards] = useState<CardsData | null>(null)
   const [profile, setProfile] = useState<Record<string, string>>({})
+  const [mounted, setMounted] = useState(false)
+  const [dataReady, setDataReady] = useState(false)
   const { activeSection, scrollProgress } = useScrollSpy(NAV_SECTIONS)
 
   useEffect(() => {
-    fetch("/api/cards")
-      .then(res => res.json())
-      .then(data => setCards(data))
-      .catch(() => setCards(null))
-    fetch("/api/profile")
-      .then(res => res.json())
-      .then(data => setProfile(data))
-      .catch(() => setProfile({}))
+    // Trigger mount animation
+    requestAnimationFrame(() => setMounted(true))
+    
+    // Fetch data
+    Promise.all([
+      fetch("/api/cards").then(res => res.json()).catch(() => null),
+      fetch("/api/profile").then(res => res.json()).catch(() => ({})),
+    ]).then(([cardsData, profileData]) => {
+      if (cardsData) setCards(cardsData)
+      if (profileData) setProfile(profileData)
+      setDataReady(true)
+    })
   }, [])
 
   // Use fetched data or fallback to defaults
@@ -686,7 +697,7 @@ export default function PortfolioDesign() {
   const pFooter = profile.footerText || "2025 Yash Goyal"
 
   return (
-    <div className="min-h-screen bg-[#0a0a0b] text-[#e5e5e5] relative overflow-hidden">
+    <div className={`min-h-screen bg-[#0a0a0b] text-[#e5e5e5] relative overflow-hidden transition-opacity duration-700 ease-out ${mounted ? "opacity-100" : "opacity-0"}`}>
       {/* Interactive Matrix Background */}
       <MatrixBackground />
 
@@ -705,7 +716,7 @@ export default function PortfolioDesign() {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-40">
+      <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-700 delay-100 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}>
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8 mt-2 sm:mt-3 lg:mt-4">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 rounded-lg sm:rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
             <a href="#about" className="font-semibold text-base lg:text-lg text-white hover:text-cyan-400 transition-colors">
@@ -768,30 +779,30 @@ export default function PortfolioDesign() {
               {/* Left Column - Text Content */}
               <div className="space-y-4 sm:space-y-5 lg:space-y-6 order-2 lg:order-1">
                 <div className="space-y-2 sm:space-y-3 lg:space-y-4">
-                  <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                  <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-700 delay-200 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
                     <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3]">{pTagline}</span>
                   </div>
 
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white leading-[1.1] tracking-tight">
-                    <span className="block">Hi, I'm</span>
+                  <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold text-white leading-[1.1] tracking-tight transition-all duration-700 delay-400 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
+                    <span className="block">{"Hi, I'm"}</span>
                     <span className="block bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent animate-gradient">
                       {pName}
                       <CheckeredFlag />
                     </span>
                   </h1>
 
-                  <p className="text-base sm:text-lg lg:text-xl 2xl:text-2xl text-[#a3a3a3] font-light">
+                  <p className={`text-base sm:text-lg lg:text-xl 2xl:text-2xl text-[#a3a3a3] font-light transition-all duration-700 delay-500 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
                     {pTitle}
                   </p>
                 </div>
 
-                <p className="text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-[#a3a3a3] max-w-xl 2xl:max-w-2xl">
+                <div className={`text-sm sm:text-base lg:text-lg 2xl:text-xl leading-relaxed text-[#a3a3a3] max-w-xl 2xl:max-w-2xl transition-all duration-700 delay-600 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
                   <AnimatedBio text={pBio} />
-                </p>
+                </div>
 
                 {/* Primary CTA */}
-                <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4">
+                <div className={`flex flex-wrap gap-2 sm:gap-3 lg:gap-4 transition-all duration-700 delay-700 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
                   <Button
                     size="lg"
                     asChild
@@ -820,7 +831,7 @@ export default function PortfolioDesign() {
               </div>
 
               {/* Right Column - Photo & Contact Cards */}
-              <div className="order-1 lg:order-2 flex flex-col items-center w-full lg:w-auto">
+              <div className={`order-1 lg:order-2 flex flex-col items-center w-full lg:w-auto transition-all duration-1000 delay-300 ease-out ${mounted ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
                 {/* Profile Photo with Glow */}
                 <div className="relative mb-4 sm:mb-6 lg:mb-8">
                   {/* Glow effect */}
@@ -903,7 +914,7 @@ export default function PortfolioDesign() {
             </div>
 
             {/* Scroll indicator */}
-            <div className="absolute bottom-4 lg:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#a3a3a3]">
+            <div className={`absolute bottom-4 lg:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#a3a3a3] transition-all duration-700 delay-1000 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
               <span className="text-xs uppercase tracking-widest">Scroll</span>
               <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
                 <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" />
@@ -914,7 +925,7 @@ export default function PortfolioDesign() {
       </section>
 
       {/* Impact Stats Section */}
-      <section className="py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5 overflow-hidden">
+      <section className={`py-8 sm:py-12 lg:py-16 2xl:py-20 border-t border-white/5 overflow-hidden transition-opacity duration-500 ease-out ${dataReady ? "opacity-100" : "opacity-80"}`}>
         <div className="mx-2 sm:mx-3 lg:mx-4 2xl:mx-8">
           <div className="max-w-[1600px] 2xl:max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 2xl:px-8">
             <RevealOnScroll>
