@@ -38,6 +38,7 @@ import {
 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { upload } from "@vercel/blob/client"
 import Link from "next/link"
 
 interface UploadedDocument {
@@ -193,36 +194,21 @@ export function AdminDashboard() {
       return
     }
 
-    // Check file size (max 8MB)
-    const maxSize = 8 * 1024 * 1024 // 8MB
-    if (file.size > maxSize) {
-      alert(`Image too large. Maximum size is 8MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
+    if (file.size > 8 * 1024 * 1024) {
+      alert(`Image too large. Maximum size is 8MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.`)
       return
     }
     
     setIsUploadingPhoto(true)
     try {
-      const formData = new FormData()
-      formData.append("file", file)
-      const res = await fetch("/api/upload", { method: "POST", body: formData })
-      const text = await res.text()
-      let data
-      try {
-        data = JSON.parse(text)
-      } catch {
-        console.error("[v0] Upload response not JSON:", text)
-        alert(`Upload failed: ${text.slice(0, 100)}`)
-        return
-      }
-      if (res.ok && data.url) {
-        setProfile(prev => ({ ...prev, profilePhotoUrl: data.url }))
-      } else {
-        console.error("[v0] Upload failed:", data)
-        alert(`Upload failed: ${data.error || "Unknown error"}`)
-      }
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      })
+      setProfile(prev => ({ ...prev, profilePhotoUrl: blob.url }))
     } catch (error) {
-      console.error("[v0] Photo upload error:", error)
-      alert("Upload failed. Network error, please try again.")
+      const message = error instanceof Error ? error.message : "Upload failed"
+      alert(`Upload failed: ${message}`)
     } finally {
       setIsUploadingPhoto(false)
     }
@@ -999,7 +985,7 @@ export function AdminDashboard() {
                                 disabled={isUploadingPhoto}
                               />
                             </label>
-                            <p className="text-xs text-muted-foreground">JPG, PNG or WebP. Will be displayed in the hero section.</p>
+                            <p className="text-xs text-muted-foreground">JPG, PNG or WebP. Max 8MB. Will be displayed in the hero section.</p>
                             {profile.profilePhotoUrl && (
                               <Button
                                 variant="ghost"
@@ -1389,19 +1375,16 @@ export function AdminDashboard() {
                                     alert("Image too large. Maximum size is 8MB.")
                                     return
                                   }
-                                  const formData = new FormData()
-                                  formData.append("file", file)
-                                  try {
-                                    const res = await fetch("/api/upload", { method: "POST", body: formData })
-                                    const data = await res.json()
-                                    if (res.ok && data.url) {
-                                      setEditingCard((prev: Record<string, unknown> | null) => prev ? { ...prev, image: data.url } : prev)
-                                    } else {
-                                      alert(`Upload failed: ${data.error || "Unknown error"}`)
-                                    }
-                                  } catch (err) {
-                                    alert(`Upload error: ${err}`)
-                                  }
+                              try {
+                                const blob = await upload(file.name, file, {
+                                  access: "public",
+                                  handleUploadUrl: "/api/upload",
+                                })
+                                setEditingCard((prev: Record<string, unknown> | null) => prev ? { ...prev, image: blob.url } : prev)
+                              } catch (err) {
+                                const message = err instanceof Error ? err.message : "Upload failed"
+                                alert(`Upload failed: ${message}`)
+                              }
                                 }
                                 input.click()
                               }}
