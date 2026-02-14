@@ -465,39 +465,39 @@ function CuriosityPrompt() {
         ? "translate-y-0 opacity-100" 
         : "translate-y-8 opacity-0 pointer-events-none"
     }`}>
-      <div className="relative max-w-xs">
+      <div className="relative max-w-xl">
         {/* Dismiss button */}
         <button 
           onClick={() => setIsDismissed(true)}
-          className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
+          className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
           aria-label="Dismiss"
         >
-          <X className="h-3 w-3 text-[#a3a3a3]" />
+          <X className="h-4 w-4 text-[#a3a3a3]" />
         </button>
         
         <Link href="/chat" className="block group">
-          <div className="p-4 rounded-2xl bg-[#0a0a0b]/90 backdrop-blur-xl border border-white/10 hover:border-cyan-500/30 shadow-2xl shadow-black/50 transition-all duration-300">
+          <div className="p-8 rounded-2xl bg-[#0a0a0b]/90 backdrop-blur-xl border border-white/10 hover:border-cyan-500/30 shadow-2xl shadow-black/50 transition-all duration-300">
             {/* Top secret badge */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 animate-pulse">
-                <Lock className="h-2.5 w-2.5 text-amber-400" />
-                <span className="text-[9px] text-amber-400 font-bold uppercase tracking-widest">Classified</span>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 animate-pulse">
+                <Lock className="h-4 w-4 text-amber-400" />
+                <span className="text-xs text-amber-400 font-bold uppercase tracking-widest">Classified</span>
               </div>
             </div>
             
             {/* Message */}
-            <p className="text-sm font-medium text-white mb-1 leading-snug">
+            <p className="text-lg font-medium text-white mb-2 leading-snug">
               Psst... YashGPT has intel
             </p>
-            <p className="text-xs text-[#a3a3a3] mb-3 leading-relaxed">
+            <p className="text-sm text-[#a3a3a3] mb-5 leading-relaxed">
               Things not on this page. The real stories behind the numbers. Care to ask?
             </p>
             
             {/* CTA */}
-            <div className="flex items-center gap-2 text-cyan-400">
-              <MessageSquare className="h-3.5 w-3.5" />
-              <span className="text-xs font-semibold group-hover:underline">Unlock the conversation</span>
-              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+            <div className="flex items-center gap-3 text-cyan-400">
+              <MessageSquare className="h-5 w-5" />
+              <span className="text-sm font-semibold group-hover:underline">Unlock the conversation</span>
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
         </Link>

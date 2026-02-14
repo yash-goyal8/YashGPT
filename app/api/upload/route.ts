@@ -25,9 +25,9 @@ export async function POST(request: NextRequest) {
 
     console.log("[v0] File received:", file.name, file.size, file.type)
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 8 * 1024 * 1024) {
       return NextResponse.json({ 
-        error: `File too large. Maximum size is 5MB. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB` 
+        error: `File too large. Maximum size is 8MB. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB` 
       }, { status: 413 })
     }
 

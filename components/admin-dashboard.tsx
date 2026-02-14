@@ -193,10 +193,10 @@ export function AdminDashboard() {
       return
     }
 
-    // Check file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024 // 5MB
+    // Check file size (max 8MB)
+    const maxSize = 8 * 1024 * 1024 // 8MB
     if (file.size > maxSize) {
-      alert(`Image too large. Maximum size is 5MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
+      alert(`Image too large. Maximum size is 8MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
       return
     }
     
@@ -1355,62 +1355,62 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Project Image</Label>
-                          {(editingCard?.image as string) ? (
-                            <div className="flex items-center gap-3">
-                              <img 
-                                src={editingCard.image as string} 
-                                alt="Project preview" 
+                          <Label>Project Image (Max 8MB)</Label>
+                          {editingCard?.image ? (
+                            <div className="flex items-center gap-3 mb-2">
+                              <img
+                                src={String(editingCard.image)}
+                                alt="Project preview"
                                 className="w-32 h-20 rounded-md object-cover border"
                               />
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setEditingCard({ ...editingCard, image: "" })}
-                              >
+                              <Button type="button" variant="outline" size="sm" onClick={() => setEditingCard({ ...editingCard, image: "" })}>
                                 Remove
                               </Button>
                             </div>
                           ) : null}
                           <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={async (e) => {
-                              const file = e.target.files?.[0]
-                              if (!file) return
-                              if (file.size > 5 * 1024 * 1024) {
-                                alert("Image too large. Maximum size is 5MB.")
-                                return
-                              }
-                              const formData = new FormData()
-                              formData.append("file", file)
-                              console.log("[v0] Uploading project image:", file.name, file.size, file.type)
-                              try {
-                                const res = await fetch("/api/upload", { method: "POST", body: formData })
-                                console.log("[v0] Upload response status:", res.status)
-                                const text = await res.text()
-                                console.log("[v0] Upload response body:", text.substring(0, 200))
-                                let data
-                                try {
-                                  data = JSON.parse(text)
-                                } catch {
-                                  alert(`Upload failed: Server returned invalid response`)
-                                  return
-                                }
-                                if (res.ok && data.url) {
-                                  console.log("[v0] Project image uploaded:", data.url)
-                                  setEditingCard({ ...editingCard, image: data.url })
-                                } else {
-                                  alert(`Upload failed: ${data.error || "Unknown error"}`)
-                                }
-                              } catch (err) {
-                                console.error("[v0] Project image upload error:", err)
-                                alert(`Upload error: ${err}`)
-                              }
-                            }}
+                            placeholder="Image URL (upload below or paste URL)"
+                            value={String(editingCard?.image || "")}
+                            onChange={(e) => setEditingCard({ ...editingCard, image: e.target.value })}
                           />
-                          <p className="text-xs text-muted-foreground">Max 5MB, JPG/PNG recommended</p>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const input = document.createElement("input")
+                                input.type = "file"
+                                input.accept = "image/*"
+                                input.onchange = async () => {
+                                  const file = input.files?.[0]
+                                  if (!file) return
+                                  if (file.size > 8 * 1024 * 1024) {
+                                    alert("Image too large. Maximum size is 8MB.")
+                                    return
+                                  }
+                                  const formData = new FormData()
+                                  formData.append("file", file)
+                                  try {
+                                    const res = await fetch("/api/upload", { method: "POST", body: formData })
+                                    const data = await res.json()
+                                    if (res.ok && data.url) {
+                                      setEditingCard((prev: Record<string, unknown> | null) => prev ? { ...prev, image: data.url } : prev)
+                                    } else {
+                                      alert(`Upload failed: ${data.error || "Unknown error"}`)
+                                    }
+                                  } catch (err) {
+                                    alert(`Upload error: ${err}`)
+                                  }
+                                }
+                                input.click()
+                              }}
+                            >
+                              <ImageIcon className="h-4 w-4 mr-2" />
+                              Upload Image
+                            </Button>
+                            <span className="text-xs text-muted-foreground">JPG, PNG recommended</span>
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label>Description</Label>
