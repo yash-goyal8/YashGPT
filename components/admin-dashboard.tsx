@@ -38,6 +38,7 @@ import {
 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { upload } from "@vercel/blob/client"
 import Link from "next/link"
 
 interface UploadedDocument {
@@ -193,36 +194,21 @@ export function AdminDashboard() {
       return
     }
 
-    // Check file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024 // 5MB
-    if (file.size > maxSize) {
-      alert(`Image too large. Maximum size is 5MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.\n\nTip: Compress your image at tinypng.com or use a smaller resolution.`)
+    if (file.size > 8 * 1024 * 1024) {
+      alert(`Image too large. Maximum size is 8MB. Your image is ${(file.size / 1024 / 1024).toFixed(2)}MB.`)
       return
     }
     
     setIsUploadingPhoto(true)
     try {
-      const formData = new FormData()
-      formData.append("file", file)
-      const res = await fetch("/api/upload", { method: "POST", body: formData })
-      const text = await res.text()
-      let data
-      try {
-        data = JSON.parse(text)
-      } catch {
-        console.error("[v0] Upload response not JSON:", text)
-        alert(`Upload failed: ${text.slice(0, 100)}`)
-        return
-      }
-      if (res.ok && data.url) {
-        setProfile(prev => ({ ...prev, profilePhotoUrl: data.url }))
-      } else {
-        console.error("[v0] Upload failed:", data)
-        alert(`Upload failed: ${data.error || "Unknown error"}`)
-      }
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      })
+      setProfile(prev => ({ ...prev, profilePhotoUrl: blob.url }))
     } catch (error) {
-      console.error("[v0] Photo upload error:", error)
-      alert("Upload failed. Network error, please try again.")
+      const message = error instanceof Error ? error.message : "Upload failed"
+      alert(`Upload failed: ${message}`)
     } finally {
       setIsUploadingPhoto(false)
     }
@@ -999,7 +985,7 @@ export function AdminDashboard() {
                                 disabled={isUploadingPhoto}
                               />
                             </label>
-                            <p className="text-xs text-muted-foreground">JPG, PNG or WebP. Will be displayed in the hero section.</p>
+                            <p className="text-xs text-muted-foreground">JPG, PNG or WebP. Max 8MB. Will be displayed in the hero section.</p>
                             {profile.profilePhotoUrl && (
                               <Button
                                 variant="ghost"
@@ -1355,62 +1341,59 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Project Image</Label>
-                          {(editingCard?.image as string) ? (
-                            <div className="flex items-center gap-3">
-                              <img 
-                                src={editingCard.image as string} 
-                                alt="Project preview" 
+                          <Label>Project Image (Max 8MB)</Label>
+                          {editingCard?.image ? (
+                            <div className="flex items-center gap-3 mb-2">
+                              <img
+                                src={String(editingCard.image)}
+                                alt="Project preview"
                                 className="w-32 h-20 rounded-md object-cover border"
                               />
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setEditingCard({ ...editingCard, image: "" })}
-                              >
+                              <Button type="button" variant="outline" size="sm" onClick={() => setEditingCard({ ...editingCard, image: "" })}>
                                 Remove
                               </Button>
                             </div>
                           ) : null}
                           <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={async (e) => {
-                              const file = e.target.files?.[0]
-                              if (!file) return
-                              if (file.size > 5 * 1024 * 1024) {
-                                alert("Image too large. Maximum size is 5MB.")
-                                return
-                              }
-                              const formData = new FormData()
-                              formData.append("file", file)
-                              console.log("[v0] Uploading project image:", file.name, file.size, file.type)
-                              try {
-                                const res = await fetch("/api/upload", { method: "POST", body: formData })
-                                console.log("[v0] Upload response status:", res.status)
-                                const text = await res.text()
-                                console.log("[v0] Upload response body:", text.substring(0, 200))
-                                let data
-                                try {
-                                  data = JSON.parse(text)
-                                } catch {
-                                  alert(`Upload failed: Server returned invalid response`)
-                                  return
-                                }
-                                if (res.ok && data.url) {
-                                  console.log("[v0] Project image uploaded:", data.url)
-                                  setEditingCard({ ...editingCard, image: data.url })
-                                } else {
-                                  alert(`Upload failed: ${data.error || "Unknown error"}`)
-                                }
-                              } catch (err) {
-                                console.error("[v0] Project image upload error:", err)
-                                alert(`Upload error: ${err}`)
-                              }
-                            }}
+                            placeholder="Image URL (upload below or paste URL)"
+                            value={String(editingCard?.image || "")}
+                            onChange={(e) => setEditingCard({ ...editingCard, image: e.target.value })}
                           />
-                          <p className="text-xs text-muted-foreground">Max 5MB, JPG/PNG recommended</p>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const input = document.createElement("input")
+                                input.type = "file"
+                                input.accept = "image/*"
+                                input.onchange = async () => {
+                                  const file = input.files?.[0]
+                                  if (!file) return
+                                  if (file.size > 8 * 1024 * 1024) {
+                                    alert("Image too large. Maximum size is 8MB.")
+                                    return
+                                  }
+                              try {
+                                const blob = await upload(file.name, file, {
+                                  access: "public",
+                                  handleUploadUrl: "/api/upload",
+                                })
+                                setEditingCard((prev: Record<string, unknown> | null) => prev ? { ...prev, image: blob.url } : prev)
+                              } catch (err) {
+                                const message = err instanceof Error ? err.message : "Upload failed"
+                                alert(`Upload failed: ${message}`)
+                              }
+                                }
+                                input.click()
+                              }}
+                            >
+                              <ImageIcon className="h-4 w-4 mr-2" />
+                              Upload Image
+                            </Button>
+                            <span className="text-xs text-muted-foreground">JPG, PNG recommended</span>
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label>Description</Label>
