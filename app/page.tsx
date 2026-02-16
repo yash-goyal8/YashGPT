@@ -1165,9 +1165,8 @@ export default function PortfolioDesign() {
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5 auto-rows-fr">
               {certificationsData.map((cert, index) => (
                 <RevealOnScroll key={index} delay={index * 80}>
-                  <Link
-                    href={`/detail/certification/${cert.slug}`}
-                    className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                  <div
+                    className="block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 transition-all duration-300"
                   >
                     <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                       <div className="p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg bg-cyan-500/10">
@@ -1175,10 +1174,10 @@ export default function PortfolioDesign() {
                       </div>
                       <span className="text-[8px] sm:text-[10px] lg:text-xs font-medium text-[#a3a3a3] px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 rounded-full bg-white/5">{cert.date}</span>
                     </div>
-                    <h3 className="text-[11px] sm:text-sm lg:text-base font-medium text-white mb-0.5 sm:mb-1 group-hover:text-cyan-400 transition-colors line-clamp-2">{cert.title}</h3>
+                    <h3 className="text-[11px] sm:text-sm lg:text-base font-medium text-white mb-0.5 sm:mb-1 line-clamp-2">{cert.title}</h3>
                     <p className="text-[10px] sm:text-xs lg:text-sm text-cyan-400 mb-1 sm:mb-1.5 lg:mb-2 line-clamp-1">{cert.issuer}</p>
                     <p className="text-[8px] sm:text-[10px] lg:text-xs text-[#a3a3a3] truncate">ID: {cert.credentialId}</p>
-                  </Link>
+                  </div>
                 </RevealOnScroll>
               ))}
             </div>
