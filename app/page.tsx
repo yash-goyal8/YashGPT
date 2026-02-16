@@ -1166,7 +1166,7 @@ export default function PortfolioDesign() {
               {certificationsData.map((cert, index) => (
                 <RevealOnScroll key={index} delay={index * 80}>
                   <div
-                    className="block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 transition-all duration-300"
+                    className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] hover:scale-[1.03] transition-all duration-300"
                   >
                     <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                       <div className="p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg bg-cyan-500/10">
