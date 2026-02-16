@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Phone } from "lucide-react"
+import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Github } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Link from "next/link"
 
@@ -155,14 +155,21 @@ export function ChatInterface() {
 
   const [visitorInfo, setVisitorInfo] = useState<VisitorInfo | null>(null)
   const [visitorForm, setVisitorForm] = useState({
-    name: "",
-    company: "",
+  name: "",
+  company: "",
   })
   const [formError, setFormError] = useState("")
-
+  const [profileData, setProfileData] = useState<Record<string, string>>({})
+  
   useEffect(() => {
-    setSessionId(getSessionId())
+  setSessionId(getSessionId())
+  fetch("/api/profile").then(r => r.json()).then(d => setProfileData(d)).catch(() => {})
   }, [])
+  
+  const profileEmail = profileData.email || ""
+  const profileLinkedin = profileData.linkedinUrl || ""
+  const profileGithub = profileData.githubUrl || ""
+  const profileResume = profileData.resumeUrl || ""
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -274,10 +281,13 @@ const assistantMessage: Message = {
               {/* Quick Action Buttons */}
               <TooltipProvider delayDuration={100}>
                 <div className="flex items-center gap-1 lg:gap-2">
+                  {profileResume && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <a 
-                        href="#resume" 
+                        href={profileResume}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
                       >
                         <FileText className="h-4 w-4" />
@@ -285,10 +295,12 @@ const assistantMessage: Message = {
                     </TooltipTrigger>
                     <TooltipContent>View Resume</TooltipContent>
                   </Tooltip>
+                  )}
+                  {profileLinkedin && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <a 
-                        href="https://linkedin.com/in/yashgoyal" 
+                        href={profileLinkedin}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
@@ -298,10 +310,12 @@ const assistantMessage: Message = {
                     </TooltipTrigger>
                     <TooltipContent>LinkedIn</TooltipContent>
                   </Tooltip>
+                  )}
+                  {profileEmail && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <a 
-                        href="mailto:yash@example.com" 
+                        href={`mailto:${profileEmail}`}
                         className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
                       >
                         <Mail className="h-4 w-4" />
@@ -309,17 +323,22 @@ const assistantMessage: Message = {
                     </TooltipTrigger>
                     <TooltipContent>Email</TooltipContent>
                   </Tooltip>
+                  )}
+                  {profileGithub && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <a 
-                        href="tel:+1234567890" 
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                        href={profileGithub}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
                       >
-                        <Phone className="h-4 w-4" />
+                        <Github className="h-4 w-4" />
                       </a>
                     </TooltipTrigger>
-                    <TooltipContent>Phone</TooltipContent>
+                    <TooltipContent>GitHub</TooltipContent>
                   </Tooltip>
+                  )}
                 </div>
               </TooltipProvider>
             </div>
@@ -409,10 +428,13 @@ const assistantMessage: Message = {
             {/* Quick Action Buttons */}
             <TooltipProvider delayDuration={100}>
               <div className="flex items-center gap-1 lg:gap-2">
+                {profileResume && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a 
-                      href="#resume" 
+                      href={profileResume}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
                     >
                       <FileText className="h-4 w-4" />
@@ -420,10 +442,12 @@ const assistantMessage: Message = {
                   </TooltipTrigger>
                   <TooltipContent>View Resume</TooltipContent>
                 </Tooltip>
+                )}
+                {profileLinkedin && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a 
-                      href="https://linkedin.com/in/yashgoyal" 
+                      href={profileLinkedin}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
@@ -433,10 +457,12 @@ const assistantMessage: Message = {
                   </TooltipTrigger>
                   <TooltipContent>LinkedIn</TooltipContent>
                 </Tooltip>
+                )}
+                {profileEmail && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a 
-                      href="mailto:yash@example.com" 
+                      href={`mailto:${profileEmail}`}
                       className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
                     >
                       <Mail className="h-4 w-4" />
@@ -444,17 +470,22 @@ const assistantMessage: Message = {
                   </TooltipTrigger>
                   <TooltipContent>Email</TooltipContent>
                 </Tooltip>
+                )}
+                {profileGithub && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a 
-                      href="tel:+1234567890" 
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-[#a3a3a3] hover:text-cyan-400 transition-all"
+                      href={profileGithub}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
                     >
-                      <Phone className="h-4 w-4" />
+                      <Github className="h-4 w-4" />
                     </a>
                   </TooltipTrigger>
-                  <TooltipContent>Phone</TooltipContent>
+                  <TooltipContent>GitHub</TooltipContent>
                 </Tooltip>
+                )}
               </div>
             </TooltipProvider>
           </div>
