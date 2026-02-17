@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, Briefcase, GraduationCap, FolderKanban, Lightbulb, Award, Calendar, ExternalLink, Play, FileText, Image as ImageIcon } from "lucide-react"
@@ -84,6 +84,13 @@ export default function DetailPage() {
   const router = useRouter()
   const type = params.type as string
   const slug = params.slug as string
+  const backClickRef = useRef(false)
+  
+  const handleBackClick = () => {
+    if (backClickRef.current) return // Prevent double clicks
+    backClickRef.current = true
+    router.back()
+  }
   
   const [data, setData] = useState<DetailData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -131,11 +138,9 @@ export default function DetailPage() {
       <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
           <p className="text-[#a3a3a3] mb-4">Content not available yet</p>
-        <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/5">
-        <Link href="/">
+        <Button variant="outline" className="border-white/20 text-white hover:bg-white/5" onClick={handleBackClick}>
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Portfolio
-        </Link>
         </Button>
         </div>
       </div>
@@ -152,10 +157,10 @@ export default function DetailPage() {
       <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4">
         <div className="mx-3 lg:mx-4">
           <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
+          <button onClick={handleBackClick} className="flex items-center gap-2 lg:gap-3 group cursor-pointer">
           <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
           <span className="text-sm lg:text-base text-[#a3a3a3] group-hover:text-white transition-colors">Back to Portfolio</span>
-          </Link>
+          </button>
             
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${config?.bgColor || 'bg-white/5'}`}>
               <Icon className={`h-4 w-4 ${config?.color || 'text-white'}`} />
