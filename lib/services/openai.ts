@@ -69,7 +69,6 @@ export async function generateChatResponse(
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      temperature: CONFIG.llm.temperature,
       max_completion_tokens: CONFIG.llm.maxTokens,
     })
     return response.choices[0]?.message?.content || "I couldn't generate a response. Please try again."
