@@ -447,7 +447,6 @@ export function AdminDashboard() {
           throw new Error(message)
         }
       })
-      })
 
       const uploadedDocs = await Promise.all(uploadPromises)
       setUploadedFiles((prev) => [...prev, ...uploadedDocs])
