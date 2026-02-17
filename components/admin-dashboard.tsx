@@ -431,7 +431,6 @@ export function AdminDashboard() {
           const blob = await upload(file.name, file, {
             access: "public",
             handleUploadUrl: "/api/upload",
-            addRandomSuffix: true,
           })
           
           setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }))

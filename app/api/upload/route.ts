@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
             "application/msword", // .doc
           ],
           maximumSizeInBytes: 10 * 1024 * 1024, // 10MB for documents
+          addRandomSuffix: true,
         }
       },
       onUploadCompleted: async () => {
