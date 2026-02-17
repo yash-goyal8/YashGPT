@@ -10,8 +10,16 @@ export async function POST(request: NextRequest) {
       request,
       onBeforeGenerateToken: async () => {
         return {
-          allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-          maximumSizeInBytes: 8 * 1024 * 1024, // 8MB
+          allowedContentTypes: [
+            "image/jpeg", 
+            "image/png", 
+            "image/webp", 
+            "image/gif",
+            "text/plain",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+            "application/msword", // .doc
+          ],
+          maximumSizeInBytes: 10 * 1024 * 1024, // 10MB for documents
         }
       },
       onUploadCompleted: async () => {
