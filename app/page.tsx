@@ -664,14 +664,6 @@ export default function PortfolioDesign() {
     // Trigger mount animation
     requestAnimationFrame(() => setMounted(true))
     
-    // Restore scroll position if returning from detail page
-    const savedScrollPos = sessionStorage.getItem("portfolioScrollPos")
-    if (savedScrollPos) {
-      const scrollPos = parseInt(savedScrollPos, 10)
-      sessionStorage.removeItem("portfolioScrollPos")
-      setTimeout(() => window.scrollTo(0, scrollPos), 100)
-    }
-    
     // Fetch data
     Promise.all([
       fetch("/api/cards").then(res => res.json()).catch(() => null),
@@ -680,6 +672,14 @@ export default function PortfolioDesign() {
       if (cardsData) setCards(cardsData)
       if (profileData) setProfile(profileData)
       setDataReady(true)
+      
+      // Restore scroll position after data loads and layout settles
+      const savedScrollPos = sessionStorage.getItem("portfolioScrollPos")
+      if (savedScrollPos) {
+        const scrollPos = parseInt(savedScrollPos, 10)
+        sessionStorage.removeItem("portfolioScrollPos")
+        setTimeout(() => window.scrollTo(0, scrollPos), 50)
+      }
     })
   }, [])
 
