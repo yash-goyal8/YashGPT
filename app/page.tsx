@@ -990,7 +990,7 @@ export default function PortfolioDesign() {
                         </span>
                       ))}
                     </div>
-                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-cyan-400/0 group-hover:text-cyan-400/70 transition-all duration-300 font-medium">
+                    <div className="absolute bottom-2 right-3 text-[11px] sm:text-[13px] lg:text-sm text-cyan-400/0 group-hover:text-cyan-400/70 transition-all duration-300 font-medium">
                       Click for details →
                     </div>
                   </Link>
@@ -1025,7 +1025,7 @@ export default function PortfolioDesign() {
                     <h3 className="text-sm sm:text-base lg:text-lg font-medium text-white mb-0.5 sm:mb-1 group-hover:text-violet-400 transition-colors">{edu.degree}</h3>
                     <p className="text-[10px] sm:text-xs lg:text-sm text-violet-400 mb-1.5 sm:mb-2 lg:mb-3">{edu.school}</p>
                     <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] leading-relaxed">{edu.focus}</p>
-                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-violet-400/0 group-hover:text-violet-400/70 transition-all duration-300 font-medium">
+                    <div className="absolute bottom-2 right-3 text-[11px] sm:text-[13px] lg:text-sm text-violet-400/0 group-hover:text-violet-400/70 transition-all duration-300 font-medium">
                       Click for details →
                     </div>
                   </Link>
@@ -1068,7 +1068,7 @@ export default function PortfolioDesign() {
                         </span>
                       ))}
                     </div>
-                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-emerald-400/0 group-hover:text-emerald-400/70 transition-all duration-300 font-medium">
+                    <div className="absolute bottom-2 right-3 text-[11px] sm:text-[13px] lg:text-sm text-emerald-400/0 group-hover:text-emerald-400/70 transition-all duration-300 font-medium">
                       Click for details →
                     </div>
                   </Link>
