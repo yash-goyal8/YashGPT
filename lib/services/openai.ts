@@ -1,11 +1,11 @@
 /**
  * OpenAI Service
  * Handles embeddings and LLM generation using OpenAI API directly
+ * Uses your own OPENAI_API_KEY - no gateway
  */
 
 import OpenAI from "openai"
 
-// Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })

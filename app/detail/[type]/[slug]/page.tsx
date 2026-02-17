@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, Briefcase, GraduationCap, FolderKanban, Lightbulb, Award, Calendar, ExternalLink, Play, FileText, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -81,8 +81,16 @@ function AnimatedBackground() {
 
 export default function DetailPage() {
   const params = useParams()
+  const router = useRouter()
   const type = params.type as string
   const slug = params.slug as string
+  const backClickRef = useRef(false)
+  
+  const handleBackClick = () => {
+    if (backClickRef.current) return // Prevent double clicks
+    backClickRef.current = true
+    router.back()
+  }
   
   const [data, setData] = useState<DetailData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -130,12 +138,10 @@ export default function DetailPage() {
       <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
           <p className="text-[#a3a3a3] mb-4">Content not available yet</p>
-          <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/5">
-            <Link href="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Portfolio
-            </Link>
-          </Button>
+        <Button variant="outline" className="border-white/20 text-white hover:bg-white/5" onClick={handleBackClick}>
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back to Portfolio
+        </Button>
         </div>
       </div>
     )
@@ -151,10 +157,10 @@ export default function DetailPage() {
       <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4">
         <div className="mx-3 lg:mx-4">
           <div className="max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl bg-[#0a0a0b]/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
-              <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
-              <span className="text-sm lg:text-base text-[#a3a3a3] group-hover:text-white transition-colors">Back to Portfolio</span>
-            </Link>
+          <button onClick={handleBackClick} className="flex items-center gap-2 lg:gap-3 group cursor-pointer">
+          <ArrowLeft className="h-4 w-4 lg:h-5 lg:w-5 text-[#a3a3a3] group-hover:text-white transition-colors" />
+          <span className="text-sm lg:text-base text-[#a3a3a3] group-hover:text-white transition-colors">Back to Portfolio</span>
+          </button>
             
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${config?.bgColor || 'bg-white/5'}`}>
               <Icon className={`h-4 w-4 ${config?.color || 'text-white'}`} />
@@ -210,6 +216,27 @@ export default function DetailPage() {
                 <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider mb-4">Overview</h2>
                 <div className="p-4 lg:p-6 rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5">
                   <p className="text-sm lg:text-base text-[#e5e5e5] leading-relaxed whitespace-pre-wrap">{content.overview}</p>
+                </div>
+              </section>
+            )}
+
+            {/* Links Section */}
+            {content.links && content.links.length > 0 && (
+              <section className="mb-8 lg:mb-12">
+                <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider mb-4">Links</h2>
+                <div className="flex flex-wrap gap-3">
+                  {content.links.map((link, i) => (
+                    <a 
+                      key={i}
+                      href={link.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.03] border border-white/5 hover:border-white/10 hover:bg-white/[0.06] transition-all text-sm text-white"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      {link.label}
+                    </a>
+                  ))}
                 </div>
               </section>
             )}
@@ -297,27 +324,6 @@ export default function DetailPage() {
                       {item.description && (
                         <p className="text-xs text-[#a3a3a3] mt-1">{item.description}</p>
                       )}
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Links Section */}
-            {content.links && content.links.length > 0 && (
-              <section className="mb-8 lg:mb-12">
-                <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider mb-4">Links</h2>
-                <div className="flex flex-wrap gap-3">
-                  {content.links.map((link, i) => (
-                    <a 
-                      key={i}
-                      href={link.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.03] border border-white/5 hover:border-white/10 hover:bg-white/[0.06] transition-all text-sm text-white"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      {link.label}
                     </a>
                   ))}
                 </div>

@@ -164,7 +164,9 @@ export async function POST(request: Request) {
         }
 
         // Store all chunks in batch
+        console.log("[v0] Storing", chunksWithEmbeddings.length, "chunks for", doc.name)
         await storeChunksBatch(chunksWithEmbeddings)
+        console.log("[v0] Successfully stored chunks for", doc.name)
 
         results.processed++
         results.chunks += chunks.length

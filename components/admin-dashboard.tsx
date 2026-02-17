@@ -427,35 +427,24 @@ export function AdminDashboard() {
       setUploadProgress(newProgress)
 
       const uploadPromises = validFiles.map(async (file) => {
-        const formData = new FormData()
-        formData.append("file", file)
+        try {
+          const blob = await upload(file.name, file, {
+            access: "public",
+            handleUploadUrl: "/api/upload",
+          })
+          
+          setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }))
 
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || `Failed to upload "${file.name}"`)
-        }
-
-        const data = await response.json()
-        
-        console.log("[v0] Upload response:", JSON.stringify(data))
-
-        setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }))
-
-        if (!data.url) {
-          throw new Error(`Upload succeeded but no URL returned for "${file.name}"`)
-        }
-
-        return {
-          id: data.id || Date.now().toString() + Math.random().toString(),
-          name: file.name,
-          size: file.size,
-          uploadedAt: new Date().toISOString(),
-          url: data.url,
+          return {
+            id: Date.now().toString() + Math.random().toString(),
+            name: file.name,
+            size: file.size,
+            uploadedAt: new Date().toISOString(),
+            url: blob.url,
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : `Failed to upload "${file.name}"`
+          throw new Error(message)
         }
       })
 
