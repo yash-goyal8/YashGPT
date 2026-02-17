@@ -214,6 +214,27 @@ export default function DetailPage() {
               </section>
             )}
 
+            {/* Links Section */}
+            {content.links && content.links.length > 0 && (
+              <section className="mb-8 lg:mb-12">
+                <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider mb-4">Links</h2>
+                <div className="flex flex-wrap gap-3">
+                  {content.links.map((link, i) => (
+                    <a 
+                      key={i}
+                      href={link.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.03] border border-white/5 hover:border-white/10 hover:bg-white/[0.06] transition-all text-sm text-white"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Highlights Section */}
             {content.highlights && content.highlights.length > 0 && (
               <section className="mb-8 lg:mb-12">
@@ -297,27 +318,6 @@ export default function DetailPage() {
                       {item.description && (
                         <p className="text-xs text-[#a3a3a3] mt-1">{item.description}</p>
                       )}
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Links Section */}
-            {content.links && content.links.length > 0 && (
-              <section className="mb-8 lg:mb-12">
-                <h2 className="text-sm font-medium text-[#a3a3a3] uppercase tracking-wider mb-4">Links</h2>
-                <div className="flex flex-wrap gap-3">
-                  {content.links.map((link, i) => (
-                    <a 
-                      key={i}
-                      href={link.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.03] border border-white/5 hover:border-white/10 hover:bg-white/[0.06] transition-all text-sm text-white"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      {link.label}
                     </a>
                   ))}
                 </div>
