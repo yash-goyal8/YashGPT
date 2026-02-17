@@ -1,36 +1,40 @@
 /**
  * OpenAI Service
- * Handles embeddings and LLM generation using Vercel AI SDK 6
- * Uses Vercel AI Gateway (zero-config, no API key needed)
+ * Handles embeddings and LLM generation using OpenAI API directly
+ * Uses your own OPENAI_API_KEY - no gateway
  */
 
-import { embed, generateText } from "ai"
+import OpenAI from "openai"
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
 
 // Configuration
 const CONFIG = {
   embedding: {
-    model: "openai/text-embedding-3-small",
+    model: "text-embedding-3-small" as const,
     dimensions: 1536,
   },
   llm: {
-    model: "openai/gpt-4o-mini",
+    model: "gpt-4o-mini" as const,
     temperature: 0.2,
-    maxOutputTokens: 1024,
+    maxTokens: 1024,
   },
 } as const
 
 /**
- * Generate embedding for text using OpenAI text-embedding-3-small via AI Gateway
+ * Generate embedding for text using OpenAI text-embedding-3-small
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   try {
-    const result = await embed({
+    const response = await openai.embeddings.create({
       model: CONFIG.embedding.model,
-      value: text.trim().substring(0, 8000),
+      input: text.trim().substring(0, 8000),
     })
-    return Array.from(result.embedding)
+    return response.data[0].embedding
   } catch (error) {
-    console.error("[AI SDK] Embedding generation failed:", error)
+    console.error("[OpenAI] Embedding generation failed:", error)
     throw new Error(`Embedding failed: ${error instanceof Error ? error.message : "Unknown error"}`)
   }
 }
@@ -39,34 +43,38 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  * Generate embeddings for multiple texts in batch
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
-  const results: number[][] = []
-  for (const text of texts) {
-    const embedding = await generateEmbedding(text)
-    results.push(embedding)
+  try {
+    const response = await openai.embeddings.create({
+      model: CONFIG.embedding.model,
+      input: texts.map(t => t.trim().substring(0, 8000)),
+    })
+    return response.data.map(d => d.embedding)
+  } catch (error) {
+    console.error("[OpenAI] Batch embedding generation failed:", error)
+    throw new Error(`Batch embedding failed: ${error instanceof Error ? error.message : "Unknown error"}`)
   }
-  return results
 }
 
 /**
- * Generate chat response using GPT-4o-mini via AI Gateway
+ * Generate chat response using GPT-4o-mini
  */
 export async function generateChatResponse(
   systemPrompt: string,
   userPrompt: string
 ): Promise<string> {
   try {
-    const result = await generateText({
+    const response = await openai.chat.completions.create({
       model: CONFIG.llm.model,
-      system: systemPrompt,
       messages: [
+        { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
       temperature: CONFIG.llm.temperature,
-      maxOutputTokens: CONFIG.llm.maxOutputTokens,
+      max_tokens: CONFIG.llm.maxTokens,
     })
-    return result.text || "I couldn't generate a response. Please try again."
+    return response.choices[0]?.message?.content || "I couldn't generate a response. Please try again."
   } catch (error) {
-    console.error("[AI SDK] Chat generation failed:", error)
+    console.error("[OpenAI] Chat generation failed:", error)
     throw new Error(`Chat generation failed: ${error instanceof Error ? error.message : "Unknown error"}`)
   }
 }
