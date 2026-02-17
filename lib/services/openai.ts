@@ -17,7 +17,7 @@ const CONFIG = {
     dimensions: 1536,
   },
   llm: {
-    model: "gpt-4o-mini" as const,
+    model: "gpt-5-mini" as const,
     temperature: 0.2,
     maxTokens: 1024,
   },
@@ -56,7 +56,7 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 }
 
 /**
- * Generate chat response using GPT-4o-mini
+ * Generate chat response using GPT-5-mini
  */
 export async function generateChatResponse(
   systemPrompt: string,
