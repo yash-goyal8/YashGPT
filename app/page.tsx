@@ -969,7 +969,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/experience/${exp.slug}`}
-                    className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                    className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     <div className="flex items-center gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                       <div className="p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg bg-cyan-500/10">
@@ -989,6 +989,9 @@ export default function PortfolioDesign() {
                           {skill}
                         </span>
                       ))}
+                    </div>
+                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-cyan-400/0 group-hover:text-cyan-400/70 transition-all duration-300 font-medium">
+                      Click for details →
                     </div>
                   </Link>
                 </RevealOnScroll>
@@ -1011,7 +1014,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/education/${edu.slug}`}
-                    className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                    className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     <div className="flex items-center gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
                       <div className="p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg bg-violet-500/10">
@@ -1022,6 +1025,9 @@ export default function PortfolioDesign() {
                     <h3 className="text-sm sm:text-base lg:text-lg font-medium text-white mb-0.5 sm:mb-1 group-hover:text-violet-400 transition-colors">{edu.degree}</h3>
                     <p className="text-[10px] sm:text-xs lg:text-sm text-violet-400 mb-1.5 sm:mb-2 lg:mb-3">{edu.school}</p>
                     <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] leading-relaxed">{edu.focus}</p>
+                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-violet-400/0 group-hover:text-violet-400/70 transition-all duration-300 font-medium">
+                      Click for details →
+                    </div>
                   </Link>
                 </RevealOnScroll>
               ))}
@@ -1043,7 +1049,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/project/${project.slug}`}
-                    className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                    className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     {/* Project Image */}
                     <div className="aspect-video rounded-md sm:rounded-lg bg-gradient-to-br from-white/10 to-white/5 mb-2 sm:mb-3 lg:mb-4 overflow-hidden flex items-center justify-center">
@@ -1061,6 +1067,9 @@ export default function PortfolioDesign() {
                           {t}
                         </span>
                       ))}
+                    </div>
+                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-emerald-400/0 group-hover:text-emerald-400/70 transition-all duration-300 font-medium">
+                      Click for details →
                     </div>
                   </Link>
                 </RevealOnScroll>
@@ -1083,7 +1092,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/case-study/${study.slug}`}
-                    className="group block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer hover:scale-[1.03]"
+                    className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     <h3 className="text-base sm:text-lg lg:text-xl font-medium text-white mb-3 sm:mb-4 lg:mb-6 group-hover:text-amber-400 transition-colors line-clamp-2">{study.title}</h3>
                     <div className="space-y-2 sm:space-y-3 lg:space-y-4 text-[10px] sm:text-xs lg:text-sm">
@@ -1099,6 +1108,9 @@ export default function PortfolioDesign() {
                         <span className="text-emerald-400 uppercase tracking-wider text-[9px] sm:text-[10px] lg:text-xs">Impact</span>
                         <p className="text-white font-medium mt-0.5 sm:mt-1">{study.impact}</p>
                       </div>
+                    </div>
+                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-amber-400/0 group-hover:text-amber-400/70 transition-all duration-300 font-medium">
+                      Click for details →
                     </div>
                   </Link>
                 </RevealOnScroll>
