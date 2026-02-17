@@ -583,7 +583,10 @@ function AnimatedCounter({
 }
 
 // Section reveal animation component
- function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  // Save scroll position before navigating to detail page
+  const handleCardClick = () => {
+    sessionStorage.setItem("portfolioScrollPos", window.scrollY.toString())
+  }
   const ref = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
   
@@ -663,6 +666,14 @@ export default function PortfolioDesign() {
   useEffect(() => {
     // Trigger mount animation
     requestAnimationFrame(() => setMounted(true))
+    
+    // Restore scroll position if returning from detail page
+    const savedScrollPos = sessionStorage.getItem("portfolioScrollPos")
+    if (savedScrollPos) {
+      const scrollPos = parseInt(savedScrollPos, 10)
+      sessionStorage.removeItem("portfolioScrollPos")
+      setTimeout(() => window.scrollTo(0, scrollPos), 100)
+    }
     
     // Fetch data
     Promise.all([
@@ -969,6 +980,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/experience/${exp.slug}`}
+                    onClick={handleCardClick}
                     className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     <div className="flex items-center gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
@@ -1014,6 +1026,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/education/${edu.slug}`}
+                    onClick={handleCardClick}
                     className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     <div className="flex items-center gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
@@ -1049,6 +1062,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/project/${project.slug}`}
+                    onClick={handleCardClick}
                     className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     {/* Project Image */}
@@ -1092,6 +1106,7 @@ export default function PortfolioDesign() {
                 <RevealOnScroll key={index} delay={index * 100}>
                   <Link
                     href={`/detail/case-study/${study.slug}`}
+                    onClick={handleCardClick}
                     className="group relative block h-full p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 hover:border-white/10 transition-all duration-300 cursor-pointer hover:scale-[1.03] overflow-hidden"
                   >
                     <h3 className="text-base sm:text-lg lg:text-xl font-medium text-white mb-3 sm:mb-4 lg:mb-6 group-hover:text-amber-400 transition-colors line-clamp-2">{study.title}</h3>
@@ -1109,7 +1124,7 @@ export default function PortfolioDesign() {
                         <p className="text-white font-medium mt-0.5 sm:mt-1">{study.impact}</p>
                       </div>
                     </div>
-                    <div className="absolute bottom-2 right-3 text-[9px] sm:text-[10px] text-amber-400/0 group-hover:text-amber-400/70 transition-all duration-300 font-medium">
+                    <div className="absolute bottom-2 right-3 text-xs sm:text-sm text-amber-400/0 group-hover:text-amber-400/70 transition-all duration-300 font-medium">
                       Click for details →
                     </div>
                   </Link>
