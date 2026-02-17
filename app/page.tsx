@@ -583,10 +583,7 @@ function AnimatedCounter({
 }
 
 // Section reveal animation component
-  // Save scroll position before navigating to detail page
-  const handleCardClick = () => {
-    sessionStorage.setItem("portfolioScrollPos", window.scrollY.toString())
-  }
+ function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
   
@@ -685,6 +682,11 @@ export default function PortfolioDesign() {
       setDataReady(true)
     })
   }, [])
+
+  // Save scroll position before navigating to detail page
+  const handleCardClick = () => {
+    sessionStorage.setItem("portfolioScrollPos", window.scrollY.toString())
+  }
 
   // Use fetched data or fallback to defaults
   const impactData = cards?.impact || IMPACT
