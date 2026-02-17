@@ -176,6 +176,16 @@ export async function POST(request: Request) {
       })
     }
 
+    // Log vector index info for debugging
+    try {
+      const { getVectorIndex } = await import("@/lib/services/vector")
+      const idx = getVectorIndex()
+      const info = await idx.info()
+      console.log("[v0] Vector index info:", JSON.stringify(info))
+    } catch (e) {
+      console.log("[v0] Failed to get index info:", e instanceof Error ? e.message : e)
+    }
+
     // Generate embedding for the question
     console.log("[v0] Generating embedding for question:", sanitizedQuestion.substring(0, 50))
     const queryEmbedding = await generateEmbedding(sanitizedQuestion)
