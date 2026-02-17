@@ -244,6 +244,7 @@ const assistantMessage: Message = {
   timestamp: new Date(),
   media: data.media,
   }
+  if (data.debug) console.log("[v0] Chat debug error:", data.debug)
   setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {

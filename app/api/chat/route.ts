@@ -177,16 +177,23 @@ export async function POST(request: Request) {
     }
 
     // Generate embedding for the question
+    console.log("[v0] Generating embedding for question:", sanitizedQuestion.substring(0, 50))
     const queryEmbedding = await generateEmbedding(sanitizedQuestion)
+    console.log("[v0] Embedding generated, length:", queryEmbedding.length)
 
     // Search for relevant chunks (top 5)
     const searchResults = await searchChunks(queryEmbedding, 5)
+    console.log("[v0] Search results count:", searchResults.length)
+    if (searchResults.length > 0) {
+      console.log("[v0] Top result score:", searchResults[0].score, "source:", searchResults[0].sourceFile)
+    }
 
     // Assemble context (max 2200 tokens)
     const context = assembleContext(
       searchResults.map((r) => ({ content: r.content, score: r.score })),
       2200
     )
+    console.log("[v0] Assembled context length:", context?.length || 0)
 
     if (!context) {
       return NextResponse.json({
@@ -227,9 +234,10 @@ export async function POST(request: Request) {
       media: media.length > 0 ? media : undefined,
     })
   } catch (error) {
-    console.error("[v0] Chat API error:", error)
+    console.error("[v0] Chat API error:", error instanceof Error ? error.message : error)
+    console.error("[v0] Chat API error stack:", error instanceof Error ? error.stack : "no stack")
     return NextResponse.json(
-      { error: "Failed to process your question. Please try again." },
+      { error: "Failed to process your question. Please try again.", debug: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     )
   }
