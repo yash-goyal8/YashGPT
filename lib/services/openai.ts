@@ -19,7 +19,7 @@ const CONFIG = {
   llm: {
     model: "gpt-5-mini" as const,
     temperature: 0.2,
-    maxTokens: 1024,
+    maxTokens: 512,
   },
 } as const
 
@@ -56,27 +56,24 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 }
 
 /**
- * Generate chat response using GPT-5-mini
+ * Generate chat response using GPT-5-mini via Responses API
  */
 export async function generateChatResponse(
   systemPrompt: string,
   userPrompt: string
 ): Promise<string> {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await openai.responses.create({
       model: CONFIG.llm.model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      max_completion_tokens: CONFIG.llm.maxTokens,
+      instructions: systemPrompt,
+      input: userPrompt,
+      max_output_tokens: CONFIG.llm.maxTokens,
     })
-    const choice = response.choices[0]
-    console.log("[v0] GPT response finish_reason:", choice?.finish_reason)
-    console.log("[v0] GPT response content length:", choice?.message?.content?.length ?? "null")
-    console.log("[v0] GPT response content preview:", choice?.message?.content?.substring(0, 200) ?? "EMPTY")
-    console.log("[v0] GPT response refusal:", choice?.message?.refusal ?? "none")
-    return choice?.message?.content || "I couldn't generate a response. Please try again."
+    const text = response.output_text
+    console.log("[v0] GPT response status:", response.status)
+    console.log("[v0] GPT response text length:", text?.length ?? "null")
+    console.log("[v0] GPT response preview:", text?.substring(0, 200) ?? "EMPTY")
+    return text || "I couldn't generate a response. Please try again."
   } catch (error) {
     console.error("[OpenAI] Chat generation failed:", error)
     throw new Error(`Chat generation failed: ${error instanceof Error ? error.message : "Unknown error"}`)

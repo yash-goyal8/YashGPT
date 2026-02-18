@@ -198,10 +198,10 @@ export async function POST(request: Request) {
       console.log("[v0] Top result score:", searchResults[0].score, "source:", searchResults[0].sourceFile)
     }
 
-    // Assemble context (max 2200 tokens)
+    // Assemble context (max 1500 tokens for faster response)
     const context = assembleContext(
       searchResults.map((r) => ({ content: r.content, score: r.score })),
-      2200
+      1500
     )
     console.log("[v0] Assembled context length:", context?.length || 0)
 
