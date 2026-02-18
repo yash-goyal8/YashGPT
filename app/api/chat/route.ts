@@ -43,17 +43,17 @@ async function searchRelevantMedia(question: string): Promise<Array<{
   try {
     const redis = getRedis()
     const mediaIds = await redis.smembers("media:items")
-    
+
     if (!mediaIds || mediaIds.length === 0) return []
-    
+
     const pipeline = redis.pipeline()
     for (const id of mediaIds) {
       pipeline.hgetall(`media:${id}`)
     }
-    
+
     const results = await pipeline.exec()
     const allMedia = results.filter((item): item is any => item !== null && typeof item === "object")
-    
+
     // Score media items based on keyword matches
     const questionWords = question.toLowerCase().split(/\s+/)
     const scoredMedia = allMedia.map(item => {
@@ -61,17 +61,17 @@ async function searchRelevantMedia(question: string): Promise<Array<{
       const title = (item.title || "").toLowerCase()
       const description = (item.description || "").toLowerCase()
       const tags = typeof item.tags === "string" ? JSON.parse(item.tags) : item.tags || []
-      
+
       for (const word of questionWords) {
         if (word.length < 3) continue
         if (title.includes(word)) score += 3
         if (description.includes(word)) score += 2
         if (tags.some((t: string) => t.toLowerCase().includes(word))) score += 4
       }
-      
+
       return { ...item, score, tags }
     })
-    
+
     // Return top 3 relevant media items
     return scoredMedia
       .filter(m => m.score > 0)
@@ -179,7 +179,7 @@ export async function POST(request: Request) {
 
     // Search for relevant chunks (top 5) + media search in parallel
     const [searchResults, media] = await Promise.all([
-      searchChunks(queryEmbedding, 5),
+      searchChunks(queryEmbedding, 10),
       isAskingForMedia(sanitizedQuestion) ? searchRelevantMedia(sanitizedQuestion) : Promise.resolve([]),
     ])
 
@@ -209,7 +209,7 @@ export async function POST(request: Request) {
       visitorCompany,
       responseTime: Date.now() - startTime,
       chunksUsed: searchResults.length,
-    }).catch(() => {})
+    }).catch(() => { })
 
     // Send media info as the first SSE event if available, then pipe the GPT stream
     const encoder = new TextEncoder()
@@ -236,7 +236,7 @@ export async function POST(request: Request) {
               try {
                 const parsed = JSON.parse(payload)
                 if (parsed.text) fullText += parsed.text
-              } catch {}
+              } catch { }
             }
             controller.enqueue(value)
           }
@@ -246,7 +246,7 @@ export async function POST(request: Request) {
 
         // Cache the response in background after stream completes
         if (fullText) {
-          cacheResponse(sanitizedQuestion, fullText).catch(() => {})
+          cacheResponse(sanitizedQuestion, fullText).catch(() => { })
         }
         await analyticsPromise
         controller.close()
