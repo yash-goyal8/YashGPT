@@ -152,6 +152,7 @@ export function ChatInterface() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId, setSessionId] = useState("")
+  const [showMenu, setShowMenu] = useState(true)
 
   const [visitorInfo, setVisitorInfo] = useState<VisitorInfo | null>(null)
   const [visitorForm, setVisitorForm] = useState({
@@ -222,6 +223,7 @@ export function ChatInterface() {
 
     setMessages((prev) => [...prev, userMessage])
     setInput("")
+    setShowMenu(false) // Hide menu when sending a message
     setIsLoading(true)
 
     try {
@@ -401,7 +403,7 @@ const assistantMessage: Message = {
     )
   }
 
-  const showQuestionBank = messages.length <= 1
+  const showQuestionBank = (messages.length <= 1) || showMenu
 
   // Chat interface
   return (
@@ -548,6 +550,19 @@ const assistantMessage: Message = {
                       <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: "0.2s" }} />
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Show Menu Button */}
+              {!showMenu && messages.length > 1 && !isLoading && (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={() => setShowMenu(true)}
+                    className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl px-6 py-3 flex items-center gap-2"
+                  >
+                    <Brain className="h-4 w-4 text-cyan-400" />
+                    Show Question Menu
+                  </Button>
                 </div>
               )}
             </div>
