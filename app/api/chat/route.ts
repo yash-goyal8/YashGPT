@@ -8,7 +8,6 @@ import { NextResponse } from "next/server"
 import { headers } from "next/headers"
 import {
   generateEmbedding,
-  generateChatResponse,
   RAG_SYSTEM_PROMPT,
   createRAGPrompt,
   searchChunks,
@@ -17,7 +16,6 @@ import {
   getCachedResponse,
   cacheResponse,
   trackAnalytics,
-  hashQuestion,
   getRedis,
 } from "@/lib/services"
 
@@ -179,8 +177,11 @@ export async function POST(request: Request) {
     // Generate embedding for the question
     const queryEmbedding = await generateEmbedding(sanitizedQuestion)
 
-    // Search for relevant chunks (top 5)
-    const searchResults = await searchChunks(queryEmbedding, 5)
+    // Search for relevant chunks (top 5) + media search in parallel
+    const [searchResults, media] = await Promise.all([
+      searchChunks(queryEmbedding, 5),
+      isAskingForMedia(sanitizedQuestion) ? searchRelevantMedia(sanitizedQuestion) : Promise.resolve([]),
+    ])
 
     // Assemble context from all matched chunks (no token limit on input)
     const context = assembleContext(
@@ -195,33 +196,69 @@ export async function POST(request: Request) {
       })
     }
 
-    // Generate response using GPT-4o-mini
+    // Stream response using GPT-5-mini
+    const { streamChatResponse } = await import("@/lib/services/openai")
     const userPrompt = createRAGPrompt(sanitizedQuestion, context, visitorName)
-    const response = await generateChatResponse(RAG_SYSTEM_PROMPT, userPrompt)
+    const stream = await streamChatResponse(RAG_SYSTEM_PROMPT, userPrompt)
 
-    // Search for relevant media if question asks for visuals
-    let media: Array<{id: string, url: string, type: "image" | "video", title: string, description: string}> = []
-    if (isAskingForMedia(sanitizedQuestion)) {
-      media = await searchRelevantMedia(sanitizedQuestion)
-    }
-
-    // Cache the response
-    await cacheResponse(sanitizedQuestion, response)
-
-    // Track analytics
-    await trackAnalytics({
+    // Fire-and-forget: analytics + caching run in background, don't block the stream
+    const analyticsPromise = trackAnalytics({
       type: "chat",
       question: sanitizedQuestion,
       visitorName,
       visitorCompany,
       responseTime: Date.now() - startTime,
       chunksUsed: searchResults.length,
+    }).catch(() => {})
+
+    // Send media info as the first SSE event if available, then pipe the GPT stream
+    const encoder = new TextEncoder()
+    const wrappedStream = new ReadableStream({
+      async start(controller) {
+        // Send metadata first (media, chunks count)
+        if (media.length > 0) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ media })}\n\n`))
+        }
+
+        // Pipe GPT stream through
+        const reader = stream.getReader()
+        let fullText = ""
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+            // Collect full text for caching
+            const decoded = new TextDecoder().decode(value)
+            const lines = decoded.split("\n").filter(l => l.startsWith("data: "))
+            for (const line of lines) {
+              const payload = line.slice(6)
+              if (payload === "[DONE]") continue
+              try {
+                const parsed = JSON.parse(payload)
+                if (parsed.text) fullText += parsed.text
+              } catch {}
+            }
+            controller.enqueue(value)
+          }
+        } finally {
+          reader.releaseLock()
+        }
+
+        // Cache the response in background after stream completes
+        if (fullText) {
+          cacheResponse(sanitizedQuestion, fullText).catch(() => {})
+        }
+        await analyticsPromise
+        controller.close()
+      },
     })
 
-    return NextResponse.json({
-      response,
-      chunksUsed: searchResults.length,
-      media: media.length > 0 ? media : undefined,
+    return new Response(wrappedStream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      },
     })
   } catch (error) {
     console.error("[v0] Chat API error:", error instanceof Error ? error.message : error)

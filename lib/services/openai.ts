@@ -87,6 +87,48 @@ export async function generateChatResponse(
 }
 
 /**
+ * Stream chat response using GPT-5-mini via Responses API (streaming)
+ * Returns a ReadableStream of text chunks for real-time display
+ */
+export async function streamChatResponse(
+  systemPrompt: string,
+  userPrompt: string
+): Promise<ReadableStream<Uint8Array>> {
+  const stream = await getOpenAI().responses.stream({
+    model: CONFIG.llm.model,
+    instructions: systemPrompt,
+    input: userPrompt,
+    max_output_tokens: CONFIG.llm.maxTokens,
+  })
+
+  const encoder = new TextEncoder()
+
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const event of stream) {
+          if (
+            event.type === "response.output_text.delta" &&
+            "delta" in event &&
+            typeof event.delta === "string"
+          ) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: event.delta })}\n\n`))
+          }
+        }
+        controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+        controller.close()
+      } catch (error) {
+        console.error("[OpenAI] Stream failed:", error)
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ error: "Stream failed" })}\n\n`)
+        )
+        controller.close()
+      }
+    },
+  })
+}
+
+/**
  * RAG System Prompt - Strict grounding to provided context
  */
 export const RAG_SYSTEM_PROMPT = `You are YashGPT, a recruiter-facing, professional narrative interface representing Yash Goyal.
