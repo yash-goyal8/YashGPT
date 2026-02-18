@@ -17,7 +17,7 @@ function AnimatedBackground() {
       <div className="absolute top-0 -left-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute top-40 -right-40 w-96 h-96 bg-violet-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
       <div className="absolute -bottom-20 left-1/3 w-72 h-72 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '0.5s' }} />
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
@@ -96,6 +96,19 @@ const QUESTION_CATEGORIES = [
     ],
   },
   {
+    id: "career",
+    label: "Career Goals",
+    icon: Rocket,
+    color: "text-amber-400",
+    bgColor: "bg-amber-500/10",
+    questions: [
+      "What motivates you professionally?",
+      "Where do you see yourself in 5 years?",
+      "Why MBA after your technical background?",
+      "What kind of role are you looking for?",
+    ],
+  },
+  {
     id: "adaptability",
     label: "Adaptability",
     icon: Shuffle,
@@ -156,17 +169,17 @@ export function ChatInterface() {
 
   const [visitorInfo, setVisitorInfo] = useState<VisitorInfo | null>(null)
   const [visitorForm, setVisitorForm] = useState({
-  name: "",
-  company: "",
+    name: "",
+    company: "",
   })
   const [formError, setFormError] = useState("")
   const [profileData, setProfileData] = useState<Record<string, string>>({})
-  
+
   useEffect(() => {
-  setSessionId(getSessionId())
-  fetch("/api/profile").then(r => r.json()).then(d => setProfileData(d)).catch(() => {})
+    setSessionId(getSessionId())
+    fetch("/api/profile").then(r => r.json()).then(d => setProfileData(d)).catch(() => { })
   }, [])
-  
+
   const profileEmail = profileData.email || ""
   const profileLinkedin = profileData.linkedinUrl || ""
   const profileGithub = profileData.githubUrl || ""
@@ -240,14 +253,14 @@ export function ChatInterface() {
 
       const data = await response.json()
 
-const assistantMessage: Message = {
-  role: "assistant",
-  content: data.response || data.error || "I couldn't process that question. Please try again.",
-  timestamp: new Date(),
-  media: data.media,
-  }
-  if (data.debug) console.log("[v0] Chat debug error:", data.debug)
-  setMessages((prev) => [...prev, assistantMessage])
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: data.response || data.error || "I couldn't process that question. Please try again.",
+        timestamp: new Date(),
+        media: data.media,
+      }
+      if (data.debug) console.log("[v0] Chat debug error:", data.debug)
+      setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
         role: "assistant",
@@ -265,7 +278,7 @@ const assistantMessage: Message = {
     return (
       <div className="flex flex-col h-full bg-[#0a0a0b] text-white">
         <AnimatedBackground />
-        
+
         {/* Header */}
         <header className="relative z-10 px-4 py-4">
           <div className="max-w-6xl mx-auto">
@@ -280,67 +293,67 @@ const assistantMessage: Message = {
                   <p className="text-[10px] lg:text-xs text-[#a3a3a3]">Your AI assistant</p>
                 </div>
               </Link>
-              
+
               {/* Quick Action Buttons */}
               <TooltipProvider delayDuration={100}>
                 <div className="flex items-center gap-1 lg:gap-2">
                   {profileResume && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={profileResume}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                      >
-                        <FileText className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>View Resume</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={profileResume}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                        >
+                          <FileText className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>View Resume</TooltipContent>
+                    </Tooltip>
                   )}
                   {profileLinkedin && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={profileLinkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>LinkedIn</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={profileLinkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                        >
+                          <Linkedin className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>LinkedIn</TooltipContent>
+                    </Tooltip>
                   )}
                   {profileEmail && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={`mailto:${profileEmail}`}
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
-                      >
-                        <Mail className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>Email</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={`mailto:${profileEmail}`}
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                        >
+                          <Mail className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>Email</TooltipContent>
+                    </Tooltip>
                   )}
                   {profileGithub && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={profileGithub}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                      >
-                        <Github className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>GitHub</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={profileGithub}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                        >
+                          <Github className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>GitHub</TooltipContent>
+                    </Tooltip>
                   )}
                 </div>
               </TooltipProvider>
@@ -409,7 +422,7 @@ const assistantMessage: Message = {
   return (
     <div className="flex flex-col h-full bg-[#0a0a0b] text-white">
       <AnimatedBackground />
-      
+
       {/* Header */}
       <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4 flex-shrink-0">
         <div className="max-w-5xl xl:max-w-6xl mx-auto">
@@ -427,67 +440,67 @@ const assistantMessage: Message = {
                 </p>
               </div>
             </Link>
-            
+
             {/* Quick Action Buttons */}
             <TooltipProvider delayDuration={100}>
               <div className="flex items-center gap-1 lg:gap-2">
                 {profileResume && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={profileResume}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                    >
-                      <FileText className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>View Resume</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={profileResume}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                      >
+                        <FileText className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>View Resume</TooltipContent>
+                  </Tooltip>
                 )}
                 {profileLinkedin && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={profileLinkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
-                    >
-                      <Linkedin className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>LinkedIn</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={profileLinkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>LinkedIn</TooltipContent>
+                  </Tooltip>
                 )}
                 {profileEmail && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={`mailto:${profileEmail}`}
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
-                    >
-                      <Mail className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>Email</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={`mailto:${profileEmail}`}
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                      >
+                        <Mail className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>Email</TooltipContent>
+                  </Tooltip>
                 )}
                 {profileGithub && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={profileGithub}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                    >
-                      <Github className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>GitHub</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={profileGithub}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                      >
+                        <Github className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>GitHub</TooltipContent>
+                  </Tooltip>
                 )}
               </div>
             </TooltipProvider>
@@ -503,11 +516,10 @@ const assistantMessage: Message = {
               {messages.map((message, index) => (
                 <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`max-w-[80%] p-4 rounded-2xl ${
-                      message.role === "user" 
-                        ? "bg-white text-black" 
+                    className={`max-w-[80%] p-4 rounded-2xl ${message.role === "user"
+                        ? "bg-white text-black"
                         : "bg-white/[0.03] border border-white/10 text-white"
-                    }`}
+                      }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     {message.media && message.media.length > 0 && (
@@ -575,10 +587,10 @@ const assistantMessage: Message = {
                 <h2 className="text-2xl font-bold text-white mb-2">What would you like to know?</h2>
                 <p className="text-[#a3a3a3]">Click any question below or type your own</p>
               </div>
-              
+
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {QUESTION_CATEGORIES.map((category) => (
-                  <div 
+                  <div
                     key={category.id}
                     className="rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden"
                   >
@@ -589,7 +601,7 @@ const assistantMessage: Message = {
                       </div>
                       <span className="font-medium text-white">{category.label}</span>
                     </div>
-                    
+
                     {/* Questions */}
                     <div className="p-2">
                       {category.questions.slice(0, 3).map((question, qIndex) => (
@@ -630,8 +642,8 @@ const assistantMessage: Message = {
               className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-[#a3a3a3]/50 focus:border-cyan-500/50 h-12 rounded-xl"
               disabled={isLoading}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading || !input.trim()}
               className="bg-white text-black hover:bg-white/90 h-12 px-6 rounded-xl"
             >
