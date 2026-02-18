@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Github, Book, HeartHandshake } from "lucide-react"
+import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Github, Book, HeartHandshake, Scale, TrendingUp } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Link from "next/link"
 
@@ -127,7 +127,7 @@ const QUESTION_CATEGORIES = [
   {
     id: "judgement", //ready
     label: "Data, Metrics & Judgment",
-    icon: Shuffle,
+    icon: Scale,
     color: "text-sky-400",
     bgColor: "bg-sky-500/10",
     questions: [
@@ -140,7 +140,7 @@ const QUESTION_CATEGORIES = [
   {
     id: "growth", //ready
     label: "Failure, Feedback & Growth ",
-    icon: Shuffle,
+    icon: TrendingUp,
     color: "text-sky-400",
     bgColor: "bg-sky-500/10",
     questions: [
