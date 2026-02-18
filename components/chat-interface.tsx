@@ -141,8 +141,8 @@ const QUESTION_CATEGORIES = [
     id: "growth", //ready
     label: "Failure, Feedback & Growth ",
     icon: TrendingUp,
-    color: "text-sky-400",
-    bgColor: "bg-sky-500/10",
+    color: "text-green-400",
+    bgColor: "bg-green-500/10",
     questions: [
       "Tell me about a time when Yash failed",
       "Tell me about a time you took responsibility for a failure",
