@@ -128,8 +128,8 @@ const QUESTION_CATEGORIES = [
     id: "judgement", //ready
     label: "Data, Metrics & Judgment",
     icon: Scale,
-    color: "text-sky-400",
-    bgColor: "bg-sky-500/10",
+    color: "text-red-400",
+    bgColor: "bg-red-500/10",
     questions: [
       "Describe a time Yash used data to make a decision",
       "How do Yash choose the right success metrics?",
