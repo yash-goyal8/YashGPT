@@ -71,7 +71,12 @@ export async function generateChatResponse(
       ],
       max_completion_tokens: CONFIG.llm.maxTokens,
     })
-    return response.choices[0]?.message?.content || "I couldn't generate a response. Please try again."
+    const choice = response.choices[0]
+    console.log("[v0] GPT response finish_reason:", choice?.finish_reason)
+    console.log("[v0] GPT response content length:", choice?.message?.content?.length ?? "null")
+    console.log("[v0] GPT response content preview:", choice?.message?.content?.substring(0, 200) ?? "EMPTY")
+    console.log("[v0] GPT response refusal:", choice?.message?.refusal ?? "none")
+    return choice?.message?.content || "I couldn't generate a response. Please try again."
   } catch (error) {
     console.error("[OpenAI] Chat generation failed:", error)
     throw new Error(`Chat generation failed: ${error instanceof Error ? error.message : "Unknown error"}`)
