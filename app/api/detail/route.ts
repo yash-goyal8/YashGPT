@@ -1,7 +1,5 @@
-import { Redis } from "@upstash/redis"
 import { NextRequest, NextResponse } from "next/server"
-
-const redis = Redis.fromEnv()
+import { getRedis } from "@/lib/services/cache"
 
 export interface DetailContent {
   type: string
@@ -41,6 +39,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const redis = getRedis()
     const key = `detail:${type}:${slug}`
     const content = await redis.get<DetailContent>(key)
     
@@ -54,6 +53,7 @@ export async function GET(request: NextRequest) {
 // POST - Save detail content (admin only)
 export async function POST(request: NextRequest) {
   try {
+    const redis = getRedis()
     const body = await request.json()
     const { type, slug, ...content } = body
 
@@ -92,6 +92,7 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
+    const redis = getRedis()
     const key = `detail:${type}:${slug}`
     await redis.del(key)
     await redis.srem(`detail:index:${type}`, slug)

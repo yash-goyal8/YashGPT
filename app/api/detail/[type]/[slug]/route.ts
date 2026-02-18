@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { Redis } from "@upstash/redis"
-
-const redis = Redis.fromEnv()
+import { getRedis } from "@/lib/services/cache"
 
 // Helper to generate slug from title
 function generateSlug(title: string): string {
@@ -109,6 +107,7 @@ export async function GET(
 
   try {
     console.log("[v0] Fetching detail:", { type, slug })
+    const redis = getRedis()
     
     // Try to get extended content from Redis
     const extendedContent = await redis.get(`detail:${type}:${slug}`)
@@ -207,15 +206,10 @@ export async function POST(
   const { type, slug } = await params
 
   try {
+    const redis = getRedis()
     const body = await request.json()
     
     console.log("[v0] Saving detail content:", { type, slug, keys: Object.keys(body) })
-    
-    // Check Redis connection
-    if (!process.env.KV_REST_API_URL && !process.env.UPSTASH_REDIS_REST_URL) {
-      console.error("[v0] Redis environment variables not configured")
-      return NextResponse.json({ error: "Storage not configured" }, { status: 500 })
-    }
     
     // Store extended content in Redis (Upstash handles JSON automatically)
     const result = await redis.set(`detail:${type}:${slug}`, body)
@@ -240,6 +234,7 @@ export async function DELETE(
   const { type, slug } = await params
 
   try {
+    const redis = getRedis()
     await redis.del(`detail:${type}:${slug}`)
     return NextResponse.json({ success: true })
   } catch (error) {

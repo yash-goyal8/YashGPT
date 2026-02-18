@@ -1,7 +1,5 @@
-import { Redis } from "@upstash/redis"
 import { NextResponse } from "next/server"
-
-const redis = Redis.fromEnv()
+import { getRedis } from "@/lib/services/cache"
 
 const PROFILE_KEY = "portfolio:profile"
 
@@ -21,6 +19,7 @@ const DEFAULT_PROFILE = {
 
 export async function GET() {
   try {
+    const redis = getRedis()
     const profile = await redis.get(PROFILE_KEY)
     if (profile) {
       // Merge with defaults so new fields always exist
@@ -34,6 +33,7 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
+    const redis = getRedis()
     const data = await request.json()
     const existing = await redis.get(PROFILE_KEY)
     const merged = { ...DEFAULT_PROFILE, ...(existing as object || {}), ...data }
