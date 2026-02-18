@@ -31,94 +31,123 @@ function AnimatedBackground() {
 // Question categories for the chat
 const QUESTION_CATEGORIES = [
   {
-    id: "behavioral",
-    label: "Behavioral",
+    id: "Personal Journey", //ready
+    label: "Personal Journey",
     icon: Brain,
     color: "text-rose-400",
     bgColor: "bg-rose-500/10",
     questions: [
-      "Tell me about a time you failed and what you learned",
-      "How do you handle pressure and tight deadlines?",
-      "Describe a situation where you went above and beyond",
-      "How do you stay updated with industry trends?",
+      "Tell me about Yash",
+      "What is Yash currently doing professionally?",
+      "What are Yash's Long term & short-term career goals?",
+      "What motivates Yash professionally?",
+      "What roles are Yash targeting?"
     ],
   },
   {
-    id: "product",
-    label: "Product Strategy",
+    id: "product", //ready
+    label: "Product Strategy & Sense",
     icon: Target,
     color: "text-cyan-400",
     bgColor: "bg-cyan-500/10",
     questions: [
-      "How do you prioritize features in a product roadmap?",
-      "Walk me through your product discovery process",
-      "How do you measure product success?",
-      "Describe a product you took from 0 to 1",
+      "How do Yash prioritize features or a product roadmap?",
+      "Describe a time when Yash made a product decision with incomplete data",
+      "How do Yash define and measure product success?",
+      "Describe a product Yash took from 0 to 1",
+      "How do Yash decide what not to build?"
     ],
   },
   {
-    id: "leadership",
-    label: "Leadership",
+    id: "leadership", //ready
+    label: "Leadership, Influnce & Stakeholders",
     icon: Users,
     color: "text-violet-400",
     bgColor: "bg-violet-500/10",
     questions: [
-      "Describe your leadership style",
-      "How do you handle conflicts in a team?",
-      "Tell me about a time you mentored someone",
-      "How do you prioritize competing deadlines?",
+      "Describe a time Yash influenced without authority",
+      "How do Yash handle conflicts in a team or stakeholder?",
+      "How do Yash manage up with senior leadership?",
+      "How do Yash prioritize competing deadlines?",
     ],
   },
   {
-    id: "technical",
-    label: "Technical",
+    id: "technical", //ready
+    label: "Technical Depth & AI Readiness ",
     icon: Code2,
     color: "text-emerald-400",
     bgColor: "bg-emerald-500/10",
     questions: [
-      "What technologies do you specialize in?",
+      "What technologies do Yash specialize in?",
       "Describe a complex technical problem you solved",
-      "How do you approach system design?",
+      "How do you approach AI-driven products as a PM?",
       "Tell me about your experience with AI/ML",
+      "How do you balance technical debt with AI velocity?"
     ],
   },
   {
-    id: "career",
-    label: "Career Goals",
+    id: "execution", //ready
+    label: "Execution, Delivery & Ownership",
     icon: Rocket,
     color: "text-amber-400",
     bgColor: "bg-amber-500/10",
     questions: [
-      "What motivates you professionally?",
-      "Where do you see yourself in 5 years?",
-      "Why MBA after your technical background?",
-      "What kind of role are you looking for?",
+      "Describe a project Yash owned end-to-end",
+      "Tell me about a time when Yash delivered under tight constraints",
+      "Tell me about a time Yash had to pivot during execution",
+      "How do Yash balance speed with long-term quality??",
     ],
   },
   {
-    id: "career",
-    label: "Career Goals",
+    id: "empathy", //ready
+    label: "Customer & Market Empathy ",
     icon: Rocket,
     color: "text-amber-400",
     bgColor: "bg-amber-500/10",
     questions: [
-      "What motivates you professionally?",
-      "Where do you see yourself in 5 years?",
-      "Why MBA after your technical background?",
-      "What kind of role are you looking for?",
+      "Tell me about a time Yash deeply understood a user problem",
+      "Describe a time customer feedback changed Yash's product direction",
+      "How do Yash gather user insights?",
+      "How do Yash balance customer needs with business constraints?",
     ],
   },
   {
-    id: "adaptability",
-    label: "Adaptability",
+    id: "adaptability", //ready
+    label: "Adaptability, Ambiguity & Problem Solving",
     icon: Shuffle,
     color: "text-sky-400",
     bgColor: "bg-sky-500/10",
     questions: [
-      "How do you handle ambiguity in projects?",
-      "Tell me about a time you had to pivot quickly",
-      "How do you adapt to rapidly changing requirements?",
-      "Describe navigating uncertainty in a startup",
+      "How do Yash handle ambiguity or incomplete information in projects?",
+      "Tell me about a time when Yash learned something new quickly",
+      "How do Yash approach problems he has never seen before?",
+      "How do Yash make decisions when there’s no clear right answer",
+    ],
+  },
+  {
+    id: "judgement", //ready
+    label: "Data, Metrics & Judgment",
+    icon: Shuffle,
+    color: "text-sky-400",
+    bgColor: "bg-sky-500/10",
+    questions: [
+      "Describe a time Yash used data to make a decision",
+      "How do Yash choose the right success metrics?",
+      "Describe a time metrics or data contradicted Yash's intuition",
+      "How do Yash decide when data is “good enough” to act?",
+    ],
+  },
+  {
+    id: "growth", //ready
+    label: "Failure, Feedback & Growth ",
+    icon: Shuffle,
+    color: "text-sky-400",
+    bgColor: "bg-sky-500/10",
+    questions: [
+      "Tell me about a time when Yash failed",
+      "Tell me about a time you took responsibility for a failure",
+      "Describe critical feedback Yash has received and how he acted on it",
+      "What’s the hardest lesson Yash has learned?",
     ],
   },
 ]
@@ -517,8 +546,8 @@ export function ChatInterface() {
                 <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[80%] p-4 rounded-2xl ${message.role === "user"
-                        ? "bg-white text-black"
-                        : "bg-white/[0.03] border border-white/10 text-white"
+                      ? "bg-white text-black"
+                      : "bg-white/[0.03] border border-white/10 text-white"
                       }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
