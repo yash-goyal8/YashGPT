@@ -6,9 +6,18 @@
 
 import OpenAI from "openai"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+let _openai: OpenAI | null = null
+
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      throw new Error("OPENAI_API_KEY environment variable is not set. Add it in the Vars section of the sidebar.")
+    }
+    _openai = new OpenAI({ apiKey })
+  }
+  return _openai
+}
 
 // Configuration
 const CONFIG = {
@@ -28,7 +37,7 @@ const CONFIG = {
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   try {
-    const response = await openai.embeddings.create({
+    const response = await getOpenAI().embeddings.create({
       model: CONFIG.embedding.model,
       input: text.trim().substring(0, 8000),
     })
@@ -44,7 +53,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   try {
-    const response = await openai.embeddings.create({
+    const response = await getOpenAI().embeddings.create({
       model: CONFIG.embedding.model,
       input: texts.map(t => t.trim().substring(0, 8000)),
     })
@@ -63,7 +72,7 @@ export async function generateChatResponse(
   userPrompt: string
 ): Promise<string> {
   try {
-    const response = await openai.responses.create({
+    const response = await getOpenAI().responses.create({
       model: CONFIG.llm.model,
       instructions: systemPrompt,
       input: userPrompt,
