@@ -28,7 +28,7 @@ const CONFIG = {
   llm: {
     model: "gpt-5-mini" as const,
     temperature: 0.2,
-    maxTokens: 512,
+    maxTokens: 1250,
   },
 } as const
 
@@ -79,9 +79,6 @@ export async function generateChatResponse(
       max_output_tokens: CONFIG.llm.maxTokens,
     })
     const text = response.output_text
-    console.log("[v0] GPT response status:", response.status)
-    console.log("[v0] GPT response text length:", text?.length ?? "null")
-    console.log("[v0] GPT response preview:", text?.substring(0, 200) ?? "EMPTY")
     return text || "I couldn't generate a response. Please try again."
   } catch (error) {
     console.error("[OpenAI] Chat generation failed:", error)

@@ -176,35 +176,17 @@ export async function POST(request: Request) {
       })
     }
 
-    // Log vector index info for debugging
-    try {
-      const { getVectorIndex } = await import("@/lib/services/vector")
-      const idx = getVectorIndex()
-      const info = await idx.info()
-      console.log("[v0] Vector index info:", JSON.stringify(info))
-    } catch (e) {
-      console.log("[v0] Failed to get index info:", e instanceof Error ? e.message : e)
-    }
-
     // Generate embedding for the question
-    console.log("[v0] Generating embedding for question:", sanitizedQuestion.substring(0, 50))
     const queryEmbedding = await generateEmbedding(sanitizedQuestion)
-    console.log("[v0] Embedding generated, length:", queryEmbedding.length)
 
     // Search for relevant chunks (top 5)
     const searchResults = await searchChunks(queryEmbedding, 5)
-    console.log("[v0] Search results count:", searchResults.length)
-    if (searchResults.length > 0) {
-      console.log("[v0] Top result score:", searchResults[0].score, "source:", searchResults[0].sourceFile)
-    }
 
-    // Assemble context (max 1500 tokens for faster response)
+    // Assemble context from all matched chunks (no token limit on input)
     const context = assembleContext(
       searchResults.map((r) => ({ content: r.content, score: r.score })),
-      1500
+      99999
     )
-    console.log("[v0] Assembled context length:", context?.length || 0)
-
     if (!context) {
       return NextResponse.json({
         response:
@@ -226,8 +208,7 @@ export async function POST(request: Request) {
     // Cache the response
     await cacheResponse(sanitizedQuestion, response)
 
-    // Track analytics - await to ensure it completes
-    console.log("[v0] About to track analytics for question:", sanitizedQuestion.substring(0, 50))
+    // Track analytics
     await trackAnalytics({
       type: "chat",
       question: sanitizedQuestion,
@@ -236,7 +217,6 @@ export async function POST(request: Request) {
       responseTime: Date.now() - startTime,
       chunksUsed: searchResults.length,
     })
-    console.log("[v0] Analytics tracking completed")
 
     return NextResponse.json({
       response,
