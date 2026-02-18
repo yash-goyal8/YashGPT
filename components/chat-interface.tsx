@@ -280,16 +280,80 @@ export function ChatInterface() {
         }),
       })
 
-      const data = await response.json()
+      // Handle non-streaming responses (cache hits, errors, rate limits)
+      const contentType = response.headers.get("content-type") || ""
+      if (contentType.includes("application/json")) {
+        const data = await response.json()
+        const assistantMessage: Message = {
+          role: "assistant",
+          content: data.response || data.error || "I couldn't process that question. Please try again.",
+          timestamp: new Date(),
+          media: data.media,
+        }
+        setMessages((prev) => [...prev, assistantMessage])
+      } else {
+        // Handle streaming SSE response
+        const reader = response.body?.getReader()
+        if (!reader) throw new Error("No response stream")
 
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: data.response || data.error || "I couldn't process that question. Please try again.",
-        timestamp: new Date(),
-        media: data.media,
+        const decoder = new TextDecoder()
+        let streamedText = ""
+        let mediaData: Message["media"] = undefined
+
+        // Add placeholder assistant message
+        const placeholderMessage: Message = {
+          role: "assistant",
+          content: "",
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, placeholderMessage])
+
+        let buffer = ""
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split("\n")
+          buffer = lines.pop() || ""
+
+          for (const line of lines) {
+            const trimmed = line.trim()
+            if (!trimmed.startsWith("data: ")) continue
+            const payload = trimmed.slice(6)
+            if (payload === "[DONE]") continue
+
+            try {
+              const parsed = JSON.parse(payload)
+              if (parsed.text) {
+                streamedText += parsed.text
+                setMessages((prev) => {
+                  const updated = [...prev]
+                  const last = updated[updated.length - 1]
+                  if (last && last.role === "assistant") {
+                    updated[updated.length - 1] = { ...last, content: streamedText, media: mediaData }
+                  }
+                  return updated
+                })
+              }
+              if (parsed.media) {
+                mediaData = parsed.media
+              }
+              if (parsed.error) {
+                streamedText = "I couldn't generate a response. Please try again."
+                setMessages((prev) => {
+                  const updated = [...prev]
+                  const last = updated[updated.length - 1]
+                  if (last && last.role === "assistant") {
+                    updated[updated.length - 1] = { ...last, content: streamedText }
+                  }
+                  return updated
+                })
+              }
+            } catch {}
+          }
+        }
       }
-      if (data.debug) console.log("[v0] Chat debug error:", data.debug)
-      setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
         role: "assistant",

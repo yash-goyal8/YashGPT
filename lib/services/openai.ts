@@ -6,9 +6,27 @@
 
 import OpenAI from "openai"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+let _openai: OpenAI | null = null
+let _initError: Error | null = null
+
+function getOpenAI(): OpenAI {
+  if (_initError) throw _initError
+  
+  if (!_openai) {
+    try {
+      const apiKey = process.env.OPENAI_API_KEY
+      if (!apiKey) {
+        _initError = new Error("OPENAI_API_KEY not set. Add it in the Vars section.")
+        throw _initError
+      }
+      _openai = new OpenAI({ apiKey })
+    } catch (error) {
+      _initError = error instanceof Error ? error : new Error(String(error))
+      throw _initError
+    }
+  }
+  return _openai
+}
 
 // Configuration
 const CONFIG = {
@@ -19,7 +37,7 @@ const CONFIG = {
   llm: {
     model: "gpt-5-mini" as const,
     temperature: 0.2,
-    maxTokens: 1024,
+    maxTokens: 1250,
   },
 } as const
 
@@ -28,7 +46,7 @@ const CONFIG = {
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   try {
-    const response = await openai.embeddings.create({
+    const response = await getOpenAI().embeddings.create({
       model: CONFIG.embedding.model,
       input: text.trim().substring(0, 8000),
     })
@@ -44,7 +62,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  */
 export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
   try {
-    const response = await openai.embeddings.create({
+    const response = await getOpenAI().embeddings.create({
       model: CONFIG.embedding.model,
       input: texts.map(t => t.trim().substring(0, 8000)),
     })
@@ -56,26 +74,72 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 }
 
 /**
- * Generate chat response using GPT-5-mini
+ * Generate chat response using GPT-5-mini via Chat Completions API
  */
 export async function generateChatResponse(
   systemPrompt: string,
   userPrompt: string
 ): Promise<string> {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: CONFIG.llm.model,
       messages: [
-        { role: "system", content: systemPrompt },
+        { role: "developer", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
       max_completion_tokens: CONFIG.llm.maxTokens,
     })
-    return response.choices[0]?.message?.content || "I couldn't generate a response. Please try again."
+    const text = response.choices[0]?.message?.content
+    console.log("[v0] GPT finish_reason:", response.choices[0]?.finish_reason)
+    console.log("[v0] GPT content length:", text?.length ?? "null")
+    console.log("[v0] GPT content preview:", text?.substring(0, 150) ?? "EMPTY")
+    return text || "I couldn't generate a response. Please try again."
   } catch (error) {
     console.error("[OpenAI] Chat generation failed:", error)
     throw new Error(`Chat generation failed: ${error instanceof Error ? error.message : "Unknown error"}`)
   }
+}
+
+/**
+ * Stream chat response using GPT-5-mini via Chat Completions API (streaming)
+ * Returns a ReadableStream of SSE text chunks for real-time display
+ */
+export async function streamChatResponse(
+  systemPrompt: string,
+  userPrompt: string
+): Promise<ReadableStream<Uint8Array>> {
+  const stream = await getOpenAI().chat.completions.create({
+    model: CONFIG.llm.model,
+    messages: [
+      { role: "developer", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    max_completion_tokens: CONFIG.llm.maxTokens,
+    stream: true,
+  })
+
+  const encoder = new TextEncoder()
+
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const chunk of stream) {
+          const delta = chunk.choices[0]?.delta?.content
+          if (delta) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: delta })}\n\n`))
+          }
+        }
+        controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
+        controller.close()
+      } catch (error) {
+        console.error("[OpenAI] Stream failed:", error)
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ error: "Stream failed" })}\n\n`)
+        )
+        controller.close()
+      }
+    },
+  })
 }
 
 /**

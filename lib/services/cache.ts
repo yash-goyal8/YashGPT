@@ -18,24 +18,30 @@ export function getRedis(): Redis {
     const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
     
     if (!url || !token) {
-      console.warn("[v0] Redis env vars not configured. Caching and analytics disabled.")
-      // Return a mock Redis that silently fails all operations
+      // Redis not configured -- return a mock that silently no-ops all operations
+      // This allows the app to work without Redis (caching/analytics disabled)
+      const noop = async () => null
       return {
         get: async () => null,
-        set: async () => null,
-        setex: async () => null,
+        set: noop,
+        setex: noop,
         incr: async () => 0,
         hincrby: async () => 0,
-        expire: async () => null,
+        expire: noop,
         ttl: async () => -1,
-        zincrby: async () => null,
-        lpush: async () => null,
-        ltrim: async () => null,
+        zincrby: noop,
+        lpush: noop,
+        ltrim: noop,
         hget: async () => null,
+        hset: noop,
+        hgetall: async () => null,
         lrange: async () => [],
         zrange: async () => [],
         keys: async () => [],
         del: async () => 0,
+        srem: noop,
+        sadd: noop,
+        smembers: async () => [],
         pipeline: () => ({
           incr: () => null,
           ttl: () => null,

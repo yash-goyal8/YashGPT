@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server"
-import { Redis } from "@upstash/redis"
-
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-})
+import { getRedis } from "@/lib/services/cache"
 
 const ADMIN_PASSWORD_KEY = "chatbot:admin_password"
 const DEFAULT_PASSWORD = "admin123" // User should change this
 
 export async function POST(request: Request) {
   try {
+    const redis = getRedis()
     const { password } = await request.json()
 
     // Get stored password or use default
@@ -30,6 +26,7 @@ export async function POST(request: Request) {
 // Endpoint to change admin password
 export async function PUT(request: Request) {
   try {
+    const redis = getRedis()
     const { currentPassword, newPassword } = await request.json()
 
     const storedPassword = (await redis.get<string>(ADMIN_PASSWORD_KEY)) || DEFAULT_PASSWORD
