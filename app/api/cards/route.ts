@@ -1,7 +1,5 @@
-import { Redis } from "@upstash/redis"
 import { NextResponse } from "next/server"
-
-const redis = Redis.fromEnv()
+import { getRedis } from "@/lib/services/cache"
 
 const CARDS_KEY = "portfolio:cards"
 
@@ -175,6 +173,7 @@ const DEFAULT_CARDS = {
 // GET - Fetch all cards
 export async function GET() {
   try {
+    const redis = getRedis()
     const cards = await redis.get(CARDS_KEY)
     
     if (!cards) {
@@ -194,6 +193,7 @@ export async function GET() {
 // POST - Update cards
 export async function POST(request: Request) {
   try {
+    const redis = getRedis()
     const body = await request.json()
     const { category, cards } = body
     
@@ -219,6 +219,7 @@ export async function POST(request: Request) {
 // PUT - Update a single card
 export async function PUT(request: Request) {
   try {
+    const redis = getRedis()
     const body = await request.json()
     const { category, slug, data } = body
     
@@ -257,6 +258,7 @@ export async function PUT(request: Request) {
 // DELETE - Delete a card
 export async function DELETE(request: Request) {
   try {
+    const redis = getRedis()
     const { searchParams } = new URL(request.url)
     const category = searchParams.get("category")
     const slug = searchParams.get("slug")

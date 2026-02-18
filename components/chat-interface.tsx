@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Github } from "lucide-react"
+import { Send, ArrowLeft, Bot, User, Building2, Brain, Target, Users, Rocket, Code2, ChevronRight, Shuffle, FileText, Mail, Linkedin, Github, Book, HeartHandshake, Scale, TrendingUp } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import Link from "next/link"
 
@@ -17,7 +17,7 @@ function AnimatedBackground() {
       <div className="absolute top-0 -left-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute top-40 -right-40 w-96 h-96 bg-violet-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
       <div className="absolute -bottom-20 left-1/3 w-72 h-72 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '0.5s' }} />
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
@@ -31,81 +31,123 @@ function AnimatedBackground() {
 // Question categories for the chat
 const QUESTION_CATEGORIES = [
   {
-    id: "behavioral",
-    label: "Behavioral",
-    icon: Brain,
+    id: "personal-journey",
+    label: "Personal Journey",
+    icon: Book,
     color: "text-rose-400",
     bgColor: "bg-rose-500/10",
     questions: [
-      "Tell me about a time you failed and what you learned",
-      "How do you handle pressure and tight deadlines?",
-      "Describe a situation where you went above and beyond",
-      "How do you stay updated with industry trends?",
+      "Tell me about Yash",
+      "What is Yash currently doing professionally?",
+      "What are Yash's Long term & short-term career goals?",
+      "What motivates Yash professionally?",
+      "What roles are Yash targeting?"
     ],
   },
   {
-    id: "product",
-    label: "Product Strategy",
+    id: "product-strategy",
+    label: "Product Strategy & Sense",
     icon: Target,
     color: "text-cyan-400",
     bgColor: "bg-cyan-500/10",
     questions: [
-      "How do you prioritize features in a product roadmap?",
-      "Walk me through your product discovery process",
-      "How do you measure product success?",
-      "Describe a product you took from 0 to 1",
+      "How do Yash prioritize features or a product roadmap?",
+      "Describe a time when Yash made a product decision with incomplete data",
+      "How do Yash define and measure product success?",
+      "Describe a product Yash took from 0 to 1",
+      "How do Yash decide what not to build?"
     ],
   },
   {
     id: "leadership",
-    label: "Leadership",
+    label: "Leadership, Influnce & Stakeholders",
     icon: Users,
     color: "text-violet-400",
     bgColor: "bg-violet-500/10",
     questions: [
-      "Describe your leadership style",
-      "How do you handle conflicts in a team?",
-      "Tell me about a time you mentored someone",
-      "How do you prioritize competing deadlines?",
+      "Describe a time Yash influenced without authority",
+      "How do Yash handle conflicts in a team or stakeholder?",
+      "How do Yash manage up with senior leadership?",
+      "How do Yash prioritize competing deadlines?",
     ],
   },
   {
-    id: "technical",
-    label: "Technical",
+    id: "technical-depth",
+    label: "Technical Depth & AI Readiness",
     icon: Code2,
     color: "text-emerald-400",
     bgColor: "bg-emerald-500/10",
     questions: [
-      "What technologies do you specialize in?",
+      "What technologies do Yash specialize in?",
       "Describe a complex technical problem you solved",
-      "How do you approach system design?",
+      "How do you approach AI-driven products as a PM?",
       "Tell me about your experience with AI/ML",
+      "How do you balance technical debt with AI velocity?"
     ],
   },
   {
-    id: "career",
-    label: "Career Goals",
+    id: "execution", //ready
+    label: "Execution, Delivery & Ownership",
     icon: Rocket,
     color: "text-amber-400",
     bgColor: "bg-amber-500/10",
     questions: [
-      "What motivates you professionally?",
-      "Where do you see yourself in 5 years?",
-      "Why MBA after your technical background?",
-      "What kind of role are you looking for?",
+      "Describe a project Yash owned end-to-end",
+      "Tell me about a time when Yash delivered under tight constraints",
+      "Tell me about a time Yash had to pivot during execution",
+      "How do Yash balance speed with long-term quality?",
     ],
   },
   {
-    id: "adaptability",
-    label: "Adaptability",
+    id: "empathy", //ready
+    label: "Customer & Market Empathy ",
+    icon: HeartHandshake,
+    color: "text-pink-400",
+    bgColor: "bg-pink-500/10",
+    questions: [
+      "Tell me about a time Yash deeply understood a user problem",
+      "Describe a time customer feedback changed Yash's product direction",
+      "How do Yash gather user insights?",
+      "How do Yash balance customer needs with business constraints?",
+    ],
+  },
+  {
+    id: "adaptability", //ready
+    label: "Adaptability, Ambiguity & Problem Solving",
     icon: Shuffle,
     color: "text-sky-400",
     bgColor: "bg-sky-500/10",
     questions: [
-      "How do you handle ambiguity in projects?",
-      "Tell me about a time you had to pivot quickly",
-      "How do you adapt to rapidly changing requirements?",
-      "Describe navigating uncertainty in a startup",
+      "How do Yash handle ambiguity or incomplete information in projects?",
+      "Tell me about a time when Yash learned something new quickly",
+      "How do Yash approach problems he has never seen before?",
+      "How do Yash make decisions when there’s no clear right answer",
+    ],
+  },
+  {
+    id: "judgement", //ready
+    label: "Data, Metrics & Judgment",
+    icon: Scale,
+    color: "text-red-400",
+    bgColor: "bg-red-500/10",
+    questions: [
+      "Describe a time Yash used data to make a decision",
+      "How do Yash choose the right success metrics?",
+      "Describe a time metrics or data contradicted Yash's intuition",
+      "How do Yash decide when data is “good enough” to act?",
+    ],
+  },
+  {
+    id: "growth", //ready
+    label: "Failure, Feedback & Growth ",
+    icon: TrendingUp,
+    color: "text-green-400",
+    bgColor: "bg-green-500/10",
+    questions: [
+      "Tell me about a time when Yash failed",
+      "Tell me about a time you took responsibility for a failure",
+      "Describe critical feedback Yash has received and how he acted on it",
+      "What’s the hardest lesson Yash has learned?",
     ],
   },
 ]
@@ -152,20 +194,21 @@ export function ChatInterface() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId, setSessionId] = useState("")
+  const [showMenu, setShowMenu] = useState(true)
 
   const [visitorInfo, setVisitorInfo] = useState<VisitorInfo | null>(null)
   const [visitorForm, setVisitorForm] = useState({
-  name: "",
-  company: "",
+    name: "",
+    company: "",
   })
   const [formError, setFormError] = useState("")
   const [profileData, setProfileData] = useState<Record<string, string>>({})
-  
+
   useEffect(() => {
-  setSessionId(getSessionId())
-  fetch("/api/profile").then(r => r.json()).then(d => setProfileData(d)).catch(() => {})
+    setSessionId(getSessionId())
+    fetch("/api/profile").then(r => r.json()).then(d => setProfileData(d)).catch(() => { })
   }, [])
-  
+
   const profileEmail = profileData.email || ""
   const profileLinkedin = profileData.linkedinUrl || ""
   const profileGithub = profileData.githubUrl || ""
@@ -222,6 +265,7 @@ export function ChatInterface() {
 
     setMessages((prev) => [...prev, userMessage])
     setInput("")
+    setShowMenu(false) // Hide menu when sending a message
     setIsLoading(true)
 
     try {
@@ -238,14 +282,14 @@ export function ChatInterface() {
 
       const data = await response.json()
 
-const assistantMessage: Message = {
-  role: "assistant",
-  content: data.response || data.error || "I couldn't process that question. Please try again.",
-  timestamp: new Date(),
-  media: data.media,
-  }
-  if (data.debug) console.log("[v0] Chat debug error:", data.debug)
-  setMessages((prev) => [...prev, assistantMessage])
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: data.response || data.error || "I couldn't process that question. Please try again.",
+        timestamp: new Date(),
+        media: data.media,
+      }
+      if (data.debug) console.log("[v0] Chat debug error:", data.debug)
+      setMessages((prev) => [...prev, assistantMessage])
     } catch {
       const errorMessage: Message = {
         role: "assistant",
@@ -263,7 +307,7 @@ const assistantMessage: Message = {
     return (
       <div className="flex flex-col h-full bg-[#0a0a0b] text-white">
         <AnimatedBackground />
-        
+
         {/* Header */}
         <header className="relative z-10 px-4 py-4">
           <div className="max-w-6xl mx-auto">
@@ -278,67 +322,67 @@ const assistantMessage: Message = {
                   <p className="text-[10px] lg:text-xs text-[#a3a3a3]">Your AI assistant</p>
                 </div>
               </Link>
-              
+
               {/* Quick Action Buttons */}
               <TooltipProvider delayDuration={100}>
                 <div className="flex items-center gap-1 lg:gap-2">
                   {profileResume && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={profileResume}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                      >
-                        <FileText className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>View Resume</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={profileResume}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                        >
+                          <FileText className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>View Resume</TooltipContent>
+                    </Tooltip>
                   )}
                   {profileLinkedin && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={profileLinkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>LinkedIn</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={profileLinkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                        >
+                          <Linkedin className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>LinkedIn</TooltipContent>
+                    </Tooltip>
                   )}
                   {profileEmail && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={`mailto:${profileEmail}`}
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
-                      >
-                        <Mail className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>Email</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={`mailto:${profileEmail}`}
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                        >
+                          <Mail className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>Email</TooltipContent>
+                    </Tooltip>
                   )}
                   {profileGithub && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a 
-                        href={profileGithub}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                      >
-                        <Github className="h-4 w-4" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent>GitHub</TooltipContent>
-                  </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={profileGithub}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                        >
+                          <Github className="h-4 w-4" />
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>GitHub</TooltipContent>
+                    </Tooltip>
                   )}
                 </div>
               </TooltipProvider>
@@ -401,13 +445,13 @@ const assistantMessage: Message = {
     )
   }
 
-  const showQuestionBank = messages.length <= 1
+  const showQuestionBank = (messages.length <= 1) || showMenu
 
   // Chat interface
   return (
     <div className="flex flex-col h-full bg-[#0a0a0b] text-white">
       <AnimatedBackground />
-      
+
       {/* Header */}
       <header className="relative z-10 px-3 lg:px-4 py-3 lg:py-4 flex-shrink-0">
         <div className="max-w-5xl xl:max-w-6xl mx-auto">
@@ -425,67 +469,67 @@ const assistantMessage: Message = {
                 </p>
               </div>
             </Link>
-            
+
             {/* Quick Action Buttons */}
             <TooltipProvider delayDuration={100}>
               <div className="flex items-center gap-1 lg:gap-2">
                 {profileResume && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={profileResume}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                    >
-                      <FileText className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>View Resume</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={profileResume}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                      >
+                        <FileText className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>View Resume</TooltipContent>
+                  </Tooltip>
                 )}
                 {profileLinkedin && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={profileLinkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
-                    >
-                      <Linkedin className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>LinkedIn</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={profileLinkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-[#0077B5]/20 text-[#a3a3a3] hover:text-[#0077B5] transition-all"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>LinkedIn</TooltipContent>
+                  </Tooltip>
                 )}
                 {profileEmail && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={`mailto:${profileEmail}`}
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
-                    >
-                      <Mail className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>Email</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={`mailto:${profileEmail}`}
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-[#a3a3a3] hover:text-emerald-400 transition-all"
+                      >
+                        <Mail className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>Email</TooltipContent>
+                  </Tooltip>
                 )}
                 {profileGithub && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a 
-                      href={profileGithub}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
-                    >
-                      <Github className="h-4 w-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>GitHub</TooltipContent>
-                </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={profileGithub}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 lg:p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-[#a3a3a3] hover:text-white transition-all"
+                      >
+                        <Github className="h-4 w-4" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>GitHub</TooltipContent>
+                  </Tooltip>
                 )}
               </div>
             </TooltipProvider>
@@ -501,11 +545,10 @@ const assistantMessage: Message = {
               {messages.map((message, index) => (
                 <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`max-w-[80%] p-4 rounded-2xl ${
-                      message.role === "user" 
-                        ? "bg-white text-black" 
-                        : "bg-white/[0.03] border border-white/10 text-white"
-                    }`}
+                    className={`max-w-[80%] p-4 rounded-2xl ${message.role === "user"
+                      ? "bg-white text-black"
+                      : "bg-white/[0.03] border border-white/10 text-white"
+                      }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     {message.media && message.media.length > 0 && (
@@ -550,6 +593,19 @@ const assistantMessage: Message = {
                   </div>
                 </div>
               )}
+
+              {/* Show Menu Button */}
+              {!showMenu && messages.length > 1 && !isLoading && (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={() => setShowMenu(true)}
+                    className="bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl px-6 py-3 flex items-center gap-2"
+                  >
+                    <Brain className="h-4 w-4 text-cyan-400" />
+                    Show Question Menu
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
@@ -560,26 +616,26 @@ const assistantMessage: Message = {
                 <h2 className="text-2xl font-bold text-white mb-2">What would you like to know?</h2>
                 <p className="text-[#a3a3a3]">Click any question below or type your own</p>
               </div>
-              
+
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {QUESTION_CATEGORIES.map((category) => (
-                  <div 
+                  <div
                     key={category.id}
                     className="rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden"
                   >
                     {/* Category Header */}
                     <div className="flex items-center gap-3 p-4 border-b border-white/5">
-                      <div className={`p-2.5 rounded-lg ${category.bgColor}`}>
+                      <div className={`p-2.5 rounded-lg ${category.bgColor} flex-shrink-0`}>
                         <category.icon className={`h-5 w-5 ${category.color}`} />
                       </div>
-                      <span className="font-medium text-white">{category.label}</span>
+                      <span className="font-medium text-white text-sm">{category.label}</span>
                     </div>
-                    
+
                     {/* Questions */}
                     <div className="p-2">
-                      {category.questions.slice(0, 3).map((question, qIndex) => (
+                      {category.questions.map((question, qIndex) => (
                         <button
-                          key={qIndex}
+                          key={`${category.id}-${qIndex}`}
                           onClick={() => handleSendMessage(question)}
                           className="w-full text-left p-3 rounded-xl text-sm text-[#a3a3a3] hover:text-white hover:bg-white/[0.04] transition-all group flex items-start gap-2"
                         >
@@ -615,8 +671,8 @@ const assistantMessage: Message = {
               className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-[#a3a3a3]/50 focus:border-cyan-500/50 h-12 rounded-xl"
               disabled={isLoading}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading || !input.trim()}
               className="bg-white text-black hover:bg-white/90 h-12 px-6 rounded-xl"
             >

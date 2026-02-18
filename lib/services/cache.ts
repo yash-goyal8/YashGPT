@@ -14,9 +14,39 @@ let redis: Redis | null = null
  */
 export function getRedis(): Redis {
   if (!redis) {
+    const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
+    const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
+    
+    if (!url || !token) {
+      console.warn("[v0] Redis env vars not configured. Caching and analytics disabled.")
+      // Return a mock Redis that silently fails all operations
+      return {
+        get: async () => null,
+        set: async () => null,
+        setex: async () => null,
+        incr: async () => 0,
+        hincrby: async () => 0,
+        expire: async () => null,
+        ttl: async () => -1,
+        zincrby: async () => null,
+        lpush: async () => null,
+        ltrim: async () => null,
+        hget: async () => null,
+        lrange: async () => [],
+        zrange: async () => [],
+        keys: async () => [],
+        del: async () => 0,
+        pipeline: () => ({
+          incr: () => null,
+          ttl: () => null,
+          exec: async () => [0, -1],
+        }),
+      } as any
+    }
+    
     redis = new Redis({
-      url: process.env.KV_REST_API_URL!,
-      token: process.env.KV_REST_API_TOKEN!,
+      url,
+      token,
     })
   }
   return redis
