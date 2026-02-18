@@ -345,7 +345,7 @@ function ChatPreviewTeaser() {
 
   const pairs = [
     { q: "What makes Yash stand out?", a: "Managed a $1.4B+ cloud portfolio, founded & sold a startup, and drove 133% growth." },
-    { q: "Tell me about his PM skills", a: "Led cross-functional teams, defined product strategy for enterprise SaaS, drove 3x user adoption." },
+    { q: "Tell me about his PM skills", a: "Led cross-functional teams, defined product strategy for enterprise SaaS, drove 2x platform adoption." },
     { q: "Why should we hire Yash?", a: "Rare blend of technical depth + business acumen. He builds products AND scales them." },
   ]
 
@@ -461,8 +461,8 @@ function CuriosityPrompt() {
 
   return (
     <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ${isVisible
-        ? "translate-y-0 opacity-100"
-        : "translate-y-8 opacity-0 pointer-events-none"
+      ? "translate-y-0 opacity-100"
+      : "translate-y-8 opacity-0 pointer-events-none"
       }`}>
       <div className="relative max-w-xl">
         {/* Dismiss button */}
@@ -583,41 +583,41 @@ function AnimatedCounter({
 }
 
 // Section reveal animation component
- function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function RevealOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
-  
+
   useEffect(() => {
-  const observer = new IntersectionObserver(
-  ([entry]) => {
-  if (entry.isIntersecting) {
-  setTimeout(() => setIsVisible(true), delay)
-  observer.unobserve(entry.target)
-  }
-  },
-  { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
-  )
-  if (ref.current) observer.observe(ref.current)
-  return () => observer.disconnect()
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsVisible(true), delay)
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
   }, [delay])
-  
+
   return (
-  <div
-  ref={ref}
-  style={{
-    transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-    transitionDuration: "800ms",
-    transitionProperty: "opacity, transform",
-  }}
-  className={`h-full ${isVisible
-  ? "opacity-100 translate-y-0 blur-0"
-  : "opacity-0 translate-y-6 blur-[2px]"
-  } ${className}`}
-  >
-  {children}
-  </div>
+    <div
+      ref={ref}
+      style={{
+        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+        transitionDuration: "800ms",
+        transitionProperty: "opacity, transform",
+      }}
+      className={`h-full ${isVisible
+        ? "opacity-100 translate-y-0 blur-0"
+        : "opacity-0 translate-y-6 blur-[2px]"
+        } ${className}`}
+    >
+      {children}
+    </div>
   )
-  }
+}
 
 // Hook for tracking active section and scroll progress
 function useScrollSpy(sectionIds: string[]) {
@@ -663,7 +663,7 @@ export default function PortfolioDesign() {
   useEffect(() => {
     // Trigger mount animation
     requestAnimationFrame(() => setMounted(true))
-    
+
     // Fetch data
     Promise.all([
       fetch("/api/cards").then(res => res.json()).catch(() => null),
@@ -672,7 +672,7 @@ export default function PortfolioDesign() {
       if (cardsData) setCards(cardsData)
       if (profileData) setProfile(profileData)
       setDataReady(true)
-      
+
       // Restore scroll position after data loads and layout settles
       const savedScrollPos = sessionStorage.getItem("portfolioScrollPos")
       if (savedScrollPos) {
@@ -1077,8 +1077,8 @@ export default function PortfolioDesign() {
                     </div>
                     <h3 className="text-sm sm:text-base lg:text-lg font-medium text-white mb-1 sm:mb-1.5 lg:mb-2 group-hover:text-emerald-400 transition-colors line-clamp-1">{project.title}</h3>
                     <p className="text-[10px] sm:text-xs lg:text-sm text-[#a3a3a3] mb-2 sm:mb-3 lg:mb-4 leading-relaxed line-clamp-2">{project.description}</p>
-                  <div className="flex flex-wrap gap-1 sm:gap-1.5 lg:gap-2">
-                    {project.tech.map((t) => (
+                    <div className="flex flex-wrap gap-1 sm:gap-1.5 lg:gap-2">
+                      {project.tech.map((t) => (
                         <span key={t} className="px-1.5 sm:px-2 py-0.5 lg:py-1 text-[9px] sm:text-[10px] lg:text-xs rounded bg-white/5 text-[#a3a3a3]">
                           {t}
                         </span>
