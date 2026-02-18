@@ -31,7 +31,7 @@ function AnimatedBackground() {
 // Question categories for the chat
 const QUESTION_CATEGORIES = [
   {
-    id: "Personal Journey", //ready
+    id: "personal-journey",
     label: "Personal Journey",
     icon: Brain,
     color: "text-rose-400",
@@ -45,7 +45,7 @@ const QUESTION_CATEGORIES = [
     ],
   },
   {
-    id: "product", //ready
+    id: "product-strategy",
     label: "Product Strategy & Sense",
     icon: Target,
     color: "text-cyan-400",
@@ -59,7 +59,7 @@ const QUESTION_CATEGORIES = [
     ],
   },
   {
-    id: "leadership", //ready
+    id: "leadership",
     label: "Leadership, Influnce & Stakeholders",
     icon: Users,
     color: "text-violet-400",
@@ -72,8 +72,8 @@ const QUESTION_CATEGORIES = [
     ],
   },
   {
-    id: "technical", //ready
-    label: "Technical Depth & AI Readiness ",
+    id: "technical-depth",
+    label: "Technical Depth & AI Readiness",
     icon: Code2,
     color: "text-emerald-400",
     bgColor: "bg-emerald-500/10",
@@ -625,17 +625,17 @@ export function ChatInterface() {
                   >
                     {/* Category Header */}
                     <div className="flex items-center gap-3 p-4 border-b border-white/5">
-                      <div className={`p-2.5 rounded-lg ${category.bgColor}`}>
+                      <div className={`p-2.5 rounded-lg ${category.bgColor} flex-shrink-0`}>
                         <category.icon className={`h-5 w-5 ${category.color}`} />
                       </div>
-                      <span className="font-medium text-white">{category.label}</span>
+                      <span className="font-medium text-white text-sm">{category.label}</span>
                     </div>
 
                     {/* Questions */}
                     <div className="p-2">
-                      {category.questions.slice(0, 3).map((question, qIndex) => (
+                      {category.questions.map((question, qIndex) => (
                         <button
-                          key={qIndex}
+                          key={`${category.id}-${qIndex}`}
                           onClick={() => handleSendMessage(question)}
                           className="w-full text-left p-3 rounded-xl text-sm text-[#a3a3a3] hover:text-white hover:bg-white/[0.04] transition-all group flex items-start gap-2"
                         >
