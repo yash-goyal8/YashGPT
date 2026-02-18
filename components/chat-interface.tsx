@@ -95,7 +95,7 @@ const QUESTION_CATEGORIES = [
       "Describe a project Yash owned end-to-end",
       "Tell me about a time when Yash delivered under tight constraints",
       "Tell me about a time Yash had to pivot during execution",
-      "How do Yash balance speed with long-term quality??",
+      "How do Yash balance speed with long-term quality?",
     ],
   },
   {
