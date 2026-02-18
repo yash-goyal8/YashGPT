@@ -102,8 +102,8 @@ const QUESTION_CATEGORIES = [
     id: "empathy", //ready
     label: "Customer & Market Empathy ",
     icon: HeartHandshake,
-    color: "text-amber-400",
-    bgColor: "bg-amber-500/10",
+    color: "text-pink-400",
+    bgColor: "bg-pink-500/10",
     questions: [
       "Tell me about a time Yash deeply understood a user problem",
       "Describe a time customer feedback changed Yash's product direction",
