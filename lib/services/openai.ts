@@ -65,20 +65,25 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 }
 
 /**
- * Generate chat response using GPT-5-mini via Responses API
+ * Generate chat response using GPT-5-mini via Chat Completions API
  */
 export async function generateChatResponse(
   systemPrompt: string,
   userPrompt: string
 ): Promise<string> {
   try {
-    const response = await getOpenAI().responses.create({
+    const response = await getOpenAI().chat.completions.create({
       model: CONFIG.llm.model,
-      instructions: systemPrompt,
-      input: userPrompt,
-      max_output_tokens: CONFIG.llm.maxTokens,
+      messages: [
+        { role: "developer", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      max_completion_tokens: CONFIG.llm.maxTokens,
     })
-    const text = response.output_text
+    const text = response.choices[0]?.message?.content
+    console.log("[v0] GPT finish_reason:", response.choices[0]?.finish_reason)
+    console.log("[v0] GPT content length:", text?.length ?? "null")
+    console.log("[v0] GPT content preview:", text?.substring(0, 150) ?? "EMPTY")
     return text || "I couldn't generate a response. Please try again."
   } catch (error) {
     console.error("[OpenAI] Chat generation failed:", error)
@@ -87,18 +92,21 @@ export async function generateChatResponse(
 }
 
 /**
- * Stream chat response using GPT-5-mini via Responses API (streaming)
- * Returns a ReadableStream of text chunks for real-time display
+ * Stream chat response using GPT-5-mini via Chat Completions API (streaming)
+ * Returns a ReadableStream of SSE text chunks for real-time display
  */
 export async function streamChatResponse(
   systemPrompt: string,
   userPrompt: string
 ): Promise<ReadableStream<Uint8Array>> {
-  const stream = await getOpenAI().responses.stream({
+  const stream = await getOpenAI().chat.completions.create({
     model: CONFIG.llm.model,
-    instructions: systemPrompt,
-    input: userPrompt,
-    max_output_tokens: CONFIG.llm.maxTokens,
+    messages: [
+      { role: "developer", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    max_completion_tokens: CONFIG.llm.maxTokens,
+    stream: true,
   })
 
   const encoder = new TextEncoder()
@@ -106,13 +114,10 @@ export async function streamChatResponse(
   return new ReadableStream({
     async start(controller) {
       try {
-        for await (const event of stream) {
-          if (
-            event.type === "response.output_text.delta" &&
-            "delta" in event &&
-            typeof event.delta === "string"
-          ) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: event.delta })}\n\n`))
+        for await (const chunk of stream) {
+          const delta = chunk.choices[0]?.delta?.content
+          if (delta) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: delta })}\n\n`))
           }
         }
         controller.enqueue(encoder.encode(`data: [DONE]\n\n`))
