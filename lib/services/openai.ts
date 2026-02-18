@@ -7,14 +7,23 @@
 import OpenAI from "openai"
 
 let _openai: OpenAI | null = null
+let _initError: Error | null = null
 
 function getOpenAI(): OpenAI {
+  if (_initError) throw _initError
+  
   if (!_openai) {
-    const apiKey = process.env.OPENAI_API_KEY
-    if (!apiKey) {
-      throw new Error("OPENAI_API_KEY environment variable is not set. Add it in the Vars section of the sidebar.")
+    try {
+      const apiKey = process.env.OPENAI_API_KEY
+      if (!apiKey) {
+        _initError = new Error("OPENAI_API_KEY not set. Add it in the Vars section.")
+        throw _initError
+      }
+      _openai = new OpenAI({ apiKey })
+    } catch (error) {
+      _initError = error instanceof Error ? error : new Error(String(error))
+      throw _initError
     }
-    _openai = new OpenAI({ apiKey })
   }
   return _openai
 }
