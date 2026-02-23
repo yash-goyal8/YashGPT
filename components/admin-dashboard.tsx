@@ -1047,6 +1047,7 @@ export function AdminDashboard() {
                     <option value="experience">Experience</option>
                     <option value="education">Education</option>
                     <option value="project">Projects</option>
+                    <option value="skills">Skills</option>
                     <option value="case-study">Case Studies</option>
                     <option value="certification">Certifications</option>
                   </select>
