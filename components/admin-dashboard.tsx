@@ -80,6 +80,151 @@ interface DetailPageContent {
   links?: { label: string; url: string }[]
 }
 
+// Standalone Skills Editor component for admin
+function SkillsEditor({
+  skills,
+  onSave,
+}: {
+  skills: Record<string, string[]>
+  onSave: (skills: Record<string, string[]>) => Promise<void>
+}) {
+  const [localSkills, setLocalSkills] = useState<Record<string, string[]>>(skills)
+  const [newGroupName, setNewGroupName] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+
+  useEffect(() => {
+    setLocalSkills(skills)
+  }, [skills])
+
+  const updateSkillItem = (group: string, index: number, value: string) => {
+    setLocalSkills(prev => ({
+      ...prev,
+      [group]: prev[group].map((s, i) => (i === index ? value : s)),
+    }))
+  }
+
+  const removeSkillItem = (group: string, index: number) => {
+    setLocalSkills(prev => ({
+      ...prev,
+      [group]: prev[group].filter((_, i) => i !== index),
+    }))
+  }
+
+  const addSkillItem = (group: string) => {
+    setLocalSkills(prev => ({
+      ...prev,
+      [group]: [...(prev[group] || []), ""],
+    }))
+  }
+
+  const addGroup = () => {
+    const name = newGroupName.trim()
+    if (!name || localSkills[name]) return
+    setLocalSkills(prev => ({ ...prev, [name]: [] }))
+    setNewGroupName("")
+  }
+
+  const removeGroup = (group: string) => {
+    setLocalSkills(prev => {
+      const updated = { ...prev }
+      delete updated[group]
+      return updated
+    })
+  }
+
+  const handleSave = async () => {
+    setIsSaving(true)
+    setSaveSuccess(false)
+    try {
+      // Filter out empty skill items before saving
+      const cleaned: Record<string, string[]> = {}
+      for (const [group, items] of Object.entries(localSkills)) {
+        cleaned[group] = items.filter(s => s.trim())
+      }
+      await onSave(cleaned)
+      setSaveSuccess(true)
+      setTimeout(() => setSaveSuccess(false), 3000)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        {Object.entries(localSkills).map(([group, items]) => (
+          <div key={group} className="border rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-semibold">{group}</Label>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:text-destructive"
+                onClick={() => removeGroup(group)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {items.map((skill, index) => (
+                <div key={index} className="flex items-center gap-1">
+                  <Input
+                    value={skill}
+                    onChange={(e) => updateSkillItem(group, index, e.target.value)}
+                    className="h-8 w-36 text-sm"
+                    placeholder="Skill name"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                    onClick={() => removeSkillItem(group, index)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8"
+                onClick={() => addSkillItem(group)}
+              >
+                <Plus className="h-3 w-3 mr-1" />
+                Add Skill
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Add new group */}
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder="New group name (e.g. Design)"
+          value={newGroupName}
+          onChange={(e) => setNewGroupName(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addGroup()}
+          className="max-w-xs"
+        />
+        <Button variant="outline" onClick={addGroup} disabled={!newGroupName.trim()}>
+          <Plus className="h-4 w-4 mr-1" />
+          Add Group
+        </Button>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <Button onClick={handleSave} disabled={isSaving}>
+          {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+          Save Skills
+        </Button>
+        {saveSuccess && <span className="text-sm text-green-600">Skills saved successfully!</span>}
+      </div>
+    </div>
+  )
+}
+
 export function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState("")
@@ -1018,17 +1163,19 @@ export function AdminDashboard() {
                       Add, edit, or remove cards displayed on your portfolio. Changes are saved to the database.
                     </p>
                   </div>
-                  <Button
-                  onClick={() => {
-                    setIsAddingCard(true)
-                    setEditingCard(null)
-                    setSkillsText("")
-                  }}
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Card
-                  </Button>
+                  {cardManagerCategory !== "skills" && (
+                    <Button
+                      onClick={() => {
+                        setIsAddingCard(true)
+                        setEditingCard(null)
+                        setSkillsText("")
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Card
+                    </Button>
+                  )}
                 </div>
 
                 {/* Category Selection */}
@@ -1053,12 +1200,27 @@ export function AdminDashboard() {
                   </select>
                 </div>
 
-                {/* Existing Cards List */}
+                {/* Skills dedicated UI */}
+                {cardManagerCategory === "skills" && !isLoadingCards && (
+                  <SkillsEditor
+                    skills={(allCards["skills"] as unknown as Record<string, string[]>) || {}}
+                    onSave={async (updatedSkills) => {
+                      await fetch("/api/cards", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ category: "skills", cards: updatedSkills }),
+                      })
+                      await fetchCards()
+                    }}
+                  />
+                )}
+
+                {/* Existing Cards List (non-skills categories) */}
                 {isLoadingCards ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin" />
                   </div>
-                ) : (
+                ) : cardManagerCategory !== "skills" && (
                   <div className="space-y-3">
                     <Label>Existing Cards ({(allCards[cardManagerCategory] as unknown[])?.length || 0})</Label>
                     <div className="grid gap-3">
@@ -1141,8 +1303,8 @@ export function AdminDashboard() {
                   </div>
                 )}
 
-                {/* Add/Edit Card Form */}
-                {(isAddingCard || editingCard) && (
+                {/* Add/Edit Card Form (not used for skills) */}
+                {(isAddingCard || editingCard) && cardManagerCategory !== "skills" && (
                   <div className="border-t pt-6 space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold">{isAddingCard ? "Add New Card" : "Edit Card"}</h3>
