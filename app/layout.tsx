@@ -8,11 +8,11 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Yash's Career Assistant - AI-Powered Chatbot for Recruiters",
+  title: "YashGPT - AI Powered Personalised Chatbot",
   description:
-    "Chat with an AI assistant to learn about Yash's career journey, achievements, and professional experiences. Powered by RAG and Google Gemini.",
+    "Chat with an AI assistant to learn about Yash's career journey, achievements, and professional experiences.",
   generator: "v0.app",
-  keywords: ["career", "portfolio", "chatbot", "AI", "recruiter", "hiring"],
+  keywords: ["career", "portfolio", "chatbot", "AI", "personalised"],
   icons: {
     icon: [
       {
