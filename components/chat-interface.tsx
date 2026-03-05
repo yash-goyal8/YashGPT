@@ -196,7 +196,7 @@ export function ChatInterface() {
   const [sessionId, setSessionId] = useState("")
   const [showMenu, setShowMenu] = useState(true)
 
-  const [visitorInfo, setVisitorInfo] = useState<VisitorInfo | null>(null)
+  const [visitorInfo, setVisitorInfo] = useState<VisitorInfo | null>({ name: "Visitor", company: "" })
   const [visitorForm, setVisitorForm] = useState({
     name: "",
     company: "",
