@@ -51,11 +51,11 @@ const QUESTION_CATEGORIES = [
     color: "text-cyan-400",
     bgColor: "bg-cyan-500/10",
     questions: [
-      "How do Yash prioritize features or a product roadmap?",
+      "How does Yash prioritize features or a product roadmap?",
       "Describe a time when Yash made a product decision with incomplete data",
-      "How do Yash define and measure product success?",
+      "How does Yash define and measure product success?",
       "Describe a product Yash took from 0 to 1",
-      "How do Yash decide what not to build?"
+      "How does Yash decide what not to build?"
     ],
   },
   {
@@ -65,10 +65,10 @@ const QUESTION_CATEGORIES = [
     color: "text-violet-400",
     bgColor: "bg-violet-500/10",
     questions: [
-      "Describe a time Yash influenced without authority",
-      "How do Yash handle conflicts in a team or stakeholder?",
-      "How do Yash manage up with senior leadership?",
-      "How do Yash prioritize competing deadlines?",
+      "Describe a time when Yash influenced without authority",
+      "How does Yash handle conflicts in a team or stakeholder?",
+      "How does Yash manage up with senior leadership?",
+      "How does Yash prioritize competing deadlines?",
     ],
   },
   {
@@ -94,8 +94,8 @@ const QUESTION_CATEGORIES = [
     questions: [
       "Describe a project Yash owned end-to-end",
       "Tell me about a time when Yash delivered under tight constraints",
-      "Tell me about a time Yash had to pivot during execution",
-      "How do Yash balance speed with long-term quality?",
+      "Tell me about a time when Yash had to pivot during execution",
+      "How does Yash balance speed with long-term quality?",
     ],
   },
   {
@@ -107,8 +107,8 @@ const QUESTION_CATEGORIES = [
     questions: [
       "Tell me about a time Yash deeply understood a user problem",
       "Describe a time customer feedback changed Yash's product direction",
-      "How do Yash gather user insights?",
-      "How do Yash balance customer needs with business constraints?",
+      "How does Yash gather user insights?",
+      "How does Yash balance customer needs with business constraints?",
     ],
   },
   {
@@ -118,10 +118,10 @@ const QUESTION_CATEGORIES = [
     color: "text-sky-400",
     bgColor: "bg-sky-500/10",
     questions: [
-      "How do Yash handle ambiguity or incomplete information in projects?",
+      "How does Yash handle ambiguity or incomplete information in projects?",
       "Tell me about a time when Yash learned something new quickly",
-      "How do Yash approach problems he has never seen before?",
-      "How do Yash make decisions when there’s no clear right answer",
+      "How does Yash approach problems he has never seen before?",
+      "How does Yash make decisions when there’s no clear right answer",
     ],
   },
   {
@@ -131,10 +131,10 @@ const QUESTION_CATEGORIES = [
     color: "text-red-400",
     bgColor: "bg-red-500/10",
     questions: [
-      "Describe a time Yash used data to make a decision",
-      "How do Yash choose the right success metrics?",
+      "Describe a time when Yash used data to make a decision",
+      "How does Yash choose the right success metrics?",
       "Describe a time metrics or data contradicted Yash's intuition",
-      "How do Yash decide when data is “good enough” to act?",
+      "How does Yash decide when data is “good enough” to act?",
     ],
   },
   {
@@ -350,7 +350,7 @@ export function ChatInterface() {
                   return updated
                 })
               }
-            } catch {}
+            } catch { }
           }
         }
       }
