@@ -1167,9 +1167,9 @@ export default function PortfolioDesign() {
                       </div>
                       {/* Skills tags — fill remaining width, wrap as needed */}
                       <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        {(skills as string[]).map((skill) => (
+                        {(skills as string[]).map((skill, i) => (
                           <span
-                            key={skill}
+                            key={`${category}-${skill}-${i}`}
                             className={`px-2.5 py-1 text-xs rounded-lg font-medium cursor-default transition-colors ${color.tag}`}
                           >
                             {skill}
@@ -1224,29 +1224,50 @@ export default function PortfolioDesign() {
               <SectionHeading icon={Info} title="Additional Information" accentColor="emerald" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8 text-[10px] sm:text-xs lg:text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 text-[10px] sm:text-xs lg:text-sm">
               <RevealOnScroll delay={0}>
                 <div>
-                  <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Interests</h3>
-                  <p className="text-[#a3a3a3] leading-relaxed">
-                    AI/ML, Startups, Product-Led Growth, Building in Public, Open Source
-                  </p>
+                  <h3 className="font-medium text-white mb-3">Interests</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: "Go-Kart Racing", icon: "🏎" },
+                      { label: "F1 Fan", icon: "🏁" },
+                      { label: "Badminton", icon: "🏸" },
+                      { label: "Table Tennis", icon: "🏓" },
+                      { label: "Hiking", icon: "⛰" },
+                      { label: "Long Drives", icon: "🛣" },
+                      { label: "Red Cross Volunteer", icon: "❤" },
+                      { label: "Traveling", icon: "✈" },
+                      { label: "Open to New Experiences", icon: "🌐" },
+                    ].map(({ label, icon }) => (
+                      <span
+                        key={label}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/8 text-[#a3a3a3] hover:text-white hover:bg-white/10 transition-colors cursor-default"
+                      >
+                        <span>{icon}</span>
+                        <span>{label}</span>
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </RevealOnScroll>
               <RevealOnScroll delay={100}>
                 <div>
-                  <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Languages</h3>
+                  <h3 className="font-medium text-white mb-3">Languages</h3>
                   <p className="text-[#a3a3a3] leading-relaxed">
-                    English (Native), Hindi (Native), Spanish (Basic)
+                    English (Fluent) · Hindi (Native) · Spanish (Basic)
                   </p>
                 </div>
               </RevealOnScroll>
               <RevealOnScroll delay={200}>
                 <div>
-                  <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Location</h3>
+                  <h3 className="font-medium text-white mb-3">Location</h3>
                   <p className="text-[#a3a3a3] leading-relaxed">
-                    San Francisco Bay Area · Open to Remote
+                    New York City, USA
                   </p>
+                  <span className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs">
+                    Open to Relocation
+                  </span>
                 </div>
               </RevealOnScroll>
             </div>
