@@ -1145,30 +1145,32 @@ export default function PortfolioDesign() {
               <SectionHeading icon={Code2} title="Skills" accentColor="cyan" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
+            <div className="flex flex-col divide-y divide-white/5">
               {Object.entries(skillsData).map(([category, skills], index) => {
                 const colors = [
-                  { bg: "bg-emerald-500/10", text: "text-emerald-400" },
-                  { bg: "bg-amber-500/10", text: "text-amber-400" },
-                  { bg: "bg-rose-500/10", text: "text-rose-400" },
+                  { bg: "bg-emerald-500/10", text: "text-emerald-400", tag: "bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 border border-emerald-500/20" },
+                  { bg: "bg-amber-500/10",   text: "text-amber-400",   tag: "bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 border border-amber-500/20" },
+                  { bg: "bg-rose-500/10",    text: "text-rose-400",    tag: "bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 border border-rose-500/20" },
+                  { bg: "bg-sky-500/10",     text: "text-sky-400",     tag: "bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 border border-sky-500/20" },
+                  { bg: "bg-violet-500/10",  text: "text-violet-400",  tag: "bg-violet-500/10 text-violet-300 hover:bg-violet-500/20 border border-violet-500/20" },
                 ]
                 const color = colors[index % colors.length]
                 return (
-                  <RevealOnScroll key={category} delay={index * 80}>
-                    <div
-                      className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:scale-[1.03] h-full"
-                    >
-                      <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
-                        <div className={`p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg ${color.bg}`}>
-                          <Code2 className={`h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 ${color.text}`} />
+                  <RevealOnScroll key={category} delay={index * 60}>
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6 py-4 sm:py-5">
+                      {/* Category label — fixed width column */}
+                      <div className="flex items-center gap-2.5 sm:w-40 lg:w-48 shrink-0">
+                        <div className={`p-1.5 rounded-lg ${color.bg}`}>
+                          <Code2 className={`h-3.5 w-3.5 ${color.text}`} />
                         </div>
-                        <h3 className="text-xs sm:text-sm lg:text-base font-medium text-white">{category}</h3>
+                        <span className="text-sm font-semibold text-white whitespace-nowrap">{category}</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 sm:gap-1.5 lg:gap-2">
-                        {skills.map((skill) => (
+                      {/* Skills tags */}
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        {(skills as string[]).map((skill, skillIdx) => (
                           <span
-                            key={skill}
-                            className="px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 lg:py-1.5 text-[9px] sm:text-xs lg:text-sm rounded-md sm:rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors cursor-default"
+                            key={`${category}-${skillIdx}`}
+                            className={`px-2.5 py-1 text-xs rounded-lg font-medium cursor-default transition-colors ${color.tag}`}
                           >
                             {skill}
                           </span>
@@ -1222,29 +1224,50 @@ export default function PortfolioDesign() {
               <SectionHeading icon={Info} title="Additional Information" accentColor="emerald" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8 text-[10px] sm:text-xs lg:text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 text-[10px] sm:text-xs lg:text-sm">
               <RevealOnScroll delay={0}>
                 <div>
-                  <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Interests</h3>
-                  <p className="text-[#a3a3a3] leading-relaxed">
-                    AI/ML, Startups, Product-Led Growth, Building in Public, Open Source
-                  </p>
+                  <h3 className="font-medium text-white mb-3">Interests</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: "Go-Kart Racing", icon: "🏎" },
+                      { label: "F1 Fan", icon: "🏁" },
+                      { label: "Badminton", icon: "🏸" },
+                      { label: "Table Tennis", icon: "🏓" },
+                      { label: "Hiking", icon: "⛰" },
+                      { label: "Long Drives", icon: "🛣" },
+                      { label: "Red Cross Volunteer", icon: "❤" },
+                      { label: "Traveling", icon: "✈" },
+                      { label: "Open to New Experiences", icon: "🌐" },
+                    ].map(({ label, icon }) => (
+                      <span
+                        key={label}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/8 text-[#a3a3a3] hover:text-white hover:bg-white/10 transition-colors cursor-default"
+                      >
+                        <span>{icon}</span>
+                        <span>{label}</span>
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </RevealOnScroll>
               <RevealOnScroll delay={100}>
                 <div>
-                  <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Languages</h3>
+                  <h3 className="font-medium text-white mb-3">Languages</h3>
                   <p className="text-[#a3a3a3] leading-relaxed">
-                    English (Native), Hindi (Native), Spanish (Basic)
+                    English (Fluent) · Hindi (Native) · Spanish (Basic)
                   </p>
                 </div>
               </RevealOnScroll>
               <RevealOnScroll delay={200}>
                 <div>
-                  <h3 className="font-medium text-white mb-1.5 sm:mb-2 lg:mb-3">Location</h3>
+                  <h3 className="font-medium text-white mb-3">Location</h3>
                   <p className="text-[#a3a3a3] leading-relaxed">
-                    San Francisco Bay Area · Open to Remote
+                    New York City, USA
                   </p>
+                  <span className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs">
+                    Open to Relocation
+                  </span>
                 </div>
               </RevealOnScroll>
             </div>
