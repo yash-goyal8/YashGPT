@@ -1165,11 +1165,11 @@ export default function PortfolioDesign() {
                         </div>
                         <span className="text-sm font-semibold text-white whitespace-nowrap">{category}</span>
                       </div>
-                      {/* Skills tags — fill remaining width, wrap as needed */}
+                      {/* Skills tags */}
                       <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                        {(skills as string[]).map((skill, i) => (
+                        {(skills as string[]).map((skill, skillIdx) => (
                           <span
-                            key={`${category}-${skill}-${i}`}
+                            key={`${category}-${skillIdx}`}
                             className={`px-2.5 py-1 text-xs rounded-lg font-medium cursor-default transition-colors ${color.tag}`}
                           >
                             {skill}
