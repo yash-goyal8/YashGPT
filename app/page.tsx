@@ -1145,30 +1145,63 @@ export default function PortfolioDesign() {
               <SectionHeading icon={Code2} title="Skills" accentColor="cyan" />
             </RevealOnScroll>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 auto-rows-fr">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
               {Object.entries(skillsData).map(([category, skills], index) => {
                 const colors = [
-                  { bg: "bg-emerald-500/10", text: "text-emerald-400" },
-                  { bg: "bg-amber-500/10", text: "text-amber-400" },
-                  { bg: "bg-rose-500/10", text: "text-rose-400" },
+                  {
+                    bg: "bg-emerald-500/10",
+                    text: "text-emerald-400",
+                    tag: "bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20",
+                    border: "border-emerald-500/20",
+                    glow: "hover:border-emerald-500/30",
+                  },
+                  {
+                    bg: "bg-amber-500/10",
+                    text: "text-amber-400",
+                    tag: "bg-amber-500/10 text-amber-300 hover:bg-amber-500/20",
+                    border: "border-amber-500/20",
+                    glow: "hover:border-amber-500/30",
+                  },
+                  {
+                    bg: "bg-rose-500/10",
+                    text: "text-rose-400",
+                    tag: "bg-rose-500/10 text-rose-300 hover:bg-rose-500/20",
+                    border: "border-rose-500/20",
+                    glow: "hover:border-rose-500/30",
+                  },
+                  {
+                    bg: "bg-sky-500/10",
+                    text: "text-sky-400",
+                    tag: "bg-sky-500/10 text-sky-300 hover:bg-sky-500/20",
+                    border: "border-sky-500/20",
+                    glow: "hover:border-sky-500/30",
+                  },
+                  {
+                    bg: "bg-violet-500/10",
+                    text: "text-violet-400",
+                    tag: "bg-violet-500/10 text-violet-300 hover:bg-violet-500/20",
+                    border: "border-violet-500/20",
+                    glow: "hover:border-violet-500/30",
+                  },
                 ]
                 const color = colors[index % colors.length]
                 return (
                   <RevealOnScroll key={category} delay={index * 80}>
                     <div
-                      className="group p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300 hover:scale-[1.03] h-full"
+                      className={`group p-4 sm:p-5 lg:p-6 rounded-xl lg:rounded-2xl bg-white/[0.02] border ${color.border} ${color.glow} hover:bg-white/[0.04] transition-all duration-300`}
                     >
-                      <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 mb-2 sm:mb-3 lg:mb-4">
-                        <div className={`p-1.5 sm:p-2 lg:p-2.5 rounded-md sm:rounded-lg ${color.bg}`}>
-                          <Code2 className={`h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 ${color.text}`} />
+                      <div className="flex items-center gap-2 lg:gap-3 mb-3 sm:mb-4">
+                        <div className={`p-1.5 sm:p-2 rounded-lg ${color.bg}`}>
+                          <Code2 className={`h-4 w-4 sm:h-5 sm:w-5 ${color.text}`} />
                         </div>
-                        <h3 className="text-xs sm:text-sm lg:text-base font-medium text-white">{category}</h3>
+                        <h3 className="text-sm sm:text-base font-semibold text-white">{category}</h3>
+                        <span className="ml-auto text-xs text-white/30">{(skills as string[]).length}</span>
                       </div>
-                      <div className="flex flex-wrap gap-1 sm:gap-1.5 lg:gap-2">
-                        {skills.map((skill) => (
+                      <div className="flex flex-wrap gap-1.5 lg:gap-2">
+                        {(skills as string[]).map((skill) => (
                           <span
                             key={skill}
-                            className="px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 lg:py-1.5 text-[9px] sm:text-xs lg:text-sm rounded-md sm:rounded-lg bg-white/5 text-[#a3a3a3] hover:bg-white/10 hover:text-white transition-colors cursor-default"
+                            className={`px-2 sm:px-2.5 py-1 text-xs rounded-lg ${color.tag} transition-colors cursor-default font-medium`}
                           >
                             {skill}
                           </span>
